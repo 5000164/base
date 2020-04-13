@@ -2,12 +2,16 @@
   "name": "base",
   "private": true,
   "version": "0.0.1",
-  "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
   },
   "devDependencies": {
     "electron": "8.2.1",
-    "prettier": "2.0.4"
+    "prettier": "2.0.4",
+    "tslint": "6.1.1",
+    "typescript": "3.8.3"
   }
 }
