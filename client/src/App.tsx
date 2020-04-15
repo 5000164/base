@@ -1,5 +1,6 @@
 import React from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { PlanList } from "./components/plan-list";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
           content="script-src 'self' 'unsafe-inline';"
         />
       </Helmet>
-      <h1>Hello World!</h1>
+      <PlanList />
     </HelmetProvider>
   );
 }
