@@ -1,7 +1,17 @@
 import React from "react";
 
-export const PlanListItem = ({ value }: { value: string }) => (
+export const PlanListItem = ({
+  value,
+  setItem,
+}: {
+  value: string;
+  setItem: Function;
+}) => (
   <li>
-    <input value={value} />
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => setItem(e.target.value)}
+    />
   </li>
 );
