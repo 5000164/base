@@ -16,17 +16,15 @@
   "dependencies": {
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-    "electron-is-dev": "^1.2.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-helmet-async": "^1.0.5",
-    "react-scripts": "3.4.1"
-  },
-  "devDependencies": {
     "concurrently": "^5.1.0",
     "electron": "8.2.1",
     "electron-builder": "^22.4.1",
+    "electron-is-dev": "^1.2.0",
     "prettier": "2.0.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-helmet-async": "^1.0.5",
+    "react-scripts": "3.4.1",
     "tslint": "6.1.1",
     "typescript": "3.8.3",
     "wait-on": "^4.0.2"
