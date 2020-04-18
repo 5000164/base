@@ -1,0 +1,18 @@
+{
+  "name": "base",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "ts-node-dev --no-notify src/server.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "graphql-yoga": "^1.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^7.2.4",
+    "prettier": "2.0.4",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "3.8.3"
+  }
+}

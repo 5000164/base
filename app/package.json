@@ -1,0 +1,32 @@
+{
+  "name": "base",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "files": [
+      "index.js",
+      {
+        "from": "../client/build/",
+        "to": "."
+      },
+      {
+        "from": "../server/build/",
+        "to": "."
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.2.0",
+    "graphql-yoga": "^1.18.3"
+  },
+  "devDependencies": {
+    "electron": "8.2.1",
+    "electron-builder": "^22.4.1",
+    "prettier": "2.0.4"
+  }
+}
