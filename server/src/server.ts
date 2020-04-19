@@ -1,14 +1,12 @@
+const path = require("path");
 import { GraphQLServer } from "graphql-yoga";
+import { importSchema } from "graphql-import";
+import { Resolvers } from "./generated/graphql";
 
-const typeDefs = `
-  type Query {
-    plan: [String!]!
-  }
-`;
-
-const resolvers = {
+const typeDefs = importSchema(path.join(__dirname, "./generated/plan.graphql"));
+const resolvers: Resolvers = {
   Query: {
-    plan: (_: any) => ["勉強", "仕事", "漫画", ""],
+    plan: () => ["勉強", "仕事", "漫画", "調べ物"],
   },
 };
 

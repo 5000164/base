@@ -1,8 +1,18 @@
-const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const { fork } = require("child_process");
+const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 
-function createWindow() {
+let server;
+
+if (!isDev) {
+  // To run a script file inside an asar file
+  const cwd = path.join(__dirname, "..");
+  const cp_path = "app.asar/server/server.js";
+  server = fork(cp_path, [], { cwd });
+}
+
+const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -15,9 +25,9 @@ function createWindow() {
     win.loadURL("http://localhost:3000");
     win.webContents.openDevTools();
   } else {
-    win.loadFile("index.html");
+    win.loadFile(path.join(__dirname, "./client/index.html"));
   }
-}
+};
 
 app.whenReady().then(createWindow);
 
@@ -27,6 +37,8 @@ app.on("activate", () => {
   }
 });
 
-if (!isDev) {
-  require("./server");
-}
+app.on("before-quit", () => {
+  if (server) {
+    server.kill();
+  }
+});

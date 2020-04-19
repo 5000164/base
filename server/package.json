@@ -4,9 +4,11 @@
   "version": "0.0.1",
   "scripts": {
     "start": "ts-node-dev --no-notify src/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "postbuild": "cp -R src/generated/*.graphql build/generated"
   },
   "dependencies": {
+    "graphql-import": "^1.0.2",
     "graphql-yoga": "^1.18.3"
   },
   "devDependencies": {

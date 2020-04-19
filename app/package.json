@@ -11,17 +11,18 @@
     "files": [
       "index.js",
       {
-        "from": "../client/build/",
-        "to": "."
+        "from": "../server/build",
+        "to": "./server"
       },
       {
-        "from": "../server/build/",
-        "to": "."
+        "from": "../client/build",
+        "to": "./client"
       }
     ]
   },
   "dependencies": {
     "electron-is-dev": "^1.2.0",
+    "graphql-import": "^1.0.2",
     "graphql-yoga": "^1.18.3"
   },
   "devDependencies": {
