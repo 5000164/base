@@ -7,6 +7,11 @@ type Query {
   tasks: [Task!]!
 }
 
+type Mutation {
+  addTask(name: String!): Task!
+}
+
 schema {
   query: Query
+  mutation: Mutation
 }

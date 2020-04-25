@@ -10,6 +10,14 @@ const resolvers: Resolvers = {
   Query: {
     tasks: (parent, args, ctx) => ctx.prisma.tasks.findMany(),
   },
+  Mutation: {
+    addTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.create({
+        data: {
+          name: args.name,
+        },
+      }),
+  },
 };
 
 const schema = makeExecutableSchema({
