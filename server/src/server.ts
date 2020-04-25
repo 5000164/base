@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 const typeDefs = importSchema(path.join(__dirname, "./generated/plan.graphql"));
 const resolvers: Resolvers = {
   Query: {
-    tasks: async (parent, args, ctx) => ctx.prisma.tasks.findMany(),
+    tasks: (parent, args, ctx) => ctx.prisma.tasks.findMany(),
   },
 };
 
