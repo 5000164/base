@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ApolloClient, { gql } from "apollo-boost";
 import { PlanListItem } from "../plan-list-item";
-import { Query } from "../../generated/graphql";
+import { Mutation, Query } from "../../generated/graphql";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",
@@ -23,7 +23,26 @@ export const PlanList = () => {
   };
 
   const addTask = () => {
-    setTasks([...tasks, {}]);
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation {
+            addTask(name: "") {
+              id
+              name
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        const addedTask: Task = {
+          id: result.data?.addTask.id,
+          name: result.data?.addTask.name,
+        };
+        setTasks([...tasks, addedTask]);
+      })
+      .catch(() => setError(true));
   };
 
   const fetchTasks = () => {
