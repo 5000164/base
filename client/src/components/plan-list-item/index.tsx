@@ -1,17 +1,19 @@
 import React from "react";
+import { Task } from "../plan-list";
 
 export const PlanListItem = ({
-  value,
-  setItem,
+  task,
+  setTask,
 }: {
-  value: string;
-  setItem: Function;
+  task: Task;
+  setTask: Function;
 }) => (
   <li>
+    <span>{task.id}</span>
     <input
       type="text"
-      value={value}
-      onChange={(e) => setItem(e.target.value)}
+      value={task.name}
+      onChange={(e) => setTask(e.target.value)}
     />
   </li>
 );

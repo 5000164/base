@@ -7,55 +7,63 @@ const client = new ApolloClient({
   uri: "http://localhost:4000",
 });
 
+export interface Task {
+  id?: number;
+  name?: string;
+}
+
 export const PlanList = () => {
-  const [items, setItems] = useState([] as string[]);
+  const [tasks, setTasks] = useState([] as Task[]);
   const [error, setError] = useState(false);
 
-  const setItem = (index: number, value: string) => {
-    const newItems = [...items];
-    newItems[index] = value;
-    setItems(newItems);
+  const setTaskName = (index: number, name: string) => {
+    const newTasks = [...tasks];
+    newTasks[index].name = name;
+    setTasks(newTasks);
   };
 
-  const addItem = () => {
-    setItems([...items, ...[""]]);
+  const addTask = () => {
+    setTasks([...tasks, {}]);
   };
 
-  const fetchItems = () => {
+  const fetchTasks = () => {
     setError(false);
     client
       .query<Query>({
         query: gql`
           {
-            plan
+            tasks {
+              id
+              name
+            }
           }
         `,
       })
-      .then((result) => setItems(result.data.plan))
+      .then((result) => setTasks(result.data.tasks))
       .catch(() => setError(true));
   };
 
-  useEffect(fetchItems, []);
+  useEffect(fetchTasks, []);
 
   return (
     <div>
       {error ? (
         <>
           <div>Error</div>
-          <button onClick={fetchItems}>Retry</button>
+          <button onClick={fetchTasks}>Retry</button>
         </>
       ) : (
         <>
           <ul>
-            {items.map((item, index) => (
+            {tasks.map((task, index) => (
               <PlanListItem
                 key={index}
-                value={item}
-                setItem={(v: string) => setItem(index, v)}
+                task={task}
+                setTask={(v: string) => setTaskName(index, v)}
               />
             ))}
           </ul>
-          <button onClick={addItem}>Add</button>
+          <button onClick={addTask}>Add</button>
         </>
       )}
     </div>

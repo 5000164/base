@@ -5,13 +5,19 @@
   "scripts": {
     "start": "ts-node-dev --no-notify src/server.ts",
     "build": "tsc",
-    "postbuild": "cp -R src/generated/*.graphql build/generated"
+    "postbuild": "cp -R src/generated/*.graphql build/generated",
+    "introspect": "npx prisma introspect",
+    "generate": "npx prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^2.0.0-beta.3",
     "graphql-import": "^1.0.2",
+    "graphql-tools": "^5.0.0",
     "graphql-yoga": "^1.18.3"
   },
   "devDependencies": {
+    "@prisma/cli": "^2.0.0-beta.3",
+    "@types/node": "^13.13.2",
     "@types/ws": "^7.2.4",
     "prettier": "2.0.4",
     "ts-node-dev": "^1.0.0-pre.44",
