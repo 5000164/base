@@ -1,15 +1,25 @@
 const path = require("path");
+import { makeExecutableSchema } from "graphql-tools";
 import { GraphQLServer } from "graphql-yoga";
 import { importSchema } from "graphql-import";
 import { Resolvers } from "./generated/graphql";
+import { PrismaClient } from "@prisma/client";
 
 const typeDefs = importSchema(path.join(__dirname, "./generated/plan.graphql"));
 const resolvers: Resolvers = {
   Query: {
-    plan: () => ["勉強", "仕事", "漫画", "調べ物"],
+    tasks: async (parent, args, ctx) => ctx.prisma.tasks.findMany(),
   },
 };
 
-const server = new GraphQLServer({ typeDefs, resolvers });
+const schema = makeExecutableSchema({
+  resolvers,
+  typeDefs,
+});
 
-server.start(() => console.log("Server is running on localhost:4000"));
+const prisma = new PrismaClient();
+const createContext = () => ({ prisma });
+
+new GraphQLServer({ schema, context: createContext }).start(() =>
+  console.log("Server is running on localhost:4000")
+);
