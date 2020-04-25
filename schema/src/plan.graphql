@@ -9,6 +9,7 @@ type Query {
 
 type Mutation {
   addTask(name: String!): Task!
+  updateTask(id: Int!, name: String!): Task!
 }
 
 schema {

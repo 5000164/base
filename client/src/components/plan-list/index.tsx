@@ -22,6 +22,9 @@ export const PlanList = () => {
     setTasks(newTasks);
   };
 
+  const updateTaskName = (updatedTask: Task) =>
+    setTasks(tasks.map((t) => (updatedTask.id === t.id ? updatedTask : t)));
+
   const addTask = () => {
     setError(false);
     client
@@ -41,6 +44,28 @@ export const PlanList = () => {
           name: result.data?.addTask.name,
         };
         setTasks([...tasks, addedTask]);
+      })
+      .catch(() => setError(true));
+  };
+
+  const updateTask = (task: Task) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          updateTask(id: ${task.id}, name: "${task.name}") {
+            id
+            name
+          }
+        }
+      `,
+      })
+      .then((result) => {
+        updateTaskName({
+          id: result.data?.updateTask.id as number,
+          name: result.data?.updateTask.name as string,
+        } as Task);
       })
       .catch(() => setError(true));
   };
@@ -79,6 +104,7 @@ export const PlanList = () => {
                 key={index}
                 task={task}
                 setTask={(v: string) => setTaskName(index, v)}
+                updateTask={updateTask}
               />
             ))}
           </ul>

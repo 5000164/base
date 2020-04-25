@@ -17,6 +17,11 @@ const resolvers: Resolvers = {
           name: args.name,
         },
       }),
+    updateTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.update({
+        where: { id: args.id },
+        data: { name: args.name },
+      }),
   },
 };
 
