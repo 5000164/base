@@ -8,7 +8,24 @@ import { PrismaClient } from "@prisma/client";
 const typeDefs = importSchema(path.join(__dirname, "./generated/plan.graphql"));
 const resolvers: Resolvers = {
   Query: {
-    tasks: async (parent, args, ctx) => ctx.prisma.tasks.findMany(),
+    tasks: (parent, args, ctx) => ctx.prisma.tasks.findMany(),
+  },
+  Mutation: {
+    addTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.create({
+        data: {
+          name: args.name,
+        },
+      }),
+    updateTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.update({
+        where: { id: args.id },
+        data: { name: args.name },
+      }),
+    deleteTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.delete({
+        where: { id: args.id },
+      }),
   },
 };
 

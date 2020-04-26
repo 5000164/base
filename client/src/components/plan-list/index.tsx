@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ApolloClient, { gql } from "apollo-boost";
 import { PlanListItem } from "../plan-list-item";
-import { Query } from "../../generated/graphql";
+import { Mutation, Query } from "../../generated/graphql";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",
@@ -22,8 +22,69 @@ export const PlanList = () => {
     setTasks(newTasks);
   };
 
+  const updateTaskName = (updatedTask: Task) =>
+    setTasks(tasks.map((t) => (updatedTask.id === t.id ? updatedTask : t)));
+
   const addTask = () => {
-    setTasks([...tasks, {}]);
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation {
+            addTask(name: "") {
+              id
+              name
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        const addedTask: Task = {
+          id: result.data?.addTask.id,
+          name: result.data?.addTask.name,
+        };
+        setTasks([...tasks, addedTask]);
+      })
+      .catch(() => setError(true));
+  };
+
+  const updateTask = (task: Task) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          updateTask(id: ${task.id}, name: "${task.name}") {
+            id
+            name
+          }
+        }
+      `,
+      })
+      .then((result) => {
+        updateTaskName({
+          id: result.data?.updateTask.id as number,
+          name: result.data?.updateTask.name as string,
+        } as Task);
+      })
+      .catch(() => setError(true));
+  };
+
+  const deleteTask = (id: number) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          deleteTask(id: ${id}) {
+            id
+            name
+          }
+        }
+      `,
+      })
+      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .catch(() => setError(true));
   };
 
   const fetchTasks = () => {
@@ -60,6 +121,8 @@ export const PlanList = () => {
                 key={index}
                 task={task}
                 setTask={(v: string) => setTaskName(index, v)}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
               />
             ))}
           </ul>
