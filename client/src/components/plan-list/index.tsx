@@ -70,6 +70,23 @@ export const PlanList = () => {
       .catch(() => setError(true));
   };
 
+  const deleteTask = (id: number) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          deleteTask(id: ${id}) {
+            id
+            name
+          }
+        }
+      `,
+      })
+      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .catch(() => setError(true));
+  };
+
   const fetchTasks = () => {
     setError(false);
     client
@@ -105,6 +122,7 @@ export const PlanList = () => {
                 task={task}
                 setTask={(v: string) => setTaskName(index, v)}
                 updateTask={updateTask}
+                deleteTask={deleteTask}
               />
             ))}
           </ul>

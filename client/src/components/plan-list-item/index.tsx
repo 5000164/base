@@ -5,10 +5,12 @@ export const PlanListItem = ({
   task,
   setTask,
   updateTask,
+  deleteTask,
 }: {
   task: Task;
   setTask: Function;
   updateTask: Function;
+  deleteTask: Function;
 }) => (
   <li>
     <span>{task.id}</span>
@@ -18,5 +20,6 @@ export const PlanListItem = ({
       onChange={(e) => setTask(e.target.value)}
     />
     <button onClick={() => updateTask(task)}>Update</button>
+    <button onClick={() => deleteTask(task.id)}>Remove</button>
   </li>
 );

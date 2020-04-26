@@ -22,6 +22,10 @@ const resolvers: Resolvers = {
         where: { id: args.id },
         data: { name: args.name },
       }),
+    deleteTask: (parent, args, ctx) =>
+      ctx.prisma.tasks.delete({
+        where: { id: args.id },
+      }),
   },
 };
 
