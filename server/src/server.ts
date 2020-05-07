@@ -86,5 +86,7 @@ interface Settings {
   } as PrismaClientOptions);
   const createContext = () => ({ prisma });
 
-  await new GraphQLServer({ schema, context: createContext }).start();
+  await new GraphQLServer({ schema, context: createContext }).start({
+    port: 5164,
+  });
 })();
