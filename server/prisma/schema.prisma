@@ -1,25 +1,15 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../../prismaClient"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../../db/db.db"
+  url      = "file:../../app.db"
 }
 
-model flyway_schema_history {
-  checksum       Int?
-  description    String
-  execution_time Int
-  installed_by   String
-  installed_on   String  @default("strftime('%Y-%m-%d %H:%M:%f','now')")
-  installed_rank Int     @id
-  script         String
-  success        Boolean
-  type           String
-  version        String?
-
-  @@index([success], name: "flyway_schema_history_s_idx")
+model SequelizeMeta {
+  name String @id
 }
 
 model tasks {

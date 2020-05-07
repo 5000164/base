@@ -4,7 +4,7 @@ import { PlanListItem } from "../plan-list-item";
 import { Mutation, Query } from "../../generated/graphql";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000",
+  uri: "http://localhost:5164",
 });
 
 export interface Task {
