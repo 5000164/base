@@ -8,6 +8,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
+    "productName": "Base",
     "files": [
       "index.js",
       {
