@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="app start" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/app/package.json" />
+  <configuration default="false" name="server introspect" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/server/package.json" />
     <command value="run" />
     <scripts>
-      <script value="start" />
+      <script value="introspect" />
     </scripts>
     <node-interpreter value="project" />
     <envs />
