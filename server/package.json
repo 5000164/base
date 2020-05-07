@@ -5,19 +5,24 @@
   "scripts": {
     "start": "ts-node-dev --no-notify src/server.ts",
     "build": "tsc",
-    "postbuild": "cp -R src/generated/*.graphql build/generated",
+    "postbuild": "cp -R src/generated/*.graphql build/generated && cp -R ../prismaClient build/prismaClient && cp -R src/migrations build/migrations",
     "introspect": "npx prisma introspect",
     "generate": "npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^2.0.0-beta.3",
+    "electron-log": "^4.1.2",
     "graphql-import": "^1.0.2",
     "graphql-tools": "^5.0.0",
-    "graphql-yoga": "^1.18.3"
+    "graphql-yoga": "^1.18.3",
+    "sequelize": "github:sequelize/sequelize#e02594fb5b8b18fe68a77a0a0f51620a9d96acb9",
+    "sqlite3": "^4.2.0",
+    "umzug": "^3.0.0-beta.3"
   },
   "devDependencies": {
     "@prisma/cli": "^2.0.0-beta.3",
-    "@types/node": "^13.13.2",
+    "@types/bluebird": "^3.5.30",
+    "@types/validator": "^13.0.0",
     "@types/ws": "^7.2.4",
     "prettier": "2.0.4",
     "ts-node-dev": "^1.0.0-pre.44",
