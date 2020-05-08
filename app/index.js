@@ -12,7 +12,9 @@ const createWindow = () => {
     width: 800,
     height: 600,
   });
-  win.loadFile(path.join(__dirname, "./client/index.html"));
+  setTimeout(() => {
+    win.loadFile(path.join(__dirname, "./client/index.html"));
+  }, 3000);
 };
 
 app.whenReady().then(createWindow);
