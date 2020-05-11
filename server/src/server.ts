@@ -6,7 +6,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import { GraphQLServer } from "graphql-yoga";
 import { importSchema } from "graphql-import";
 import { Sequelize } from "sequelize";
-import { Umzug } from "umzug";
+import { migrationsList, Umzug } from "umzug";
 import { Resolvers } from "./generated/graphql";
 import { PrismaClient, PrismaClientOptions } from "../../prismaClient";
 
@@ -39,12 +39,27 @@ interface Settings {
     storage: dbPath,
   });
   const umzug = new Umzug({
-    migrations: {
-      path: path.join(__dirname, "./migrations"),
-      params: [sequelize.getQueryInterface()],
-    },
     storage: "sequelize",
     storageOptions: { sequelize },
+    migrations: migrationsList([
+      {
+        name: "00-create-tasks-table",
+        async up() {
+          sequelize.query(`
+              CREATE TABLE tasks
+              (
+                  id   INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name TEXT NOT NULL
+              );
+          `);
+        },
+        async down() {
+          sequelize.query(`
+              DROP TABLE tasks;
+          `);
+        },
+      },
+    ]),
   });
   await umzug.up();
 
