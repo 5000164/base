@@ -70,6 +70,38 @@ export const PlanList = () => {
       .catch(() => setError(true));
   };
 
+  const completeTask = (id: number) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          completeTask(id: ${id}) {
+            id
+          }
+        }
+      `,
+      })
+      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .catch(() => setError(true));
+  };
+
+  const archiveTask = (id: number) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+        mutation {
+          archiveTask(id: ${id}) {
+            id
+          }
+        }
+      `,
+      })
+      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .catch(() => setError(true));
+  };
+
   const deleteTask = (id: number) => {
     setError(false);
     client
@@ -122,6 +154,8 @@ export const PlanList = () => {
                 task={task}
                 setTask={(v: string) => setTaskName(index, v)}
                 updateTask={updateTask}
+                completeTask={completeTask}
+                archiveTask={archiveTask}
                 deleteTask={deleteTask}
               />
             ))}

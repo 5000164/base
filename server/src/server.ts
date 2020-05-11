@@ -59,6 +59,52 @@ interface Settings {
           `);
         },
       },
+      {
+        name: "01-add-status-column-to-tasks-table",
+        async up() {
+          sequelize.query(`
+              ALTER TABLE tasks
+                  RENAME TO tasksTemp;
+          `);
+          sequelize.query(`
+              CREATE TABLE tasks
+              (
+                  id     INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name   TEXT    NOT NULL,
+                  status INTEGER NOT NULL
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO tasks (id, name, status)
+              SELECT id, name, 0 AS status
+              FROM tasksTemp;
+          `);
+          sequelize.query(`
+              DROP TABLE tasksTemp;
+          `);
+        },
+        async down() {
+          sequelize.query(`
+              ALTER TABLE tasks
+                  RENAME TO tasksTemp;
+          `);
+          sequelize.query(`
+              CREATE TABLE tasks
+              (
+                  id   INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name TEXT NOT NULL
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO tasks (id, name)
+              SELECT id, name
+              FROM tasksTemp;
+          `);
+          sequelize.query(`
+              DROP TABLE tasksTemp;
+          `);
+        },
+      },
     ]),
   });
   await umzug.up();
@@ -68,19 +114,31 @@ interface Settings {
   );
   const resolvers: Resolvers = {
     Query: {
-      tasks: (parent, args, ctx) => ctx.prisma.tasks.findMany(),
+      tasks: (parent, args, ctx) =>
+        ctx.prisma.tasks.findMany({ where: { status: 0 } }),
     },
     Mutation: {
       addTask: (parent, args, ctx) =>
         ctx.prisma.tasks.create({
           data: {
             name: args.name,
+            status: 0,
           },
         }),
       updateTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },
           data: { name: args.name },
+        }),
+      completeTask: (parent, args, ctx) =>
+        ctx.prisma.tasks.update({
+          where: { id: args.id },
+          data: { status: 1 },
+        }),
+      archiveTask: (parent, args, ctx) =>
+        ctx.prisma.tasks.update({
+          where: { id: args.id },
+          data: { status: 2 },
         }),
       deleteTask: (parent, args, ctx) =>
         ctx.prisma.tasks.delete({
