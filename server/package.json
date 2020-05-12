@@ -5,7 +5,7 @@
   "scripts": {
     "start": "ts-node-dev --no-notify src/server.ts",
     "build": "tsc",
-    "postbuild": "cp -R src/generated/*.graphql build/generated && cp -R ../prismaClient build/prismaClient && cp -R src/migrations build/migrations",
+    "postbuild": "cp -R src/generated/*.graphql build/generated && cp -R ../prismaClient build/prismaClient",
     "introspect": "npx prisma introspect",
     "generate": "npx prisma generate"
   },
