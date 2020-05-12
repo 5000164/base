@@ -10,6 +10,8 @@ type Query {
 type Mutation {
   addTask(name: String!): Task!
   updateTask(id: Int!, name: String!): Task!
+  completeTask(id: Int!): Task!
+  archiveTask(id: Int!): Task!
   deleteTask(id: Int!): Task!
 }
 
