@@ -3,25 +3,31 @@ import { Task } from "../plan-list";
 
 export const PlanListItem = ({
   task,
-  setTask,
+  setName,
+  setEstimate,
   updateTask,
   completeTask,
   archiveTask,
   deleteTask,
 }: {
   task: Task;
-  setTask: Function;
+  setName: Function;
+  setEstimate: Function;
   updateTask: Function;
   completeTask: Function;
   archiveTask: Function;
   deleteTask: Function;
 }) => (
   <li>
-    <span>{task.id}</span>
     <input
       type="text"
       value={task.name}
-      onChange={(e) => setTask(e.target.value)}
+      onChange={(e) => setName(e.target.value)}
+    />
+    <input
+      type="text"
+      value={task.estimate}
+      onChange={(e) => setEstimate(Number(e.target.value))}
     />
     <button onClick={() => updateTask(task)}>Update</button>
     <button onClick={() => completeTask(task.id)}>Complete</button>

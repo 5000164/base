@@ -1,6 +1,7 @@
 type Task {
   id: Int!
   name: String!
+  estimate: Int
 }
 
 type Query {
@@ -9,7 +10,7 @@ type Query {
 
 type Mutation {
   addTask(name: String!): Task!
-  updateTask(id: Int!, name: String!): Task!
+  updateTask(id: Int!, name: String, estimate: Int): Task!
   completeTask(id: Int!): Task!
   archiveTask(id: Int!): Task!
   deleteTask(id: Int!): Task!

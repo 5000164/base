@@ -27,11 +27,16 @@ import { migrate } from "./migration";
             status: 0,
           },
         }),
-      updateTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.update({
+      updateTask: (parent, args, ctx) => {
+        const data = {
+          ...(args.name ? { name: args.name } : {}),
+          ...(args.estimate ? { estimate: args.estimate } : {}),
+        };
+        return ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { name: args.name },
-        }),
+          data,
+        });
+      },
       completeTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },

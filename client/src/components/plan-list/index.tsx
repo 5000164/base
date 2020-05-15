@@ -10,20 +10,43 @@ const client = new ApolloClient({
 export interface Task {
   id?: number;
   name?: string;
+  estimate?: number;
 }
 
 export const PlanList = () => {
   const [tasks, setTasks] = useState([] as Task[]);
   const [error, setError] = useState(false);
 
-  const setTaskName = (index: number, name: string) => {
+  const fetchTasks = () => {
+    setError(false);
+    client
+      .query<Query>({
+        query: gql`
+          {
+            tasks {
+              id
+              name
+              estimate
+            }
+          }
+        `,
+      })
+      .then((result) => setTasks(result.data.tasks))
+      .catch(() => setError(true));
+  };
+  useEffect(fetchTasks, []);
+
+  const setName = (index: number, name: string) => {
     const newTasks = [...tasks];
     newTasks[index].name = name;
     setTasks(newTasks);
   };
 
-  const updateTaskName = (updatedTask: Task) =>
-    setTasks(tasks.map((t) => (updatedTask.id === t.id ? updatedTask : t)));
+  const setEstimate = (index: number, estimate: number) => {
+    const newTasks = [...tasks];
+    newTasks[index].estimate = estimate;
+    setTasks(newTasks);
+  };
 
   const addTask = () => {
     setError(false);
@@ -38,13 +61,6 @@ export const PlanList = () => {
           }
         `,
       })
-      .then((result) => {
-        const addedTask: Task = {
-          id: result.data?.addTask.id,
-          name: result.data?.addTask.name,
-        };
-        setTasks([...tasks, addedTask]);
-      })
       .catch(() => setError(true));
   };
 
@@ -53,19 +69,13 @@ export const PlanList = () => {
     client
       .mutate<Mutation>({
         mutation: gql`
-        mutation {
-          updateTask(id: ${task.id}, name: "${task.name}") {
-            id
-            name
+          mutation($id: Int!, $name: String, $estimate: Int) {
+            updateTask(id: $id, name: $name, estimate: $estimate) {
+              id
+            }
           }
-        }
-      `,
-      })
-      .then((result) => {
-        updateTaskName({
-          id: result.data?.updateTask.id as number,
-          name: result.data?.updateTask.name as string,
-        } as Task);
+        `,
+        variables: task,
       })
       .catch(() => setError(true));
   };
@@ -75,12 +85,13 @@ export const PlanList = () => {
     client
       .mutate<Mutation>({
         mutation: gql`
-        mutation {
-          completeTask(id: ${id}) {
-            id
+          mutation($id: Int!) {
+            completeTask(id: $id) {
+              id
+            }
           }
-        }
-      `,
+        `,
+        variables: { id },
       })
       .then(() => setTasks(tasks.filter((t) => t.id !== id)))
       .catch(() => setError(true));
@@ -91,12 +102,13 @@ export const PlanList = () => {
     client
       .mutate<Mutation>({
         mutation: gql`
-        mutation {
-          archiveTask(id: ${id}) {
-            id
+          mutation($id: Int!) {
+            archiveTask(id: $id) {
+              id
+            }
           }
-        }
-      `,
+        `,
+        variables: { id },
       })
       .then(() => setTasks(tasks.filter((t) => t.id !== id)))
       .catch(() => setError(true));
@@ -107,36 +119,17 @@ export const PlanList = () => {
     client
       .mutate<Mutation>({
         mutation: gql`
-        mutation {
-          deleteTask(id: ${id}) {
-            id
-            name
+          mutation($id: Int!) {
+            deleteTask(id: $id) {
+              id
+            }
           }
-        }
-      `,
+        `,
+        variables: { id },
       })
       .then(() => setTasks(tasks.filter((t) => t.id !== id)))
       .catch(() => setError(true));
   };
-
-  const fetchTasks = () => {
-    setError(false);
-    client
-      .query<Query>({
-        query: gql`
-          {
-            tasks {
-              id
-              name
-            }
-          }
-        `,
-      })
-      .then((result) => setTasks(result.data.tasks))
-      .catch(() => setError(true));
-  };
-
-  useEffect(fetchTasks, []);
 
   return (
     <div>
@@ -152,7 +145,8 @@ export const PlanList = () => {
               <PlanListItem
                 key={index}
                 task={task}
-                setTask={(v: string) => setTaskName(index, v)}
+                setName={(v: string) => setName(index, v)}
+                setEstimate={(v: number) => setEstimate(index, v)}
                 updateTask={updateTask}
                 completeTask={completeTask}
                 archiveTask={archiveTask}
