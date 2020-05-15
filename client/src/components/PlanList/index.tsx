@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ApolloClient, { gql } from "apollo-boost";
-import { PlanListItem } from "../plan-list-item";
+import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 
 const client = new ApolloClient({

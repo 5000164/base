@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { PlanList } from "./components/plan-list";
+import { PlanList } from "./components/PlanList";
 
 export const App = () => (
   <HelmetProvider>
