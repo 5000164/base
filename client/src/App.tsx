@@ -1,6 +1,17 @@
 import React from "react";
+import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { PlanList } from "./components/PlanList";
+
+const client = new ApolloClient({
+  uri: "http://localhost:5164",
+});
+
+export interface Task {
+  id?: number;
+  name?: string;
+  estimate?: number;
+}
 
 export const App = () => (
   <HelmetProvider>
@@ -12,6 +23,6 @@ export const App = () => (
         content="script-src 'self' 'unsafe-inline';"
       />
     </Helmet>
-    <PlanList />
+    <PlanList client={client} />
   </HelmetProvider>
 );

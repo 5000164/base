@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ApolloClient, { gql } from "apollo-boost";
+import DefaultClient, { gql } from "apollo-boost";
 import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
+import { Task } from "../../App";
 
-const client = new ApolloClient({
-  uri: "http://localhost:5164",
-});
-
-export interface Task {
-  id?: number;
-  name?: string;
-  estimate?: number;
-}
-
-export const PlanList = () => {
+export const PlanList = ({ client }: { client: DefaultClient<any> }) => {
   const [tasks, setTasks] = useState([] as Task[]);
   const [error, setError] = useState(false);
 

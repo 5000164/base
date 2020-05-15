@@ -1,5 +1,5 @@
 import React from "react";
-import { Task } from "../PlanList";
+import { Task } from "../../App";
 
 export const PlanListItem = ({
   task,
