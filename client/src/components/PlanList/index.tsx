@@ -48,9 +48,20 @@ export const PlanList = ({ client }: { client: DefaultClient<any> }) => {
             addTask(name: "") {
               id
               name
+              estimate
             }
           }
         `,
+      })
+      .then((result) => {
+        setTasks([
+          ...tasks,
+          {
+            id: result.data?.addTask.id,
+            name: result.data?.addTask.name,
+            estimate: result.data?.addTask.estimate,
+          },
+        ]);
       })
       .catch(() => setError(true));
   };
