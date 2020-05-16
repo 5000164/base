@@ -4,7 +4,13 @@ import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
 
-export const PlanList = ({ client }: { client: DefaultClient<any> }) => {
+export const PlanList = ({
+  client,
+  countUpReload,
+}: {
+  client: DefaultClient<any>;
+  countUpReload: Function;
+}) => {
   const [tasks, setTasks] = useState([] as Task[]);
   const [error, setError] = useState(false);
 
@@ -95,7 +101,10 @@ export const PlanList = ({ client }: { client: DefaultClient<any> }) => {
         `,
         variables: { id },
       })
-      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .then(() => {
+        setTasks(tasks.filter((t) => t.id !== id));
+        countUpReload();
+      })
       .catch(() => setError(true));
   };
 

@@ -24,6 +24,8 @@ enum Status {
     Query: {
       tasks: (parent, args, ctx) =>
         ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
+      completedTasks: (parent, args, ctx) =>
+        ctx.prisma.tasks.findMany({ where: { status: Status.Completed } }),
     },
     Mutation: {
       addTask: (parent, args, ctx) =>

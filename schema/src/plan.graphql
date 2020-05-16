@@ -6,6 +6,7 @@ type Task {
 
 type Query {
   tasks: [Task!]!
+  completedTasks: [Task!]!
 }
 
 type Mutation {
