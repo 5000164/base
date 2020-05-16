@@ -21,12 +21,12 @@ export const PlanListItem = ({
   <li>
     <input
       type="text"
-      value={task.name}
+      value={task.name ?? ""}
       onChange={(e) => setName(e.target.value)}
     />
     <input
       type="text"
-      value={task.estimate}
+      value={task.estimate ?? ""}
       onChange={(e) => setEstimate(Number(e.target.value))}
     />
     <button onClick={() => updateTask(task)}>Update</button>
