@@ -3,6 +3,7 @@ type Task {
   name: String!
   estimate: Int
   actual: Int
+  status_changed_at: Int
 }
 
 type Query {
