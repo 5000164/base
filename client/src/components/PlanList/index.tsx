@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
+import styled from "styled-components";
 import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
@@ -143,7 +144,7 @@ export const PlanList = ({
   };
 
   return (
-    <div>
+    <>
       {error ? (
         <>
           <div>Error</div>
@@ -151,7 +152,7 @@ export const PlanList = ({
         </>
       ) : (
         <>
-          <ul>
+          <StyledPlanList>
             {tasks.map((task, index) => (
               <PlanListItem
                 key={index}
@@ -164,10 +165,23 @@ export const PlanList = ({
                 deleteTask={deleteTask}
               />
             ))}
-          </ul>
-          <button onClick={addTask}>Add</button>
+          </StyledPlanList>
+          <AddButtonWrapper>
+            <button onClick={addTask}>Add</button>
+          </AddButtonWrapper>
         </>
       )}
-    </div>
+    </>
   );
 };
+
+const StyledPlanList = styled.ul`
+  width: 1024px;
+  margin: 20px auto;
+  padding: 0;
+`;
+
+const AddButtonWrapper = styled.div`
+  width: 1024px;
+  margin: 20px auto;
+`;

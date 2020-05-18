@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
+import styled from "styled-components";
 import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { CompletedListItem } from "../CompletedListItem";
@@ -35,7 +36,7 @@ export const CompletedList = ({
   useEffect(fetchTasks, [reload]);
 
   return (
-    <div>
+    <>
       {error ? (
         <>
           <div>Error</div>
@@ -43,13 +44,19 @@ export const CompletedList = ({
         </>
       ) : (
         <>
-          <ul>
+          <StyledCompletedList>
             {tasks.map((task, index) => (
               <CompletedListItem key={index} task={task} />
             ))}
-          </ul>
+          </StyledCompletedList>
         </>
       )}
-    </div>
+    </>
   );
 };
+
+const StyledCompletedList = styled.ul`
+  width: 1024px;
+  margin: 20px auto;
+  padding: 0;
+`;
