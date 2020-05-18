@@ -26,6 +26,7 @@ export const PlanList = ({
               id
               name
               estimate
+              actual
             }
           }
         `,
@@ -54,6 +55,12 @@ export const PlanList = ({
     setTasks(newTasks);
   };
 
+  const setActual = (index: number, actual: number) => {
+    const newTasks = [...tasks];
+    newTasks[index].actual = actual;
+    setTasks(newTasks);
+  };
+
   const addTask = () => {
     setError(false);
     client
@@ -64,6 +71,7 @@ export const PlanList = ({
               id
               name
               estimate
+              actual
             }
           }
         `,
@@ -75,6 +83,7 @@ export const PlanList = ({
             id: result.data?.addTask.id,
             name: result.data?.addTask.name,
             estimate: result.data?.addTask.estimate,
+            actual: result.data?.addTask.actual,
           },
         ]);
       })
@@ -86,8 +95,13 @@ export const PlanList = ({
     client
       .mutate<Mutation>({
         mutation: gql`
-          mutation($id: Int!, $name: String, $estimate: Int) {
-            updateTask(id: $id, name: $name, estimate: $estimate) {
+          mutation($id: Int!, $name: String, $estimate: Int, $actual: Int) {
+            updateTask(
+              id: $id
+              name: $name
+              estimate: $estimate
+              actual: $actual
+            ) {
               id
             }
           }
@@ -167,6 +181,7 @@ export const PlanList = ({
                 task={task}
                 setName={(v: string) => setName(index, v)}
                 setEstimate={(v: number) => setEstimate(index, v)}
+                setActual={(v: number) => setActual(index, v)}
                 updateTask={updateTask}
                 completeTask={completeTask}
                 archiveTask={archiveTask}

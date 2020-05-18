@@ -39,6 +39,7 @@ enum Status {
         const data = {
           ...(args.name ? { name: args.name } : {}),
           ...(args.estimate ? { estimate: args.estimate } : {}),
+          ...(args.actual ? { actual: args.actual } : {}),
         };
         return ctx.prisma.tasks.update({
           where: { id: args.id },

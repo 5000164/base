@@ -8,19 +8,20 @@ export const CompletedListItem = ({ task }: { task: Task }) => (
       ✅
     </span>
     <span>{task.name}</span>
-    <Estimate>{task.estimate}</Estimate>
+    <Time>{task.estimate}</Time>
+    <Time>{task.actual}</Time>
   </StyledCompletedListItem>
 );
 
 const StyledCompletedListItem = styled.li`
   display: grid;
-  grid-template-columns: 20px 1fr 100px;
+  grid-template-columns: 20px 1fr 100px 100px;
   grid-gap: 5px;
   height: 28px;
   margin: 12px 0;
   border-bottom: 1px solid hsl(235, 10%, 80%);
 `;
 
-const Estimate = styled.span`
+const Time = styled.span`
   justify-self: end;
 `;

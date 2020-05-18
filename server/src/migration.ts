@@ -121,6 +121,56 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
           `);
         },
       },
+      {
+        name: "03-add-actual-column-to-tasks-table",
+        async up() {
+          sequelize.query(`
+              ALTER TABLE tasks
+                  RENAME TO tasksTemp;
+          `);
+          sequelize.query(`
+              CREATE TABLE tasks
+              (
+                  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name     TEXT    NOT NULL,
+                  status   INTEGER NOT NULL,
+                  estimate INTEGER,
+                  actual   INTEGER
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO tasks (id, name, status, estimate, actual)
+              SELECT id, name, status, estimate, NULL as actual
+              FROM tasksTemp;
+          `);
+          sequelize.query(`
+              DROP TABLE tasksTemp;
+          `);
+        },
+        async down() {
+          sequelize.query(`
+              ALTER TABLE tasks
+                  RENAME TO tasksTemp;
+          `);
+          sequelize.query(`
+              CREATE TABLE tasks
+              (
+                  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name     TEXT    NOT NULL,
+                  status   INTEGER NOT NULL,
+                  estimate INTEGER
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO tasks (id, name, status, estimate)
+              SELECT id, name, status, estimate
+              FROM tasksTemp;
+          `);
+          sequelize.query(`
+              DROP TABLE tasksTemp;
+          `);
+        },
+      },
     ]),
   });
   await umzug.up();

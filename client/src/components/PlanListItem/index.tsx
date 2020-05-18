@@ -6,6 +6,7 @@ export const PlanListItem = ({
   task,
   setName,
   setEstimate,
+  setActual,
   updateTask,
   completeTask,
   archiveTask,
@@ -14,6 +15,7 @@ export const PlanListItem = ({
   task: Task;
   setName: Function;
   setEstimate: Function;
+  setActual: Function;
   updateTask: Function;
   completeTask: Function;
   archiveTask: Function;
@@ -30,6 +32,11 @@ export const PlanListItem = ({
       value={task.estimate ?? ""}
       onChange={(e) => setEstimate(Number(e.target.value))}
     />
+    <StyledInput
+      type="text"
+      value={task.actual ?? ""}
+      onChange={(e) => setActual(Number(e.target.value))}
+    />
     <button onClick={() => updateTask(task)}>Update</button>
     <button onClick={() => completeTask(task.id)}>Complete</button>
     <button onClick={() => archiveTask(task.id)}>Archive</button>
@@ -39,7 +46,7 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px repeat(4, 70px);
+  grid-template-columns: 1fr 50px 50px repeat(4, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

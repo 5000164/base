@@ -13,6 +13,7 @@ export interface Task {
   id?: number;
   name?: string;
   estimate?: number;
+  actual?: number;
 }
 
 export const App = () => {

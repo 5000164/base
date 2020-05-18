@@ -26,6 +26,7 @@ export const CompletedList = ({
               id
               name
               estimate
+              actual
             }
           }
         `,
