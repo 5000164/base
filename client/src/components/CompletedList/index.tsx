@@ -57,6 +57,6 @@ export const CompletedList = ({
 
 const StyledCompletedList = styled.ul`
   width: 1024px;
-  margin: 20px auto;
+  margin: 80px auto;
   padding: 0;
 `;
