@@ -13,7 +13,9 @@ model SequelizeMeta {
 }
 
 model tasks {
-  id     Int    @default(autoincrement()) @id
-  name   String
-  status Int
+  actual   Int?
+  estimate Int?
+  id       Int    @default(autoincrement()) @id
+  name     String
+  status   Int
 }

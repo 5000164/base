@@ -8,6 +8,12 @@ import { PrismaClient, PrismaClientOptions } from "../../prismaClient";
 import { settings } from "./settings";
 import { migrate } from "./migration";
 
+enum Status {
+  Normal = 0,
+  Completed = 1,
+  Archived = 2,
+}
+
 (async () => {
   await migrate({ dbPath: settings.dbPath });
 
@@ -17,30 +23,38 @@ import { migrate } from "./migration";
   const resolvers: Resolvers = {
     Query: {
       tasks: (parent, args, ctx) =>
-        ctx.prisma.tasks.findMany({ where: { status: 0 } }),
+        ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
+      completedTasks: (parent, args, ctx) =>
+        ctx.prisma.tasks.findMany({ where: { status: Status.Completed } }),
     },
     Mutation: {
       addTask: (parent, args, ctx) =>
         ctx.prisma.tasks.create({
           data: {
             name: args.name,
-            status: 0,
+            status: Status.Normal,
           },
         }),
-      updateTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.update({
+      updateTask: (parent, args, ctx) => {
+        const data = {
+          ...(args.name ? { name: args.name } : {}),
+          ...(args.estimate ? { estimate: args.estimate } : {}),
+          ...(args.actual ? { actual: args.actual } : {}),
+        };
+        return ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { name: args.name },
-        }),
+          data,
+        });
+      },
       completeTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { status: 1 },
+          data: { status: Status.Completed },
         }),
       archiveTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { status: 2 },
+          data: { status: Status.Archived },
         }),
       deleteTask: (parent, args, ctx) =>
         ctx.prisma.tasks.delete({
