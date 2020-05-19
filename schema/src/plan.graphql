@@ -9,7 +9,7 @@ type Task {
 
 type Query {
   tasks: [Task!]!
-  recordedTasks: [Task!]!
+  recordedTasks(date: String!): [Task!]!
 }
 
 type Mutation {

@@ -24,17 +24,34 @@ enum Status {
     Query: {
       tasks: (parent, args, ctx) =>
         ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-      recordedTasks: (parent, args, ctx) =>
-        ctx.prisma.tasks.findMany({
+      recordedTasks: (parent, args, ctx) => {
+        const date = new Date(
+          new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
+        );
+        const nextDate = new Date(
+          new Date(new Date(date).setDate(date.getDate() + 1)).setHours(
+            0,
+            0,
+            0,
+            0
+          )
+        );
+        return ctx.prisma.tasks.findMany({
           where: {
             status: { in: [Status.Completed, Status.Archived] },
-            status_changed_at: {
-              gte: Math.floor(
-                new Date(new Date().setHours(0, 0, 0, 0)).getTime() / 1000
-              ),
-            },
+            AND: [
+              {
+                status_changed_at: { gte: Math.floor(date.getTime() / 1000) },
+              },
+              {
+                status_changed_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
           },
-        }),
+        });
+      },
     },
     Mutation: {
       addTask: (parent, args, ctx) =>

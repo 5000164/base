@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { RecordedListItem } from "../RecordedListItem";
+import { RecordedDate } from "../RecordedDate";
 
 export const RecordedList = ({
   client,
@@ -13,6 +14,7 @@ export const RecordedList = ({
   reload: number;
 }) => {
   const [tasks, setTasks] = useState([] as Task[]);
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [error, setError] = useState(false);
 
   const fetchTasks = () => {
@@ -21,8 +23,8 @@ export const RecordedList = ({
       .query<Query>({
         fetchPolicy: "network-only",
         query: gql`
-          {
-            recordedTasks {
+          query($date: String!) {
+            recordedTasks(date: $date) {
               id
               name
               status
@@ -31,11 +33,14 @@ export const RecordedList = ({
             }
           }
         `,
+        variables: {
+          date,
+        },
       })
       .then((result) => setTasks(result.data.recordedTasks))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, [reload]);
+  useEffect(fetchTasks, [reload, date]);
 
   return (
     <>
@@ -46,6 +51,7 @@ export const RecordedList = ({
         </>
       ) : (
         <>
+          <RecordedDate date={date} setDate={setDate} />
           <StyledRecordedList>
             {tasks.map((task, index) => (
               <RecordedListItem key={index} task={task} />
@@ -59,6 +65,6 @@ export const RecordedList = ({
 
 const StyledRecordedList = styled.ul`
   width: 1024px;
-  margin: 80px auto;
+  margin: 20px auto 80px;
   padding: 0;
 `;
