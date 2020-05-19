@@ -144,7 +144,10 @@ export const PlanList = ({
         `,
         variables: { id },
       })
-      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
+      .then(() => {
+        setTasks(tasks.filter((t) => t.id !== id));
+        countUpReload();
+      })
       .catch(() => setError(true));
   };
 

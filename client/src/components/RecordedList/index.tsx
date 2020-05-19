@@ -3,9 +3,9 @@ import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
 import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
-import { CompletedListItem } from "../CompletedListItem";
+import { RecordedListItem } from "../RecordedListItem";
 
-export const CompletedList = ({
+export const RecordedList = ({
   client,
   reload,
 }: {
@@ -22,16 +22,17 @@ export const CompletedList = ({
         fetchPolicy: "network-only",
         query: gql`
           {
-            completedTasks {
+            recordedTasks {
               id
               name
+              status
               estimate
               actual
             }
           }
         `,
       })
-      .then((result) => setTasks(result.data.completedTasks))
+      .then((result) => setTasks(result.data.recordedTasks))
       .catch(() => setError(true));
   };
   useEffect(fetchTasks, [reload]);
@@ -45,18 +46,18 @@ export const CompletedList = ({
         </>
       ) : (
         <>
-          <StyledCompletedList>
+          <StyledRecordedList>
             {tasks.map((task, index) => (
-              <CompletedListItem key={index} task={task} />
+              <RecordedListItem key={index} task={task} />
             ))}
-          </StyledCompletedList>
+          </StyledRecordedList>
         </>
       )}
     </>
   );
 };
 
-const StyledCompletedList = styled.ul`
+const StyledRecordedList = styled.ul`
   width: 1024px;
   margin: 80px auto;
   padding: 0;

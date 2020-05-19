@@ -24,10 +24,10 @@ enum Status {
     Query: {
       tasks: (parent, args, ctx) =>
         ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-      completedTasks: (parent, args, ctx) =>
+      recordedTasks: (parent, args, ctx) =>
         ctx.prisma.tasks.findMany({
           where: {
-            status: Status.Completed,
+            status: { in: [Status.Completed, Status.Archived] },
             status_changed_at: {
               gte: Math.floor(
                 new Date(new Date().setHours(0, 0, 0, 0)).getTime() / 1000

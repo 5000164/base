@@ -1,6 +1,7 @@
 type Task {
   id: Int!
   name: String!
+  status: Int
   estimate: Int
   actual: Int
   status_changed_at: Int
@@ -8,7 +9,7 @@ type Task {
 
 type Query {
   tasks: [Task!]!
-  completedTasks: [Task!]!
+  recordedTasks: [Task!]!
 }
 
 type Mutation {
