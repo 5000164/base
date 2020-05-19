@@ -20,7 +20,7 @@ export const RecordedDate = ({
 
 const StyledRecordedDate = styled.div`
   width: 1024px;
-  margin: 80px auto 20px;
+  margin: 80px auto 4px;
 `;
 
 const Date = styled.input`

@@ -5,6 +5,7 @@ import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { RecordedListItem } from "../RecordedListItem";
 import { RecordedDate } from "../RecordedDate";
+import { CalculatedTimes } from "../CalculatedTimes";
 
 export const RecordedList = ({
   client,
@@ -57,6 +58,7 @@ export const RecordedList = ({
               <RecordedListItem key={index} task={task} />
             ))}
           </StyledRecordedList>
+          <CalculatedTimes tasks={tasks} />
         </>
       )}
     </>
@@ -65,6 +67,6 @@ export const RecordedList = ({
 
 const StyledRecordedList = styled.ul`
   width: 1024px;
-  margin: 20px auto 80px;
+  margin: 4px auto;
   padding: 0;
 `;

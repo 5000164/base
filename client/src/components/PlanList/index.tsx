@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
+import { CalculatedTimes } from "../CalculatedTimes";
 
 export const PlanList = ({
   client,
@@ -13,7 +14,6 @@ export const PlanList = ({
   countUpReload: Function;
 }) => {
   const [tasks, setTasks] = useState([] as Task[]);
-  const [totalEstimateTime, setTotalEstimateTime] = useState(0);
   const [error, setError] = useState(false);
 
   const fetchTasks = () => {
@@ -35,13 +35,6 @@ export const PlanList = ({
       .catch(() => setError(true));
   };
   useEffect(fetchTasks, []);
-
-  const calculateTotalEstimateTime = () => {
-    setTotalEstimateTime(
-      tasks.reduce((totalTime, task) => totalTime + (task?.estimate ?? 0), 0)
-    );
-  };
-  useEffect(calculateTotalEstimateTime, [tasks]);
 
   const setName = (index: number, name: string) => {
     const newTasks = [...tasks];
@@ -195,9 +188,7 @@ export const PlanList = ({
           <AddButtonWrapper>
             <button onClick={addTask}>Add</button>
           </AddButtonWrapper>
-          <TotalEstimateTime>
-            Total Estimate Time: {totalEstimateTime} min
-          </TotalEstimateTime>
+          <CalculatedTimes tasks={tasks} />
         </>
       )}
     </>
@@ -213,10 +204,4 @@ const StyledPlanList = styled.ul`
 const AddButtonWrapper = styled.div`
   width: 1024px;
   margin: 4px auto;
-`;
-
-const TotalEstimateTime = styled.div`
-  width: 1024px;
-  margin: 4px auto 80px;
-  text-align: right;
 `;
