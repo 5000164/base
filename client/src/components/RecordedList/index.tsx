@@ -3,9 +3,11 @@ import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
 import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
-import { CompletedListItem } from "../CompletedListItem";
+import { RecordedListItem } from "../RecordedListItem";
+import { RecordedDate } from "../RecordedDate";
+import { CalculatedTimes } from "../CalculatedTimes";
 
-export const CompletedList = ({
+export const RecordedList = ({
   client,
   reload,
 }: {
@@ -13,6 +15,7 @@ export const CompletedList = ({
   reload: number;
 }) => {
   const [tasks, setTasks] = useState([] as Task[]);
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [error, setError] = useState(false);
 
   const fetchTasks = () => {
@@ -21,20 +24,24 @@ export const CompletedList = ({
       .query<Query>({
         fetchPolicy: "network-only",
         query: gql`
-          {
-            completedTasks {
+          query($date: String!) {
+            recordedTasks(date: $date) {
               id
               name
+              status
               estimate
               actual
             }
           }
         `,
+        variables: {
+          date,
+        },
       })
-      .then((result) => setTasks(result.data.completedTasks))
+      .then((result) => setTasks(result.data.recordedTasks))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, [reload]);
+  useEffect(fetchTasks, [reload, date]);
 
   return (
     <>
@@ -45,19 +52,21 @@ export const CompletedList = ({
         </>
       ) : (
         <>
-          <StyledCompletedList>
+          <RecordedDate date={date} setDate={setDate} />
+          <StyledRecordedList>
             {tasks.map((task, index) => (
-              <CompletedListItem key={index} task={task} />
+              <RecordedListItem key={index} task={task} />
             ))}
-          </StyledCompletedList>
+          </StyledRecordedList>
+          <CalculatedTimes tasks={tasks} />
         </>
       )}
     </>
   );
 };
 
-const StyledCompletedList = styled.ul`
+const StyledRecordedList = styled.ul`
   width: 1024px;
-  margin: 80px auto;
+  margin: 4px auto;
   padding: 0;
 `;

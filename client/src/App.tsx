@@ -3,7 +3,7 @@ import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { PlanList } from "./components/PlanList";
-import { CompletedList } from "./components/CompletedList";
+import { RecordedList } from "./components/RecordedList";
 
 const client = new ApolloClient({
   uri: "http://localhost:5164",
@@ -12,8 +12,15 @@ const client = new ApolloClient({
 export interface Task {
   id?: number;
   name?: string;
+  status?: Status;
   estimate?: number;
   actual?: number;
+}
+
+export enum Status {
+  Normal = 0,
+  Completed = 1,
+  Archived = 2,
 }
 
 export const App = () => {
@@ -32,7 +39,7 @@ export const App = () => {
         />
       </Helmet>
       <PlanList client={client} countUpReload={countUpReload} />
-      <CompletedList client={client} reload={reload} />
+      <RecordedList client={client} reload={reload} />
     </HelmetProvider>
   );
 };

@@ -24,8 +24,34 @@ enum Status {
     Query: {
       tasks: (parent, args, ctx) =>
         ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-      completedTasks: (parent, args, ctx) =>
-        ctx.prisma.tasks.findMany({ where: { status: Status.Completed } }),
+      recordedTasks: (parent, args, ctx) => {
+        const date = new Date(
+          new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
+        );
+        const nextDate = new Date(
+          new Date(new Date(date).setDate(date.getDate() + 1)).setHours(
+            0,
+            0,
+            0,
+            0
+          )
+        );
+        return ctx.prisma.tasks.findMany({
+          where: {
+            status: { in: [Status.Completed, Status.Archived] },
+            AND: [
+              {
+                status_changed_at: { gte: Math.floor(date.getTime() / 1000) },
+              },
+              {
+                status_changed_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
+          },
+        });
+      },
     },
     Mutation: {
       addTask: (parent, args, ctx) =>
@@ -49,12 +75,18 @@ enum Status {
       completeTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { status: Status.Completed },
+          data: {
+            status: Status.Completed,
+            status_changed_at: Math.floor(Date.now() / 1000),
+          },
         }),
       archiveTask: (parent, args, ctx) =>
         ctx.prisma.tasks.update({
           where: { id: args.id },
-          data: { status: Status.Archived },
+          data: {
+            status: Status.Archived,
+            status_changed_at: Math.floor(Date.now() / 1000),
+          },
         }),
       deleteTask: (parent, args, ctx) =>
         ctx.prisma.tasks.delete({
