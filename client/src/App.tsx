@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
@@ -30,28 +31,48 @@ export const App = () => {
 
   return (
     <BrowserRouter>
-      <HelmetProvider>
-        <GlobalStyle />
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>Base</title>
-          <meta
-            httpEquiv="Content-Security-Policy"
-            content="script-src 'self' 'unsafe-inline';"
-          />
-        </Helmet>
-        <Routes>
-          <Route
-            path="/plan"
-            element={
-              <>
-                <PlanList client={client} countUpReload={countUpReload} />
-                <RecordedList client={client} reload={reload} />
-              </>
-            }
-          />
-        </Routes>
-      </HelmetProvider>
+      <Grommet plain themeMode="dark">
+        <HelmetProvider>
+          <GlobalStyle />
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Base</title>
+            <meta
+              httpEquiv="Content-Security-Policy"
+              content="script-src 'self' 'unsafe-inline';"
+            />
+          </Helmet>
+          <Grid
+            rows={["fill"]}
+            columns={["xsmall", "fill"]}
+            gap="small"
+            areas={[
+              { name: "nav", start: [0, 0], end: [0, 0] },
+              { name: "main", start: [1, 0], end: [1, 0] },
+            ]}
+          >
+            <Sidebar gridArea="nav">
+              <Nav gap="small">
+                <NavLink to="/">Top</NavLink>
+                <NavLink to="/plan">Plan</NavLink>
+              </Nav>
+            </Sidebar>
+            <Main gridArea="main">
+              <Routes>
+                <Route
+                  path="/plan"
+                  element={
+                    <>
+                      <PlanList client={client} countUpReload={countUpReload} />
+                      <RecordedList client={client} reload={reload} />
+                    </>
+                  }
+                />
+              </Routes>
+            </Main>
+          </Grid>
+        </HelmetProvider>
+      </Grommet>
     </BrowserRouter>
   );
 };
