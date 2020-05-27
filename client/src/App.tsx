@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
@@ -28,19 +29,30 @@ export const App = () => {
   const countUpReload = () => setReload(reload + 1);
 
   return (
-    <HelmetProvider>
-      <GlobalStyle />
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>Base</title>
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="script-src 'self' 'unsafe-inline';"
-        />
-      </Helmet>
-      <PlanList client={client} countUpReload={countUpReload} />
-      <RecordedList client={client} reload={reload} />
-    </HelmetProvider>
+    <BrowserRouter>
+      <HelmetProvider>
+        <GlobalStyle />
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Base</title>
+          <meta
+            httpEquiv="Content-Security-Policy"
+            content="script-src 'self' 'unsafe-inline';"
+          />
+        </Helmet>
+        <Routes>
+          <Route
+            path="/plan"
+            element={
+              <>
+                <PlanList client={client} countUpReload={countUpReload} />
+                <RecordedList client={client} reload={reload} />
+              </>
+            }
+          />
+        </Routes>
+      </HelmetProvider>
+    </BrowserRouter>
   );
 };
 

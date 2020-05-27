@@ -17,6 +17,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet-async": "^1.0.5",
+    "react-router": "^6.0.0-alpha.5",
+    "react-router-dom": "^6.0.0-alpha.5",
     "react-scripts": "3.4.1",
     "styled-components": "^5.1.0",
     "typescript": "3.8.3"
