@@ -20,6 +20,7 @@ export const PlanList = ({
     setError(false);
     client
       .query<Query>({
+        fetchPolicy: "network-only",
         query: gql`
           {
             tasks {
