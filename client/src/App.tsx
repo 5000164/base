@@ -27,7 +27,7 @@ export enum Status {
 
 export const App = () => {
   const [reload, setReload] = useState(0);
-  const countUpReload = () => setReload(reload + 1);
+  const countUpReload = () => setReload((reload) => reload + 1);
 
   return (
     <BrowserRouter>
