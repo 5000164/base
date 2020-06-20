@@ -25,12 +25,14 @@ export const RecordedList = ({
         fetchPolicy: "network-only",
         query: gql`
           query($date: String!) {
-            recordedTasks(date: $date) {
-              id
-              name
-              status
-              estimate
-              actual
+            plan {
+              recordedTasks(date: $date) {
+                id
+                name
+                status
+                estimate
+                actual
+              }
             }
           }
         `,
@@ -38,7 +40,7 @@ export const RecordedList = ({
           date,
         },
       })
-      .then((result) => setTasks(result.data.recordedTasks))
+      .then((result) => setTasks(result.data.plan.recordedTasks ?? []))
       .catch(() => setError(true));
   };
   useEffect(fetchTasks, [reload, date]);

@@ -1,0 +1,12 @@
+# import Plan_Query, Plan_Mutation from "plan.graphql"
+# import Templates_Query, Templates_Mutation from "templates.graphql"
+
+type Query {
+  plan: Plan_Query!
+  templates: Templates_Query!
+}
+
+type Mutation {
+  plan: Plan_Mutation!
+  templates: Templates_Mutation!
+}

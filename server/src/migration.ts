@@ -223,6 +223,38 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
           `);
         },
       },
+      {
+        name: "05-create-templates-table-and-template-tasks-table",
+        async up() {
+          sequelize.query(`
+              CREATE TABLE templates
+              (
+                  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name              TEXT    NOT NULL,
+                  status            INTEGER NOT NULL,
+                  status_changed_at INTEGER
+              );
+          `);
+          sequelize.query(`
+              CREATE TABLE template_tasks
+              (
+                  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                  templateId INTEGER,
+                  name       TEXT NOT NULL,
+                  estimate   INTEGER,
+                  FOREIGN KEY (templateId) REFERENCES templates (id)
+              );
+          `);
+        },
+        async down() {
+          sequelize.query(`
+              DROP TABLE template_tasks;
+          `);
+          sequelize.query(`
+              DROP TABLE templates;
+          `);
+        },
+      },
     ]),
   });
   await umzug.up();

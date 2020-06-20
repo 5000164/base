@@ -23,16 +23,18 @@ export const PlanList = ({
         fetchPolicy: "network-only",
         query: gql`
           {
-            tasks {
-              id
-              name
-              estimate
-              actual
+            plan {
+              tasks {
+                id
+                name
+                estimate
+                actual
+              }
             }
           }
         `,
       })
-      .then((result) => setTasks(result.data.tasks))
+      .then((result) => setTasks(result.data?.plan?.tasks ?? []))
       .catch(() => setError(true));
   };
   useEffect(fetchTasks, []);
@@ -61,25 +63,31 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation {
-            addTask(name: "") {
-              id
-              name
-              estimate
-              actual
+            plan {
+              addTask(name: "") {
+                id
+                name
+                estimate
+                actual
+              }
             }
           }
         `,
       })
       .then((result) => {
-        setTasks([
-          ...tasks,
-          {
-            id: result.data?.addTask.id,
-            name: result.data?.addTask.name,
-            estimate: result.data?.addTask.estimate,
-            actual: result.data?.addTask.actual,
-          },
-        ]);
+        if (result.data) {
+          setTasks([
+            ...tasks,
+            {
+              id: result.data.plan.addTask.id,
+              name: result.data.plan.addTask.name,
+              estimate: result.data?.plan?.addTask.estimate,
+              actual: result.data?.plan?.addTask.actual,
+            },
+          ]);
+        } else {
+          setError(true);
+        }
       })
       .catch(() => setError(true));
   };
@@ -90,13 +98,15 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!, $name: String, $estimate: Int, $actual: Int) {
-            updateTask(
-              id: $id
-              name: $name
-              estimate: $estimate
-              actual: $actual
-            ) {
-              id
+            plan {
+              updateTask(
+                id: $id
+                name: $name
+                estimate: $estimate
+                actual: $actual
+              ) {
+                id
+              }
             }
           }
         `,
@@ -111,8 +121,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            completeTask(id: $id) {
-              id
+            plan {
+              completeTask(id: $id) {
+                id
+              }
             }
           }
         `,
@@ -131,8 +143,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            archiveTask(id: $id) {
-              id
+            plan {
+              archiveTask(id: $id) {
+                id
+              }
             }
           }
         `,
@@ -151,8 +165,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            deleteTask(id: $id) {
-              id
+            plan {
+              deleteTask(id: $id) {
+                id
+              }
             }
           }
         `,
