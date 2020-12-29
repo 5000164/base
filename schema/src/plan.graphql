@@ -18,4 +18,5 @@ type Plan_Mutation {
   completeTask(id: Int!): Plan_Task!
   archiveTask(id: Int!): Plan_Task!
   deleteTask(id: Int!): Plan_Task!
+  importTemplate(id: Int!): Boolean
 }

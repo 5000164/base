@@ -5,6 +5,7 @@ import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { CalculatedTimes } from "../CalculatedTimes";
+import { TemplateListLayer } from "../TemplateListLayer";
 
 export const PlanList = ({
   client,
@@ -14,7 +15,10 @@ export const PlanList = ({
   countUpReload: Function;
 }) => {
   const [tasks, setTasks] = useState([] as Task[]);
+  const [tasksReload, setTasksReload] = useState(0);
+  const reloadTasks = () => setTasksReload((tasksReload) => tasksReload + 1);
   const [error, setError] = useState(false);
+  const [show, setShow] = React.useState(false);
 
   const fetchTasks = () => {
     setError(false);
@@ -37,7 +41,7 @@ export const PlanList = ({
       .then((result) => setTasks(result.data?.plan?.tasks ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, []);
+  useEffect(fetchTasks, [tasksReload]);
 
   const setName = (index: number, name: string) => {
     const newTasks = [...tasks];
@@ -202,10 +206,18 @@ export const PlanList = ({
               />
             ))}
           </StyledPlanList>
-          <AddButtonWrapper>
+          <ButtonWrapper>
             <button onClick={addTask}>Add</button>
-          </AddButtonWrapper>
+            <button onClick={() => setShow(true)}>Import</button>
+          </ButtonWrapper>
           <CalculatedTimes tasks={tasks} />
+          {show && (
+            <TemplateListLayer
+              client={client}
+              reloadTasks={reloadTasks}
+              setShow={setShow}
+            />
+          )}
         </>
       )}
     </>
@@ -218,7 +230,7 @@ const StyledPlanList = styled.ul`
   padding: 0;
 `;
 
-const AddButtonWrapper = styled.div`
+const ButtonWrapper = styled.div`
   width: 1024px;
   margin: 4px auto;
 `;

@@ -5,6 +5,13 @@ import { settings } from "./settings";
 import { migrate } from "./migration";
 import { schema } from "./schema";
 
+export type TemplateTask = {
+  id: number;
+  templateId: number;
+  name: string;
+  estimate?: number;
+};
+
 export enum Status {
   Normal = 0,
   Completed = 1,

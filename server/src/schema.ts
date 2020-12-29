@@ -2,7 +2,7 @@ import path from "path";
 import { makeExecutableSchema } from "graphql-tools";
 import { importSchema } from "graphql-import";
 import { Resolvers } from "./generated/graphql";
-import { Status } from "./server";
+import { Status, TemplateTask } from "./server";
 
 const typeDefs = importSchema(
   path.join(__dirname, "./generated/schema.graphql")
@@ -20,6 +20,7 @@ const resolvers: Resolvers = {
       completeTask: undefined,
       archiveTask: undefined,
       deleteTask: undefined,
+      importTemplate: undefined,
     }),
     templates: () => ({
       addTemplate: undefined,
@@ -102,6 +103,24 @@ const resolvers: Resolvers = {
       ctx.prisma.tasks.delete({
         where: { id: args.id },
       }),
+    importTemplate: async (parent, args, ctx) => {
+      await Promise.all(
+        (
+          await ctx.prisma.template_tasks.findMany({
+            where: { templateId: args.id },
+          })
+        ).map((task: TemplateTask) =>
+          ctx.prisma.tasks.create({
+            data: {
+              name: task.name,
+              status: Status.Normal,
+              estimate: task.estimate,
+            },
+          })
+        )
+      );
+      return true;
+    },
   },
   Templates_Query: {
     templates: (parent, args, ctx) =>
