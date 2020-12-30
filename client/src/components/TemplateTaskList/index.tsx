@@ -108,6 +108,25 @@ export const TemplateTaskList = ({
       .catch(() => setError(true));
   };
 
+  const deleteTask = (task: TemplateTask) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation($id: Int!) {
+            templates {
+              deleteTask(id: $id) {
+                id
+              }
+            }
+          }
+        `,
+        variables: task,
+      })
+      .then(() => setTasks(tasks.filter((t) => t.id !== task.id)))
+      .catch(() => setError(true));
+  };
+
   return (
     <>
       {error ? (
@@ -125,7 +144,7 @@ export const TemplateTaskList = ({
               setName={(v: string) => setName(index, v)}
               setEstimate={(v: number) => setEstimate(index, v)}
               updateTask={updateTask}
-              deleteTask={() => []}
+              deleteTask={deleteTask}
             />
           ))}
           <AddButtonWrapper>
