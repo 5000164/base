@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Switch } from "react-router-dom";
 import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -71,25 +71,19 @@ export const App = () => {
               </Nav>
             </Sidebar>
             <Main gridArea="main">
-              <Routes>
-                <Route
-                  path="/plan"
-                  element={
-                    <>
-                      <PlanList client={client} countUpReload={countUpReload} />
-                      <RecordedList client={client} reload={reload} />
-                    </>
-                  }
-                />
-                <Route
-                  path="/templates"
-                  element={
-                    <>
-                      <TemplateList client={client} />
-                    </>
-                  }
-                />
-              </Routes>
+              <Switch>
+                <Route path="/plan">
+                  <>
+                    <PlanList client={client} countUpReload={countUpReload} />
+                    <RecordedList client={client} reload={reload} />
+                  </>
+                </Route>
+                <Route path="/templates">
+                  <>
+                    <TemplateList client={client} />
+                  </>
+                </Route>
+              </Switch>
             </Main>
           </Grid>
         </HelmetProvider>
@@ -112,6 +106,7 @@ const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased; // フォントにアンチエイリアスをかける (少し細く見える)
     -moz-osx-font-smoothing: grayscale;
   }
+
   body {
     width: 100%;
     height: 100%;
@@ -121,12 +116,15 @@ const GlobalStyle = createGlobalStyle`
     color: hsl(235, 10%, 28%);
     background-color: hsl(0, 100%, 100%);
   }
+
   a {
     color: hsl(235, 10%, 50%);
   }
+
   a:visited {
     color: hsl(235, 10%, 50%);
   }
+
   * {
     box-sizing: border-box;
   }

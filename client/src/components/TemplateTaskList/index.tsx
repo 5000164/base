@@ -42,7 +42,7 @@ export const TemplateTaskList = ({
       })
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, []);
+  useEffect(fetchTasks, [client, template]);
 
   const setName = (index: number, name: string) => {
     const newTasks = [...tasks];

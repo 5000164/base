@@ -1,6 +1,6 @@
 import log from "electron-log";
 import { GraphQLServer } from "graphql-yoga";
-import { PrismaClient, PrismaClientOptions } from "../../prismaClient";
+import { PrismaClient } from "../../prismaClient";
 import { settings } from "./settings";
 import { migrate } from "./migration";
 import { schema } from "./schema";
@@ -23,9 +23,11 @@ export enum Status {
 
   const prisma = new PrismaClient({
     datasources: {
-      db: `file:${settings.dbPath}`,
+      db: {
+        url: `file:${settings.dbPath}`,
+      },
     },
-  } as PrismaClientOptions);
+  });
   const createContext = () => ({ prisma });
 
   await new GraphQLServer({ schema, context: createContext }).start({

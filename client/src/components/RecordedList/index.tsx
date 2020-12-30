@@ -43,7 +43,7 @@ export const RecordedList = ({
       .then((result) => setTasks(result.data.plan.recordedTasks ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, [reload, date]);
+  useEffect(fetchTasks, [client, reload, date]);
 
   return (
     <>
