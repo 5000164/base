@@ -1,20 +1,34 @@
 import React, { useState } from "react";
+import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { PlanList } from "./components/PlanList";
 import { RecordedList } from "./components/RecordedList";
+import { TemplateList } from "./components/TemplateList";
 
 const client = new ApolloClient({
   uri: "http://localhost:5164",
 });
 
 export interface Task {
-  id?: number;
-  name?: string;
+  id: number;
+  name: string;
   status?: Status;
   estimate?: number;
   actual?: number;
+}
+
+export interface Template {
+  id: number;
+  name: string;
+}
+
+export interface TemplateTask {
+  id: number;
+  name: string;
+  estimate?: number;
 }
 
 export enum Status {
@@ -25,22 +39,62 @@ export enum Status {
 
 export const App = () => {
   const [reload, setReload] = useState(0);
-  const countUpReload = () => setReload(reload + 1);
+  const countUpReload = () => setReload((reload) => reload + 1);
 
   return (
-    <HelmetProvider>
-      <GlobalStyle />
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>Base</title>
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content="script-src 'self' 'unsafe-inline';"
-        />
-      </Helmet>
-      <PlanList client={client} countUpReload={countUpReload} />
-      <RecordedList client={client} reload={reload} />
-    </HelmetProvider>
+    <BrowserRouter>
+      <Grommet plain themeMode="dark">
+        <HelmetProvider>
+          <GlobalStyle />
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Base</title>
+            <meta
+              httpEquiv="Content-Security-Policy"
+              content="script-src 'self' 'unsafe-inline';"
+            />
+          </Helmet>
+          <Grid
+            rows={["fill"]}
+            columns={["xsmall", "fill"]}
+            gap="small"
+            areas={[
+              { name: "nav", start: [0, 0], end: [0, 0] },
+              { name: "main", start: [1, 0], end: [1, 0] },
+            ]}
+          >
+            <Sidebar gridArea="nav">
+              <Nav gap="small">
+                <NavLink to="/">Top</NavLink>
+                <NavLink to="/plan">Plan</NavLink>
+                <NavLink to="/templates">Templates</NavLink>
+              </Nav>
+            </Sidebar>
+            <Main gridArea="main">
+              <Routes>
+                <Route
+                  path="/plan"
+                  element={
+                    <>
+                      <PlanList client={client} countUpReload={countUpReload} />
+                      <RecordedList client={client} reload={reload} />
+                    </>
+                  }
+                />
+                <Route
+                  path="/templates"
+                  element={
+                    <>
+                      <TemplateList client={client} />
+                    </>
+                  }
+                />
+              </Routes>
+            </Main>
+          </Grid>
+        </HelmetProvider>
+      </Grommet>
+    </BrowserRouter>
   );
 };
 

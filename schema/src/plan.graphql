@@ -1,4 +1,4 @@
-type Task {
+type Plan_Task {
   id: Int!
   name: String!
   status: Int
@@ -7,20 +7,16 @@ type Task {
   status_changed_at: Int
 }
 
-type Query {
-  tasks: [Task!]!
-  recordedTasks(date: String!): [Task!]!
+type Plan_Query {
+  tasks: [Plan_Task!]!
+  recordedTasks(date: String!): [Plan_Task!]!
 }
 
-type Mutation {
-  addTask(name: String!): Task!
-  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Task!
-  completeTask(id: Int!): Task!
-  archiveTask(id: Int!): Task!
-  deleteTask(id: Int!): Task!
-}
-
-schema {
-  query: Query
-  mutation: Mutation
+type Plan_Mutation {
+  addTask(name: String!): Plan_Task!
+  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Plan_Task!
+  completeTask(id: Int!): Plan_Task!
+  archiveTask(id: Int!): Plan_Task!
+  deleteTask(id: Int!): Plan_Task!
+  importTemplate(id: Int!): Boolean
 }

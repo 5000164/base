@@ -20,3 +20,19 @@ model tasks {
   status            Int
   status_changed_at Int?
 }
+
+model templates {
+  id                Int              @default(autoincrement()) @id
+  name              String
+  status            Int
+  status_changed_at Int?
+  template_tasks    template_tasks[]
+}
+
+model template_tasks {
+  estimate   Int?
+  id         Int        @default(autoincrement()) @id
+  name       String
+  templateId Int?
+  templates  templates? @relation(fields: [templateId], references: [id])
+}

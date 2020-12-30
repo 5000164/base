@@ -1,0 +1,25 @@
+type Templates_Template {
+  id: Int!
+  name: String!
+}
+
+type Templates_Task {
+  id: Int!
+  name: String!
+  estimate: Int
+}
+
+type Templates_Query {
+  templates: [Templates_Template!]!
+  tasks(templateId: Int!): [Templates_Task!]!
+}
+
+type Templates_Mutation {
+  addTemplate(name: String!): Templates_Template!
+  updateTemplate(id: Int!, name: String): Templates_Template!
+  archiveTemplate(id: Int!): Templates_Template!
+  deleteTemplate(id: Int!): Templates_Template!
+  addTask(templateId: Int!, name: String!): Templates_Task!
+  updateTask(id: Int!, name: String, estimate: Int): Templates_Task!
+  deleteTask(id: Int!): Templates_Task!
+}

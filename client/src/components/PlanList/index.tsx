@@ -5,6 +5,7 @@ import { PlanListItem } from "../PlanListItem";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { CalculatedTimes } from "../CalculatedTimes";
+import { TemplateListLayer } from "../TemplateListLayer";
 
 export const PlanList = ({
   client,
@@ -14,27 +15,33 @@ export const PlanList = ({
   countUpReload: Function;
 }) => {
   const [tasks, setTasks] = useState([] as Task[]);
+  const [tasksReload, setTasksReload] = useState(0);
+  const reloadTasks = () => setTasksReload((tasksReload) => tasksReload + 1);
   const [error, setError] = useState(false);
+  const [show, setShow] = React.useState(false);
 
   const fetchTasks = () => {
     setError(false);
     client
       .query<Query>({
+        fetchPolicy: "network-only",
         query: gql`
           {
-            tasks {
-              id
-              name
-              estimate
-              actual
+            plan {
+              tasks {
+                id
+                name
+                estimate
+                actual
+              }
             }
           }
         `,
       })
-      .then((result) => setTasks(result.data.tasks))
+      .then((result) => setTasks(result.data?.plan?.tasks ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, []);
+  useEffect(fetchTasks, [tasksReload]);
 
   const setName = (index: number, name: string) => {
     const newTasks = [...tasks];
@@ -60,25 +67,31 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation {
-            addTask(name: "") {
-              id
-              name
-              estimate
-              actual
+            plan {
+              addTask(name: "") {
+                id
+                name
+                estimate
+                actual
+              }
             }
           }
         `,
       })
       .then((result) => {
-        setTasks([
-          ...tasks,
-          {
-            id: result.data?.addTask.id,
-            name: result.data?.addTask.name,
-            estimate: result.data?.addTask.estimate,
-            actual: result.data?.addTask.actual,
-          },
-        ]);
+        if (result.data) {
+          setTasks([
+            ...tasks,
+            {
+              id: result.data.plan.addTask.id,
+              name: result.data.plan.addTask.name,
+              estimate: result.data?.plan?.addTask.estimate,
+              actual: result.data?.plan?.addTask.actual,
+            },
+          ]);
+        } else {
+          setError(true);
+        }
       })
       .catch(() => setError(true));
   };
@@ -89,13 +102,15 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!, $name: String, $estimate: Int, $actual: Int) {
-            updateTask(
-              id: $id
-              name: $name
-              estimate: $estimate
-              actual: $actual
-            ) {
-              id
+            plan {
+              updateTask(
+                id: $id
+                name: $name
+                estimate: $estimate
+                actual: $actual
+              ) {
+                id
+              }
             }
           }
         `,
@@ -110,8 +125,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            completeTask(id: $id) {
-              id
+            plan {
+              completeTask(id: $id) {
+                id
+              }
             }
           }
         `,
@@ -130,8 +147,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            archiveTask(id: $id) {
-              id
+            plan {
+              archiveTask(id: $id) {
+                id
+              }
             }
           }
         `,
@@ -150,8 +169,10 @@ export const PlanList = ({
       .mutate<Mutation>({
         mutation: gql`
           mutation($id: Int!) {
-            deleteTask(id: $id) {
-              id
+            plan {
+              deleteTask(id: $id) {
+                id
+              }
             }
           }
         `,
@@ -185,10 +206,18 @@ export const PlanList = ({
               />
             ))}
           </StyledPlanList>
-          <AddButtonWrapper>
+          <ButtonWrapper>
             <button onClick={addTask}>Add</button>
-          </AddButtonWrapper>
+            <button onClick={() => setShow(true)}>Import</button>
+          </ButtonWrapper>
           <CalculatedTimes tasks={tasks} />
+          {show && (
+            <TemplateListLayer
+              client={client}
+              reloadTasks={reloadTasks}
+              setShow={setShow}
+            />
+          )}
         </>
       )}
     </>
@@ -201,7 +230,7 @@ const StyledPlanList = styled.ul`
   padding: 0;
 `;
 
-const AddButtonWrapper = styled.div`
+const ButtonWrapper = styled.div`
   width: 1024px;
   margin: 4px auto;
 `;

@@ -1,14 +1,18 @@
-import path from "path";
 import log from "electron-log";
-import { makeExecutableSchema } from "graphql-tools";
 import { GraphQLServer } from "graphql-yoga";
-import { importSchema } from "graphql-import";
-import { Resolvers } from "./generated/graphql";
 import { PrismaClient, PrismaClientOptions } from "../../prismaClient";
 import { settings } from "./settings";
 import { migrate } from "./migration";
+import { schema } from "./schema";
 
-enum Status {
+export type TemplateTask = {
+  id: number;
+  templateId: number;
+  name: string;
+  estimate?: number;
+};
+
+export enum Status {
   Normal = 0,
   Completed = 1,
   Archived = 2,
@@ -16,89 +20,6 @@ enum Status {
 
 (async () => {
   await migrate({ dbPath: settings.dbPath });
-
-  const typeDefs = importSchema(
-    path.join(__dirname, "./generated/plan.graphql")
-  );
-  const resolvers: Resolvers = {
-    Query: {
-      tasks: (parent, args, ctx) =>
-        ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-      recordedTasks: (parent, args, ctx) => {
-        const date = new Date(
-          new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
-        );
-        const nextDate = new Date(
-          new Date(new Date(date).setDate(date.getDate() + 1)).setHours(
-            0,
-            0,
-            0,
-            0
-          )
-        );
-        return ctx.prisma.tasks.findMany({
-          where: {
-            status: { in: [Status.Completed, Status.Archived] },
-            AND: [
-              {
-                status_changed_at: { gte: Math.floor(date.getTime() / 1000) },
-              },
-              {
-                status_changed_at: {
-                  lt: Math.floor(nextDate.getTime() / 1000),
-                },
-              },
-            ],
-          },
-        });
-      },
-    },
-    Mutation: {
-      addTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.create({
-          data: {
-            name: args.name,
-            status: Status.Normal,
-          },
-        }),
-      updateTask: (parent, args, ctx) => {
-        const data = {
-          ...(args.name ? { name: args.name } : {}),
-          ...(args.estimate ? { estimate: args.estimate } : {}),
-          ...(args.actual ? { actual: args.actual } : {}),
-        };
-        return ctx.prisma.tasks.update({
-          where: { id: args.id },
-          data,
-        });
-      },
-      completeTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.update({
-          where: { id: args.id },
-          data: {
-            status: Status.Completed,
-            status_changed_at: Math.floor(Date.now() / 1000),
-          },
-        }),
-      archiveTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.update({
-          where: { id: args.id },
-          data: {
-            status: Status.Archived,
-            status_changed_at: Math.floor(Date.now() / 1000),
-          },
-        }),
-      deleteTask: (parent, args, ctx) =>
-        ctx.prisma.tasks.delete({
-          where: { id: args.id },
-        }),
-    },
-  };
-
-  const schema = makeExecutableSchema({
-    resolvers,
-    typeDefs,
-  });
 
   const prisma = new PrismaClient({
     datasources: {
