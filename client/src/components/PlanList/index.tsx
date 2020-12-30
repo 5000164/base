@@ -41,7 +41,7 @@ export const PlanList = ({
       .then((result) => setTasks(result.data?.plan?.tasks ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTasks, [tasksReload]);
+  useEffect(fetchTasks, [client, tasksReload]);
 
   const setName = (index: number, name: string) => {
     const newTasks = [...tasks];

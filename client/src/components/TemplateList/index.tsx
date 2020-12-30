@@ -32,7 +32,7 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
       .then((result) => setTemplates(result.data?.templates?.templates ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTemplates, []);
+  useEffect(fetchTemplates, [client]);
 
   const setName = (index: number, name: string) => {
     const newTemplates = [...templates];

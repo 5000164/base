@@ -34,7 +34,7 @@ export const TemplateListToImport = ({
       .then((result) => setTemplates(result.data?.templates?.templates ?? []))
       .catch(() => setError(true));
   };
-  useEffect(fetchTemplates, []);
+  useEffect(fetchTemplates, [client]);
 
   return (
     <>

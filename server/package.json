@@ -11,22 +11,22 @@
     "generate": "npx prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^2.0.0-beta.3",
-    "electron-log": "^4.1.2",
+    "@prisma/client": "^2.13.1",
+    "electron-log": "^4.3.1",
     "graphql-import": "^1.0.2",
-    "graphql-tools": "^5.0.0",
+    "graphql-tools": "5.0.0",
     "graphql-yoga": "^1.18.3",
-    "sequelize": "github:sequelize/sequelize#e02594fb5b8b18fe68a77a0a0f51620a9d96acb9",
-    "sqlite3": "^4.2.0",
-    "umzug": "^3.0.0-beta.3"
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0",
+    "umzug": "3.0.0-beta.9"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.0.0-beta.3",
-    "@types/bluebird": "^3.5.30",
-    "@types/validator": "^13.0.0",
-    "@types/ws": "^7.2.4",
-    "prettier": "2.0.4",
-    "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "3.8.3"
+    "@prisma/cli": "^2.13.1",
+    "@types/bluebird": "^3.5.33",
+    "@types/validator": "^13.1.2",
+    "@types/ws": "^7.4.0",
+    "prettier": "2.2.1",
+    "ts-node-dev": "^1.1.1",
+    "typescript": "4.1.3"
   }
 }

@@ -13,16 +13,16 @@ model SequelizeMeta {
 }
 
 model tasks {
-  actual            Int?
-  estimate          Int?
-  id                Int    @default(autoincrement()) @id
+  id                Int    @id @default(autoincrement())
   name              String
   status            Int
+  estimate          Int?
+  actual            Int?
   status_changed_at Int?
 }
 
 model templates {
-  id                Int              @default(autoincrement()) @id
+  id                Int              @id @default(autoincrement())
   name              String
   status            Int
   status_changed_at Int?
@@ -30,9 +30,9 @@ model templates {
 }
 
 model template_tasks {
-  estimate   Int?
-  id         Int        @default(autoincrement()) @id
-  name       String
+  id         Int        @id @default(autoincrement())
   templateId Int?
+  name       String
+  estimate   Int?
   templates  templates? @relation(fields: [templateId], references: [id])
 }

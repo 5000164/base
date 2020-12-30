@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { migrationsList, Umzug } from "umzug";
+import { SequelizeStorage, Umzug } from "umzug";
 
 export const migrate = async ({ dbPath }: { dbPath: string }) => {
   const sequelize = new Sequelize({
@@ -7,9 +7,7 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
     storage: dbPath,
   });
   const umzug = new Umzug({
-    storage: "sequelize",
-    storageOptions: { sequelize },
-    migrations: migrationsList([
+    migrations: [
       {
         name: "00-create-tasks-table",
         async up() {
@@ -255,7 +253,10 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
           `);
         },
       },
-    ]),
+    ],
+    context: sequelize.getQueryInterface(),
+    storage: new SequelizeStorage({ sequelize }),
+    logger: console,
   });
   await umzug.up();
 };
