@@ -26,6 +26,9 @@
     "styled-components": "^5.2.1",
     "typescript": "4.1.3"
   },
+  "resolutions": {
+    "websocket-extensions": "0.1.4"
+  },
   "homepage": "./",
   "eslintConfig": {
     "extends": "react-app"
