@@ -30,8 +30,12 @@ export enum Status {
   });
   const createContext = () => ({ prisma });
 
-  await new GraphQLServer({ schema, context: createContext }).start({
+  await new GraphQLServer({
+    schema,
+    context: createContext,
+  }).start({
     port: 5164,
+    subscriptions: false,
   });
   log.debug("Server is running");
 })();
