@@ -20,6 +20,9 @@
     "sqlite3": "^5.0.0",
     "umzug": "3.0.0-beta.9"
   },
+  "resolutions": {
+    "graphql-playground-html": "1.6.22"
+  },
   "devDependencies": {
     "@prisma/cli": "^2.13.1",
     "@types/bluebird": "^3.5.33",
