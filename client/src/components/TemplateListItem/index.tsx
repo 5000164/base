@@ -22,9 +22,9 @@ export const TemplateListItem = ({
       type="text"
       value={template.name ?? ""}
       onChange={(e) => setName(e.target.value)}
+      onBlur={() => updateTemplate(template)}
     />
     <button onClick={() => editTasks()}>Edit</button>
-    <button onClick={() => updateTemplate(template)}>Update</button>
     <button onClick={() => archiveTemplate(template.id)}>Archive</button>
     <button onClick={() => deleteTemplate(template.id)}>Delete</button>
   </StyledTemplateListItem>
@@ -32,7 +32,7 @@ export const TemplateListItem = ({
 
 const StyledTemplateListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr repeat(4, 70px);
+  grid-template-columns: 1fr repeat(3, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

@@ -20,20 +20,20 @@ export const TemplateTaskListItem = ({
       type="text"
       value={task.name ?? ""}
       onChange={(e) => setName(e.target.value)}
+      onBlur={() => updateTask(task)}
     />
     <StyledInput
       type="text"
       value={task.estimate ?? ""}
       onChange={(e) => setEstimate(Number(e.target.value))}
     />
-    <button onClick={() => updateTask(task)}>Update</button>
     <button onClick={() => deleteTask(task)}>Delete</button>
   </StyledPlanListItem>
 );
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px repeat(2, 70px);
+  grid-template-columns: 1fr 50px repeat(1, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

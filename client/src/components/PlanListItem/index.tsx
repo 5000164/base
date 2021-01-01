@@ -26,18 +26,20 @@ export const PlanListItem = ({
       type="text"
       value={task.name ?? ""}
       onChange={(e) => setName(e.target.value)}
+      onBlur={() => updateTask(task)}
     />
     <StyledInput
       type="text"
       value={task.estimate ?? ""}
       onChange={(e) => setEstimate(Number(e.target.value))}
+      onBlur={() => updateTask(task)}
     />
     <StyledInput
       type="text"
       value={task.actual ?? ""}
       onChange={(e) => setActual(Number(e.target.value))}
+      onBlur={() => updateTask(task)}
     />
-    <button onClick={() => updateTask(task)}>Update</button>
     <button onClick={() => completeTask(task.id)}>Complete</button>
     <button onClick={() => archiveTask(task.id)}>Archive</button>
     <button onClick={() => deleteTask(task.id)}>Delete</button>
@@ -46,7 +48,7 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px 50px repeat(4, 70px);
+  grid-template-columns: 1fr 50px 50px repeat(3, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;
