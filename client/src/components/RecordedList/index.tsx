@@ -68,7 +68,7 @@ export const RecordedList = ({
 };
 
 const StyledRecordedList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
   padding: 0;
 `;

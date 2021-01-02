@@ -62,7 +62,7 @@ export const TemplateListToImport = ({
 };
 
 const StyledTemplateList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 80px auto 4px;
   padding: 0;
 `;

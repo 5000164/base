@@ -32,13 +32,13 @@ export const CalculatedTimes = ({ tasks }: { tasks: Task[] }) => {
 };
 
 const TotalEstimateTime = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
   text-align: right;
 `;
 
 const TotalActualTime = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
   text-align: right;
 `;

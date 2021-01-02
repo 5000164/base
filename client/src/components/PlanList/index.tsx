@@ -225,12 +225,12 @@ export const PlanList = ({
 };
 
 const StyledPlanList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 80px auto 4px;
   padding: 0;
 `;
 
 const ButtonWrapper = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
 `;

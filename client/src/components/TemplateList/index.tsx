@@ -171,12 +171,12 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
 };
 
 const StyledTemplateList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 80px auto 4px;
   padding: 0;
 `;
 
 const AddButtonWrapper = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
 `;

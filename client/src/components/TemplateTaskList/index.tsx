@@ -161,6 +161,6 @@ const TemplateName = styled.div`
 `;
 
 const AddButtonWrapper = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
 `;
