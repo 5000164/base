@@ -61,6 +61,9 @@ const resolvers: Resolvers = {
             },
           ],
         },
+        orderBy: {
+          status_changed_at: "desc",
+        },
       });
     },
   },
