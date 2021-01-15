@@ -264,7 +264,10 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
             task_tracks {
               start_task_track(task_id: $task_id) {
                 task_track_id
-                task_id
+                task {
+                  id
+                  name
+                }
                 start_at
                 stop_at
               }

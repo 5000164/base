@@ -149,16 +149,34 @@ const resolvers: Resolvers = {
       updateTemplateTasksOrder(ctx, args.updatedTemplateTasks),
   },
   Task_Tracks_Query: {
-    task_tracks: (parent, args, ctx) => ctx.prisma.task_tracks.findMany(),
+    task_tracks: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.findMany({
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
   },
   Task_Tracks_Mutation: {
     start_task_track: (parent, args, ctx) =>
       ctx.prisma.task_tracks.create({
         data: {
           start_at: Math.floor(Date.now() / 1000),
-          tasks: {
+          task: {
             connect: {
               id: args.task_id,
+            },
+          },
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
             },
           },
         },
@@ -170,6 +188,14 @@ const resolvers: Resolvers = {
         },
         data: {
           stop_at: Math.floor(Date.now() / 1000),
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       }),
   },

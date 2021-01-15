@@ -19,7 +19,10 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
             task_tracks {
               task_tracks {
                 task_track_id
-                task_id
+                task {
+                  id
+                  name
+                }
                 start_at
                 stop_at
               }
@@ -43,7 +46,10 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
             task_tracks {
               stop_task_track(task_track_id: $task_track_id) {
                 task_track_id
-                task_id
+                task {
+                  id
+                  name
+                }
                 start_at
                 stop_at
               }
@@ -60,7 +66,10 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
                 ? {
                     task_track_id:
                       data.task_tracks.stop_task_track.task_track_id,
-                    task_id: data.task_tracks.stop_task_track.task_id,
+                    task: {
+                      id: data.task_tracks.stop_task_track.task.id,
+                      name: data.task_tracks.stop_task_track.task.name,
+                    },
                     start_at: data.task_tracks?.stop_task_track.start_at,
                     stop_at: data.task_tracks?.stop_task_track.stop_at,
                   }

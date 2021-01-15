@@ -37,9 +37,14 @@ export interface TemplateTask {
 
 export interface TaskTrack {
   task_track_id: number;
-  task_id: number;
+  task: TaskTrackTask;
   start_at?: number;
   stop_at?: number;
+}
+
+export interface TaskTrackTask {
+  id: number;
+  name: string;
 }
 
 export enum Status {
