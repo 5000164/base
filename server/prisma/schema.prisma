@@ -12,8 +12,16 @@ model SequelizeMeta {
   name String @id
 }
 
+model task_tracks {
+  task_track_id Int   @id @default(autoincrement())
+  task_id       Int
+  start_at      Int?
+  stop_at       Int?
+  task          tasks @relation(fields: [task_id], references: [id])
+}
+
 model tasks {
-  id                                   Int     @id @default(autoincrement())
+  id                                   Int           @id @default(autoincrement())
   name                                 String
   status                               Int
   estimate                             Int?
@@ -21,10 +29,11 @@ model tasks {
   status_changed_at                    Int?
   previous_id                          Int?
   next_id                              Int?
-  tasks_tasksTotasks_next_id           tasks?  @relation("tasksTotasks_next_id", fields: [next_id], references: [id])
-  tasks_tasksTotasks_previous_id       tasks?  @relation("tasksTotasks_previous_id", fields: [previous_id], references: [id])
-  other_tasks_tasksTotasks_next_id     tasks[] @relation("tasksTotasks_next_id")
-  other_tasks_tasksTotasks_previous_id tasks[] @relation("tasksTotasks_previous_id")
+  tasks_tasksTotasks_next_id           tasks?        @relation("tasksTotasks_next_id", fields: [next_id], references: [id])
+  tasks_tasksTotasks_previous_id       tasks?        @relation("tasksTotasks_previous_id", fields: [previous_id], references: [id])
+  task_tracks                          task_tracks[]
+  other_tasks_tasksTotasks_next_id     tasks[]       @relation("tasksTotasks_next_id")
+  other_tasks_tasksTotasks_previous_id tasks[]       @relation("tasksTotasks_previous_id")
 }
 
 model template_tasks {
