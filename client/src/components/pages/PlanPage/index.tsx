@@ -255,6 +255,27 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
       .catch(() => setError(true));
   };
 
+  const startTaskTrack = (task_id: number) => {
+    setPlanError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation($task_id: Int!) {
+            task_tracks {
+              start_task_track(task_id: $task_id) {
+                task_track_id
+                task_id
+                start_at
+                stop_at
+              }
+            }
+          }
+        `,
+        variables: { task_id },
+      })
+      .catch(() => setPlanError(true));
+  };
+
   return (
     <PlanTemplate
       client={client}
@@ -282,6 +303,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
       archiveTask={archiveTask}
       deleteTask={deleteTask}
       updatePlanTasksOrder={updatePlanTasksOrder}
+      startTaskTrack={startTaskTrack}
     />
   );
 };

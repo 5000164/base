@@ -6,6 +6,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { TemplateList } from "./components/TemplateList";
 import { PlanPage } from "./components/pages/PlanPage";
+import { TaskTrackList } from "./components/TaskTrackList";
 
 const client = new ApolloClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
@@ -32,6 +33,13 @@ export interface TemplateTask {
   estimate?: number;
   previous_id?: number;
   next_id?: number;
+}
+
+export interface TaskTrack {
+  task_track_id: number;
+  task_id: number;
+  start_at?: number;
+  stop_at?: number;
 }
 
 export enum Status {
@@ -68,6 +76,7 @@ export const App = () => {
                 <NavLink to="/">Top</NavLink>
                 <NavLink to="/plan">Plan</NavLink>
                 <NavLink to="/templates">Templates</NavLink>
+                <NavLink to="/task-tracks">Task Tracks</NavLink>
               </Nav>
             </Sidebar>
             <Main gridArea="main">
@@ -78,6 +87,11 @@ export const App = () => {
                 <Route path="/templates">
                   <>
                     <TemplateList client={client} />
+                  </>
+                </Route>
+                <Route path="/task-tracks">
+                  <>
+                    <TaskTrackList client={client} />
                   </>
                 </Route>
               </Switch>
