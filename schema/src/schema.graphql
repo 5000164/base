@@ -1,7 +1,3 @@
-# import Plan_Query, Plan_Mutation from "plan.graphql"
-# import Templates_Query, Templates_Mutation from "templates.graphql"
-# import Task_Tracks_Query, Task_Tracks_Mutation from "task_tracks.graphql"
-
 type Query {
   plan: Plan_Query!
   templates: Templates_Query!
@@ -12,4 +8,89 @@ type Mutation {
   plan: Plan_Mutation!
   templates: Templates_Mutation!
   task_tracks: Task_Tracks_Mutation!
+}
+
+type Plan_Query {
+  tasks: [Plan_Task!]!
+  recordedTasks(date: String!): [Plan_Task!]!
+}
+
+type Plan_Mutation {
+  addTask: Boolean
+  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Boolean
+  completeTask(id: Int!): Boolean
+  archiveTask(id: Int!): Boolean
+  deleteTask(id: Int!): Boolean
+  importTemplate(id: Int!): Boolean
+  updatePlanTasksOrder(updatedPlanTasks: [Plan_Updated_Plan_Task!]!): Boolean
+}
+
+type Plan_Task {
+  id: Int!
+  name: String!
+  status: Int
+  estimate: Int
+  actual: Int
+  status_changed_at: Int
+  previous_id: Int
+  next_id: Int
+}
+
+input Plan_Updated_Plan_Task {
+  id: Int!
+  previous_id: Int
+  next_id: Int
+}
+
+type Templates_Query {
+  templates: [Templates_Template!]!
+  tasks(templateId: Int!): [Templates_Task!]!
+}
+
+type Templates_Mutation {
+  addTemplate(name: String!): Templates_Template!
+  updateTemplate(id: Int!, name: String): Templates_Template!
+  archiveTemplate(id: Int!): Templates_Template!
+  deleteTemplate(id: Int!): Templates_Template!
+  addTask(templateId: Int!): Boolean
+  updateTask(id: Int!, name: String, estimate: Int): Boolean
+  deleteTask(id: Int!): Boolean
+  updateTemplateTasksOrder(
+    updatedTemplateTasks: [Templates_Updated_Template_Task!]!
+  ): Boolean
+}
+
+type Templates_Template {
+  id: Int!
+  name: String!
+}
+
+type Templates_Task {
+  id: Int!
+  name: String!
+  estimate: Int
+  previous_id: Int
+  next_id: Int
+}
+
+input Templates_Updated_Template_Task {
+  id: Int!
+  previous_id: Int
+  next_id: Int
+}
+
+type Task_Tracks_Query {
+  task_tracks: [Task_Tracks_Task_Track!]!
+}
+
+type Task_Tracks_Mutation {
+  start_task_track(task_id: Int!): Task_Tracks_Task_Track!
+  stop_task_track(task_track_id: Int!): Task_Tracks_Task_Track!
+}
+
+type Task_Tracks_Task_Track {
+  task_track_id: Int!
+  task_id: Int!
+  start_at: Int
+  stop_at: Int
 }
