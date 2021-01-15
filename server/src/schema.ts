@@ -26,6 +26,7 @@ const resolvers: Resolvers = {
   Query: {
     plan: () => ({ tasks: undefined, recordedTasks: undefined }),
     templates: () => ({ templates: undefined, tasks: undefined }),
+    task_tracks: () => ({ task_tracks: undefined }),
   },
   Mutation: {
     plan: () => ({
@@ -45,6 +46,10 @@ const resolvers: Resolvers = {
       addTask: undefined,
       updateTask: undefined,
       deleteTask: undefined,
+    }),
+    task_tracks: () => ({
+      start_task_track: undefined,
+      stop_task_track: undefined,
     }),
   },
   Plan_Query: {
@@ -142,6 +147,31 @@ const resolvers: Resolvers = {
     deleteTask: (parent, args, ctx) => deleteTemplateTask(ctx, args.id),
     updateTemplateTasksOrder: (parent, args, ctx) =>
       updateTemplateTasksOrder(ctx, args.updatedTemplateTasks),
+  },
+  Task_Tracks_Query: {
+    task_tracks: (parent, args, ctx) => ctx.prisma.task_tracks.findMany(),
+  },
+  Task_Tracks_Mutation: {
+    start_task_track: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.create({
+        data: {
+          start_at: Math.floor(Date.now() / 1000),
+          tasks: {
+            connect: {
+              id: args.task_id,
+            },
+          },
+        },
+      }),
+    stop_task_track: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.update({
+        where: {
+          task_track_id: args.task_track_id,
+        },
+        data: {
+          stop_at: Math.floor(Date.now() / 1000),
+        },
+      }),
   },
 };
 
