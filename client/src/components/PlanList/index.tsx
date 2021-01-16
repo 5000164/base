@@ -1,4 +1,5 @@
 import React from "react";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import DefaultClient from "apollo-boost";
 import styled from "styled-components";
 import { PlanListItem } from "../PlanListItem";
@@ -43,6 +44,21 @@ export const PlanList = ({
   archiveTask: Function;
   deleteTask: Function;
 }) => {
+  const orderPlanTasks = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.index === result.source.index) {
+      return;
+    }
+
+    const newPlanTasks = [...planTasks];
+    const [reorderedPlanTask] = newPlanTasks.splice(result.source.index, 1);
+    newPlanTasks.splice(result.destination.index, 0, reorderedPlanTask);
+    setPlanTasks(newPlanTasks);
+  };
+
   return (
     <>
       {planError ? (
@@ -52,27 +68,42 @@ export const PlanList = ({
         </>
       ) : (
         <>
-          <StyledPlanList>
-            {planTasks.map((task, index) => (
-              <PlanListItem
-                key={index}
-                task={task}
-                setName={(v: string) =>
-                  setName(planTasks, setPlanTasks, index, v)
-                }
-                setEstimate={(v: number) =>
-                  setEstimate(planTasks, setPlanTasks, index, v)
-                }
-                setActual={(v: number) =>
-                  setActual(planTasks, setPlanTasks, index, v)
-                }
-                updateTask={(t: Task) => updateTask(t, setPlanError)}
-                completeTask={(id: number) => completeTask(id, setPlanError)}
-                archiveTask={(id: number) => archiveTask(id, setPlanError)}
-                deleteTask={(id: number) => deleteTask(id, setPlanError)}
-              />
-            ))}
-          </StyledPlanList>
+          <DragDropContext onDragEnd={orderPlanTasks}>
+            <Droppable droppableId="plan-list">
+              {(provided) => (
+                <StyledPlanList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {planTasks.map((task, index) => (
+                    <PlanListItem
+                      key={index}
+                      task={task}
+                      index={index}
+                      setName={(v: string) =>
+                        setName(planTasks, setPlanTasks, index, v)
+                      }
+                      setEstimate={(v: number) =>
+                        setEstimate(planTasks, setPlanTasks, index, v)
+                      }
+                      setActual={(v: number) =>
+                        setActual(planTasks, setPlanTasks, index, v)
+                      }
+                      updateTask={(t: Task) => updateTask(t, setPlanError)}
+                      completeTask={(id: number) =>
+                        completeTask(id, setPlanError)
+                      }
+                      archiveTask={(id: number) =>
+                        archiveTask(id, setPlanError)
+                      }
+                      deleteTask={(id: number) => deleteTask(id, setPlanError)}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </StyledPlanList>
+              )}
+            </Droppable>
+          </DragDropContext>
           <ButtonWrapper>
             <button onClick={() => addTask()}>Add</button>
             <button onClick={() => setShow(true)}>Import</button>
