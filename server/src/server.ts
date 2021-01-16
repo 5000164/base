@@ -34,7 +34,7 @@ export enum Status {
     schema,
     context: createContext,
   }).start({
-    port: 5164,
+    port: process.env.BASE_PORT ?? 5164,
     subscriptions: false,
   });
   log.debug("Server is running");

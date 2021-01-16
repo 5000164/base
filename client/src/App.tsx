@@ -9,7 +9,7 @@ import { RecordedList } from "./components/RecordedList";
 import { TemplateList } from "./components/TemplateList";
 
 const client = new ApolloClient({
-  uri: "http://localhost:5164",
+  uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
 });
 
 export interface Task {
