@@ -83,6 +83,50 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
       .catch(() => setError(true));
   };
 
+  const setStartAt = (index: number, startAt: string) => {
+    const newTaskTracks = [...taskTracks];
+    newTaskTracks[index].start_at = Math.floor(
+      new Date(startAt).getTime() / 1000
+    );
+    setTaskTracks(newTaskTracks);
+  };
+
+  const setStopAt = (index: number, stopAt: string) => {
+    const newTaskTracks = [...taskTracks];
+    newTaskTracks[index].stop_at = Math.floor(
+      new Date(stopAt).getTime() / 1000
+    );
+    setTaskTracks(newTaskTracks);
+  };
+
+  const updateTaskTrack = (taskTrack: TaskTrack) => {
+    setError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation($task_track_id: Int!, $start_at: Int, $stop_at: Int) {
+            task_tracks {
+              update_task_track(
+                task_track_id: $task_track_id
+                start_at: $start_at
+                stop_at: $stop_at
+              ) {
+                task_track_id
+                task {
+                  id
+                  name
+                }
+                start_at
+                stop_at
+              }
+            }
+          }
+        `,
+        variables: taskTrack,
+      })
+      .catch(() => setError(true));
+  };
+
   return (
     <>
       {error ? (
@@ -98,6 +142,9 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
                 key={index}
                 taskTrack={taskTrack}
                 stopTaskTrack={stopTaskTrack}
+                setStartAt={(v: string) => setStartAt(index, v)}
+                setStopAt={(v: string) => setStopAt(index, v)}
+                updateTaskTrack={updateTaskTrack}
               />
             ))}
           </StyledTaskTrackList>

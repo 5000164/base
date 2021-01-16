@@ -50,6 +50,7 @@ const resolvers: Resolvers = {
     task_tracks: () => ({
       start_task_track: undefined,
       stop_task_track: undefined,
+      update_task_track: undefined,
     }),
   },
   Plan_Query: {
@@ -198,6 +199,24 @@ const resolvers: Resolvers = {
           },
         },
       }),
+    update_task_track: (parent, args, ctx) => {
+      const data = {
+        ...(args.start_at ? { start_at: args.start_at } : {}),
+        ...(args.stop_at ? { stop_at: args.stop_at } : {}),
+      };
+      return ctx.prisma.task_tracks.update({
+        where: { task_track_id: args.task_track_id },
+        data,
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+    },
   },
 };
 
