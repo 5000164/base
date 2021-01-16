@@ -11,7 +11,9 @@ export const PlanTemplate = ({
   planError,
   setPlanError,
   recordedTasks,
+  setRecordedTasks,
   recordedError,
+  setRecordedError,
   date,
   setDate,
   reload,
@@ -34,7 +36,9 @@ export const PlanTemplate = ({
   planError: boolean;
   setPlanError: Function;
   recordedTasks: Task[];
+  setRecordedTasks: Function;
   recordedError: boolean;
+  setRecordedError: Function;
   date: string;
   setDate: Function;
   reload: Function;
@@ -74,10 +78,19 @@ export const PlanTemplate = ({
       />
       <RecordedList
         recordedTasks={recordedTasks}
+        setRecordedTasks={setRecordedTasks}
         recordedError={recordedError}
+        setRecordedError={setRecordedError}
         date={date}
         setDate={setDate}
         fetchRecordedTasks={fetchRecordedTasks}
+        setName={setName}
+        setEstimate={setEstimate}
+        setActual={setActual}
+        updateTask={updateTask}
+        completeTask={completeTask}
+        archiveTask={archiveTask}
+        deleteTask={deleteTask}
       />
     </>
   );

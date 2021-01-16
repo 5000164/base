@@ -222,7 +222,9 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
       planError={planError}
       setPlanError={setPlanError}
       recordedTasks={recordedTasks}
+      setRecordedTasks={setRecordedTasks}
       recordedError={recordedError}
+      setRecordedError={setRecordedError}
       date={date}
       setDate={setDate}
       reload={reload}
