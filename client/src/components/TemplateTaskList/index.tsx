@@ -66,7 +66,7 @@ export const TemplateTaskList = ({
     setError(false);
     client
       .query<Query>({
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
         query: gql`
           query($id: Int!) {
             templates {

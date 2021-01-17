@@ -13,7 +13,7 @@ export const TaskTrackList = ({ client }: { client: DefaultClient<any> }) => {
     setError(false);
     client
       .query<Query>({
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
         query: gql`
           {
             task_tracks {

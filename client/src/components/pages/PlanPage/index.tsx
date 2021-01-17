@@ -62,7 +62,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
     setPlanError(false);
     client
       .query<Query>({
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
         query: gql`
           {
             plan {
@@ -111,7 +111,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
     setRecordedError(false);
     client
       .query<Query>({
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
         query: gql`
           query($date: String!) {
             plan {

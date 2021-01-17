@@ -19,7 +19,7 @@ export const TemplateListToImport = ({
     setError(false);
     client
       .query<Query>({
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
         query: gql`
           {
             templates {
