@@ -150,6 +150,9 @@ export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
           }),
         ]
       : []),
+    ctx.prisma.task_tracks.deleteMany({
+      where: { task_id: task.id },
+    }),
     ctx.prisma.tasks.delete({
       where: { id: task.id },
     }),

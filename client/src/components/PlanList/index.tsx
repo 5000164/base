@@ -26,6 +26,7 @@ export const PlanList = ({
   archiveTask,
   deleteTask,
   updatePlanTasksOrder,
+  startTaskTrack,
 }: {
   client: DefaultClient<any>;
   planTasks: Task[];
@@ -45,6 +46,7 @@ export const PlanList = ({
   archiveTask: Function;
   deleteTask: Function;
   updatePlanTasksOrder: Function;
+  startTaskTrack: Function;
 }) => {
   const reorderPlanTasks = (result: DropResult) => {
     if (!result.destination) {
@@ -176,6 +178,7 @@ export const PlanList = ({
                         archiveTask(id, setPlanError)
                       }
                       deleteTask={(id: number) => deleteTask(id, setPlanError)}
+                      startTaskTrack={startTaskTrack}
                     />
                   ))}
                   {provided.placeholder}

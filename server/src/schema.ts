@@ -26,6 +26,7 @@ const resolvers: Resolvers = {
   Query: {
     plan: () => ({ tasks: undefined, recordedTasks: undefined }),
     templates: () => ({ templates: undefined, tasks: undefined }),
+    task_tracks: () => ({ task_tracks: undefined }),
   },
   Mutation: {
     plan: () => ({
@@ -45,6 +46,11 @@ const resolvers: Resolvers = {
       addTask: undefined,
       updateTask: undefined,
       deleteTask: undefined,
+    }),
+    task_tracks: () => ({
+      start_task_track: undefined,
+      stop_task_track: undefined,
+      update_task_track: undefined,
     }),
   },
   Plan_Query: {
@@ -142,6 +148,75 @@ const resolvers: Resolvers = {
     deleteTask: (parent, args, ctx) => deleteTemplateTask(ctx, args.id),
     updateTemplateTasksOrder: (parent, args, ctx) =>
       updateTemplateTasksOrder(ctx, args.updatedTemplateTasks),
+  },
+  Task_Tracks_Query: {
+    task_tracks: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.findMany({
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+  },
+  Task_Tracks_Mutation: {
+    start_task_track: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.create({
+        data: {
+          start_at: Math.floor(Date.now() / 1000),
+          task: {
+            connect: {
+              id: args.task_id,
+            },
+          },
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+    stop_task_track: (parent, args, ctx) =>
+      ctx.prisma.task_tracks.update({
+        where: {
+          task_track_id: args.task_track_id,
+        },
+        data: {
+          stop_at: Math.floor(Date.now() / 1000),
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+    update_task_track: (parent, args, ctx) => {
+      const data = {
+        ...(args.start_at ? { start_at: args.start_at } : {}),
+        ...(args.stop_at ? { stop_at: args.stop_at } : {}),
+      };
+      return ctx.prisma.task_tracks.update({
+        where: { task_track_id: args.task_track_id },
+        data,
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+    },
   },
 };
 

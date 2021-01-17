@@ -1,11 +1,12 @@
 import React from "react";
-import { BrowserRouter, NavLink, Route, Switch } from "react-router-dom";
+import { MemoryRouter, NavLink, Route, Switch } from "react-router-dom";
 import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { TemplateList } from "./components/TemplateList";
 import { PlanPage } from "./components/pages/PlanPage";
+import { TaskTrackList } from "./components/TaskTrackList";
 
 const client = new ApolloClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
@@ -34,6 +35,18 @@ export interface TemplateTask {
   next_id?: number;
 }
 
+export interface TaskTrack {
+  task_track_id: number;
+  task: TaskTrackTask;
+  start_at?: number;
+  stop_at?: number;
+}
+
+export interface TaskTrackTask {
+  id: number;
+  name: string;
+}
+
 export enum Status {
   Normal = 0,
   Completed = 1,
@@ -42,7 +55,7 @@ export enum Status {
 
 export const App = () => {
   return (
-    <BrowserRouter>
+    <MemoryRouter>
       <Grommet plain themeMode="dark">
         <HelmetProvider>
           <GlobalStyle />
@@ -68,6 +81,7 @@ export const App = () => {
                 <NavLink to="/">Top</NavLink>
                 <NavLink to="/plan">Plan</NavLink>
                 <NavLink to="/templates">Templates</NavLink>
+                <NavLink to="/task-tracks">Task Tracks</NavLink>
               </Nav>
             </Sidebar>
             <Main gridArea="main">
@@ -80,12 +94,17 @@ export const App = () => {
                     <TemplateList client={client} />
                   </>
                 </Route>
+                <Route path="/task-tracks">
+                  <>
+                    <TaskTrackList client={client} />
+                  </>
+                </Route>
               </Switch>
             </Main>
           </Grid>
         </HelmetProvider>
       </Grommet>
-    </BrowserRouter>
+    </MemoryRouter>
   );
 };
 

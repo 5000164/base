@@ -13,6 +13,7 @@ export const PlanListItem = ({
   completeTask,
   archiveTask,
   deleteTask,
+  startTaskTrack,
 }: {
   task: Task;
   index: number;
@@ -23,6 +24,7 @@ export const PlanListItem = ({
   completeTask: Function;
   archiveTask: Function;
   deleteTask: Function;
+  startTaskTrack: Function;
 }) => (
   <Draggable draggableId={index.toString()} index={index}>
     {(provided) => (
@@ -52,6 +54,7 @@ export const PlanListItem = ({
         <button onClick={() => completeTask(task.id)}>Complete</button>
         <button onClick={() => archiveTask(task.id)}>Archive</button>
         <button onClick={() => deleteTask(task.id)}>Delete</button>
+        <button onClick={() => startTaskTrack(task.id)}>Start</button>
       </StyledPlanListItem>
     )}
   </Draggable>
@@ -59,7 +62,7 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px 50px repeat(3, 70px);
+  grid-template-columns: 1fr 50px 50px repeat(4, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;
