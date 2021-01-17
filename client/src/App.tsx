@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, NavLink, Route, Switch } from "react-router-dom";
+import { MemoryRouter, NavLink, Route, Switch } from "react-router-dom";
 import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -55,7 +55,7 @@ export enum Status {
 
 export const App = () => {
   return (
-    <BrowserRouter>
+    <MemoryRouter>
       <Grommet plain themeMode="dark">
         <HelmetProvider>
           <GlobalStyle />
@@ -104,7 +104,7 @@ export const App = () => {
           </Grid>
         </HelmetProvider>
       </Grommet>
-    </BrowserRouter>
+    </MemoryRouter>
   );
 };
 
