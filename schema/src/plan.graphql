@@ -5,6 +5,8 @@ type Plan_Task {
   estimate: Int
   actual: Int
   status_changed_at: Int
+  previous_id: Int
+  next_id: Int
 }
 
 type Plan_Query {
@@ -13,10 +15,17 @@ type Plan_Query {
 }
 
 type Plan_Mutation {
-  addTask(name: String!): Plan_Task!
-  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Plan_Task!
-  completeTask(id: Int!): Plan_Task!
-  archiveTask(id: Int!): Plan_Task!
-  deleteTask(id: Int!): Plan_Task!
+  addTask: Boolean
+  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Boolean
+  completeTask(id: Int!): Boolean
+  archiveTask(id: Int!): Boolean
+  deleteTask(id: Int!): Boolean
   importTemplate(id: Int!): Boolean
+  updatePlanTasksOrder(updatedPlanTasks: [Plan_Updated_Plan_Task!]!): Boolean
+}
+
+input Plan_Updated_Plan_Task {
+  id: Int!
+  previous_id: Int
+  next_id: Int
 }

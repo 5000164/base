@@ -19,7 +19,7 @@ export const RecordedDate = ({
 );
 
 const StyledRecordedDate = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 80px auto 4px;
 `;
 

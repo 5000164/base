@@ -1,66 +1,75 @@
-import React, { useEffect, useState } from "react";
-import DefaultClient, { gql } from "apollo-boost";
+import React from "react";
 import styled from "styled-components";
-import { Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { RecordedListItem } from "../RecordedListItem";
 import { RecordedDate } from "../RecordedDate";
 import { CalculatedTimes } from "../CalculatedTimes";
 
 export const RecordedList = ({
-  client,
-  reload,
+  recordedTasks,
+  setRecordedTasks,
+  recordedError,
+  setRecordedError,
+  date,
+  setDate,
+  fetchRecordedTasks,
+  setName,
+  setEstimate,
+  setActual,
+  updateTask,
+  completeTask,
+  archiveTask,
+  deleteTask,
 }: {
-  client: DefaultClient<any>;
-  reload: number;
+  recordedTasks: Task[];
+  setRecordedTasks: Function;
+  recordedError: boolean;
+  setRecordedError: Function;
+  date: string;
+  setDate: Function;
+  fetchRecordedTasks: Function;
+  setName: Function;
+  setEstimate: Function;
+  setActual: Function;
+  updateTask: Function;
+  completeTask: Function;
+  archiveTask: Function;
+  deleteTask: Function;
 }) => {
-  const [tasks, setTasks] = useState([] as Task[]);
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [error, setError] = useState(false);
-
-  const fetchTasks = () => {
-    setError(false);
-    client
-      .query<Query>({
-        fetchPolicy: "network-only",
-        query: gql`
-          query($date: String!) {
-            plan {
-              recordedTasks(date: $date) {
-                id
-                name
-                status
-                estimate
-                actual
-              }
-            }
-          }
-        `,
-        variables: {
-          date,
-        },
-      })
-      .then((result) => setTasks(result.data.plan.recordedTasks ?? []))
-      .catch(() => setError(true));
-  };
-  useEffect(fetchTasks, [client, reload, date]);
-
   return (
     <>
-      {error ? (
+      {recordedError ? (
         <>
           <div>Error</div>
-          <button onClick={fetchTasks}>Retry</button>
+          <button onClick={() => fetchRecordedTasks}>Retry</button>
         </>
       ) : (
         <>
           <RecordedDate date={date} setDate={setDate} />
           <StyledRecordedList>
-            {tasks.map((task, index) => (
-              <RecordedListItem key={index} task={task} />
+            {recordedTasks.map((task, index) => (
+              <RecordedListItem
+                key={index}
+                task={task}
+                setName={(v: string) =>
+                  setName(recordedTasks, setRecordedTasks, index, v)
+                }
+                setEstimate={(v: number) =>
+                  setEstimate(recordedTasks, setRecordedTasks, index, v)
+                }
+                setActual={(v: number) =>
+                  setActual(recordedTasks, setRecordedTasks, index, v)
+                }
+                updateTask={(t: Task) => updateTask(t, setRecordedError)}
+                completeTask={(id: number) =>
+                  completeTask(id, setRecordedError)
+                }
+                archiveTask={(id: number) => archiveTask(id, setRecordedError)}
+                deleteTask={(id: number) => deleteTask(id, setRecordedError)}
+              />
             ))}
           </StyledRecordedList>
-          <CalculatedTimes tasks={tasks} />
+          <CalculatedTimes tasks={recordedTasks} />
         </>
       )}
     </>
@@ -68,7 +77,7 @@ export const RecordedList = ({
 };
 
 const StyledRecordedList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
   padding: 0;
 `;

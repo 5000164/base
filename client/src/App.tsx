@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter, NavLink, Route, Switch } from "react-router-dom";
 import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
-import { PlanList } from "./components/PlanList";
-import { RecordedList } from "./components/RecordedList";
 import { TemplateList } from "./components/TemplateList";
+import { PlanPage } from "./components/pages/PlanPage";
 
 const client = new ApolloClient({
-  uri: "http://localhost:5164",
+  uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
 });
 
 export interface Task {
@@ -18,6 +17,8 @@ export interface Task {
   status?: Status;
   estimate?: number;
   actual?: number;
+  previous_id?: number;
+  next_id?: number;
 }
 
 export interface Template {
@@ -29,6 +30,8 @@ export interface TemplateTask {
   id: number;
   name: string;
   estimate?: number;
+  previous_id?: number;
+  next_id?: number;
 }
 
 export enum Status {
@@ -38,9 +41,6 @@ export enum Status {
 }
 
 export const App = () => {
-  const [reload, setReload] = useState(0);
-  const countUpReload = () => setReload((reload) => reload + 1);
-
   return (
     <BrowserRouter>
       <Grommet plain themeMode="dark">
@@ -73,10 +73,7 @@ export const App = () => {
             <Main gridArea="main">
               <Switch>
                 <Route path="/plan">
-                  <>
-                    <PlanList client={client} countUpReload={countUpReload} />
-                    <RecordedList client={client} reload={reload} />
-                  </>
+                  <PlanPage client={client} />
                 </Route>
                 <Route path="/templates">
                   <>

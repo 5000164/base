@@ -1,8 +1,26 @@
 import React from "react";
 import styled from "styled-components";
-import { Task, Status } from "../../App";
+import { Status, Task } from "../../App";
 
-export const RecordedListItem = ({ task }: { task: Task }) => (
+export const RecordedListItem = ({
+  task,
+  setName,
+  setEstimate,
+  setActual,
+  updateTask,
+  completeTask,
+  archiveTask,
+  deleteTask,
+}: {
+  task: Task;
+  setName: Function;
+  setEstimate: Function;
+  setActual: Function;
+  updateTask: Function;
+  completeTask: Function;
+  archiveTask: Function;
+  deleteTask: Function;
+}) => (
   <StyledRecordedListItem>
     {task.status === Status.Completed ? (
       <span role="img" aria-label="White Heavy Check Mark">
@@ -13,21 +31,37 @@ export const RecordedListItem = ({ task }: { task: Task }) => (
         ⬜️
       </span>
     )}
-    <span>{task.name}</span>
-    <Time>{task.estimate}</Time>
-    <Time>{task.actual}</Time>
+    <StyledInput
+      type="text"
+      value={task.name ?? ""}
+      onChange={(e) => setName(e.target.value)}
+      onBlur={() => updateTask(task)}
+    />
+    <StyledInput
+      type="text"
+      value={task.estimate ?? ""}
+      onChange={(e) => setEstimate(Number(e.target.value))}
+      onBlur={() => updateTask(task)}
+    />
+    <StyledInput
+      type="text"
+      value={task.actual ?? ""}
+      onChange={(e) => setActual(Number(e.target.value))}
+      onBlur={() => updateTask(task)}
+    />
+    <button onClick={() => completeTask(task.id)}>Complete</button>
+    <button onClick={() => archiveTask(task.id)}>Archive</button>
+    <button onClick={() => deleteTask(task.id)}>Delete</button>
   </StyledRecordedListItem>
 );
 
 const StyledRecordedListItem = styled.li`
   display: grid;
-  grid-template-columns: 20px 1fr 100px 100px;
+  grid-template-columns: 20px 1fr 50px 50px repeat(3, 70px);
   grid-gap: 5px;
-  height: 28px;
-  margin: 12px 0;
-  border-bottom: 1px solid hsl(235, 10%, 80%);
+  margin: 5px 0;
 `;
 
-const Time = styled.span`
-  justify-self: end;
+const StyledInput = styled.input`
+  font-size: 1.5rem;
 `;

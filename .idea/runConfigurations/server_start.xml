@@ -8,6 +8,7 @@
     <node-interpreter value="project" />
     <envs>
       <env name="BASE_DB_PATH" value="$PROJECT_DIR$/app.db" />
+      <env name="BASE_PORT" value="8000" />
     </envs>
     <method v="2" />
   </configuration>

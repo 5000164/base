@@ -1,220 +1,197 @@
-import React, { useEffect, useState } from "react";
-import DefaultClient, { gql } from "apollo-boost";
+import React from "react";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import DefaultClient from "apollo-boost";
 import styled from "styled-components";
 import { PlanListItem } from "../PlanListItem";
-import { Mutation, Query } from "../../generated/graphql";
 import { Task } from "../../App";
 import { CalculatedTimes } from "../CalculatedTimes";
 import { TemplateListLayer } from "../TemplateListLayer";
 
 export const PlanList = ({
   client,
-  countUpReload,
+  planTasks,
+  setPlanTasks,
+  planError,
+  setPlanError,
+  reload,
+  show,
+  setShow,
+  fetchPlanTasks,
+  setName,
+  setEstimate,
+  setActual,
+  addTask,
+  updateTask,
+  completeTask,
+  archiveTask,
+  deleteTask,
+  updatePlanTasksOrder,
 }: {
   client: DefaultClient<any>;
-  countUpReload: Function;
+  planTasks: Task[];
+  setPlanTasks: Function;
+  planError: boolean;
+  setPlanError: Function;
+  reload: Function;
+  show: boolean;
+  setShow: Function;
+  fetchPlanTasks: Function;
+  setName: Function;
+  setEstimate: Function;
+  setActual: Function;
+  addTask: Function;
+  updateTask: Function;
+  completeTask: Function;
+  archiveTask: Function;
+  deleteTask: Function;
+  updatePlanTasksOrder: Function;
 }) => {
-  const [tasks, setTasks] = useState([] as Task[]);
-  const [tasksReload, setTasksReload] = useState(0);
-  const reloadTasks = () => setTasksReload((tasksReload) => tasksReload + 1);
-  const [error, setError] = useState(false);
-  const [show, setShow] = React.useState(false);
+  const reorderPlanTasks = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
 
-  const fetchTasks = () => {
-    setError(false);
-    client
-      .query<Query>({
-        fetchPolicy: "network-only",
-        query: gql`
-          {
-            plan {
-              tasks {
-                id
-                name
-                estimate
-                actual
-              }
-            }
-          }
-        `,
-      })
-      .then((result) => setTasks(result.data?.plan?.tasks ?? []))
-      .catch(() => setError(true));
-  };
-  useEffect(fetchTasks, [client, tasksReload]);
+    const {
+      destination: { index: di },
+      source: { index: si },
+    } = result;
 
-  const setName = (index: number, name: string) => {
-    const newTasks = [...tasks];
-    newTasks[index].name = name;
-    setTasks(newTasks);
-  };
+    if (di === si) {
+      return;
+    }
 
-  const setEstimate = (index: number, estimate: number) => {
-    const newTasks = [...tasks];
-    newTasks[index].estimate = estimate;
-    setTasks(newTasks);
-  };
+    const newPlanTasks = [...planTasks];
+    const updatedPlanTasks = [] as {
+      id: number;
+      previous_id?: number | null;
+      next_id?: number | null;
+    }[];
+    const [reorderedPlanTask] = newPlanTasks.splice(si, 1);
 
-  const setActual = (index: number, actual: number) => {
-    const newTasks = [...tasks];
-    newTasks[index].actual = actual;
-    setTasks(newTasks);
-  };
+    if (reorderedPlanTask.previous_id && reorderedPlanTask.next_id) {
+      newPlanTasks[si - 1].next_id = reorderedPlanTask.next_id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si - 1].id,
+        next_id: newPlanTasks[si - 1].next_id,
+      });
 
-  const addTask = () => {
-    setError(false);
-    client
-      .mutate<Mutation>({
-        mutation: gql`
-          mutation {
-            plan {
-              addTask(name: "") {
-                id
-                name
-                estimate
-                actual
-              }
-            }
-          }
-        `,
-      })
-      .then((result) => {
-        if (result.data) {
-          setTasks([
-            ...tasks,
-            {
-              id: result.data.plan.addTask.id,
-              name: result.data.plan.addTask.name,
-              estimate: result.data?.plan?.addTask.estimate,
-              actual: result.data?.plan?.addTask.actual,
-            },
-          ]);
+      newPlanTasks[si].previous_id = reorderedPlanTask.previous_id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si].id,
+        previous_id: newPlanTasks[si].previous_id,
+      });
+    } else if (!reorderedPlanTask.previous_id && reorderedPlanTask.next_id) {
+      newPlanTasks[si].previous_id = undefined;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si].id,
+        previous_id: null,
+      });
+    } else if (reorderedPlanTask.previous_id && !reorderedPlanTask.next_id) {
+      newPlanTasks[si - 1].next_id = undefined;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si - 1].id,
+        next_id: null,
+      });
+    }
+
+    newPlanTasks.splice(di, 0, reorderedPlanTask);
+    setPlanTasks(newPlanTasks);
+
+    if (di === 0) {
+      reorderedPlanTask.previous_id = undefined;
+    } else {
+      reorderedPlanTask.previous_id = newPlanTasks[di - 1].id;
+      newPlanTasks[di - 1].next_id = reorderedPlanTask.id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[di - 1].id,
+        next_id: newPlanTasks[di - 1].next_id,
+      });
+    }
+
+    if (di === newPlanTasks.length - 1) {
+      reorderedPlanTask.next_id = undefined;
+    } else {
+      reorderedPlanTask.next_id = newPlanTasks[di + 1].id;
+      newPlanTasks[di + 1].previous_id = reorderedPlanTask.id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[di + 1].id,
+        previous_id: newPlanTasks[di + 1].previous_id,
+      });
+    }
+
+    updatedPlanTasks.push({
+      id: reorderedPlanTask.id,
+      next_id: reorderedPlanTask.next_id ?? null,
+      previous_id: reorderedPlanTask.previous_id ?? null,
+    });
+
+    updatePlanTasksOrder(
+      updatedPlanTasks.reduce((tasks, task) => {
+        const index = tasks.findIndex((t) => t.id === task.id);
+        if (index === -1) {
+          tasks.push(task);
         } else {
-          setError(true);
+          tasks[index] = { ...tasks[index], ...task };
         }
-      })
-      .catch(() => setError(true));
-  };
-
-  const updateTask = (task: Task) => {
-    setError(false);
-    client
-      .mutate<Mutation>({
-        mutation: gql`
-          mutation($id: Int!, $name: String, $estimate: Int, $actual: Int) {
-            plan {
-              updateTask(
-                id: $id
-                name: $name
-                estimate: $estimate
-                actual: $actual
-              ) {
-                id
-              }
-            }
-          }
-        `,
-        variables: task,
-      })
-      .catch(() => setError(true));
-  };
-
-  const completeTask = (id: number) => {
-    setError(false);
-    client
-      .mutate<Mutation>({
-        mutation: gql`
-          mutation($id: Int!) {
-            plan {
-              completeTask(id: $id) {
-                id
-              }
-            }
-          }
-        `,
-        variables: { id },
-      })
-      .then(() => {
-        setTasks(tasks.filter((t) => t.id !== id));
-        countUpReload();
-      })
-      .catch(() => setError(true));
-  };
-
-  const archiveTask = (id: number) => {
-    setError(false);
-    client
-      .mutate<Mutation>({
-        mutation: gql`
-          mutation($id: Int!) {
-            plan {
-              archiveTask(id: $id) {
-                id
-              }
-            }
-          }
-        `,
-        variables: { id },
-      })
-      .then(() => {
-        setTasks(tasks.filter((t) => t.id !== id));
-        countUpReload();
-      })
-      .catch(() => setError(true));
-  };
-
-  const deleteTask = (id: number) => {
-    setError(false);
-    client
-      .mutate<Mutation>({
-        mutation: gql`
-          mutation($id: Int!) {
-            plan {
-              deleteTask(id: $id) {
-                id
-              }
-            }
-          }
-        `,
-        variables: { id },
-      })
-      .then(() => setTasks(tasks.filter((t) => t.id !== id)))
-      .catch(() => setError(true));
+        return tasks;
+      }, [] as { id: number; previous_id?: number | null; next_id?: number | null }[])
+    );
   };
 
   return (
     <>
-      {error ? (
+      {planError ? (
         <>
           <div>Error</div>
-          <button onClick={fetchTasks}>Retry</button>
+          <button onClick={() => fetchPlanTasks()}>Retry</button>
         </>
       ) : (
         <>
-          <StyledPlanList>
-            {tasks.map((task, index) => (
-              <PlanListItem
-                key={index}
-                task={task}
-                setName={(v: string) => setName(index, v)}
-                setEstimate={(v: number) => setEstimate(index, v)}
-                setActual={(v: number) => setActual(index, v)}
-                updateTask={updateTask}
-                completeTask={completeTask}
-                archiveTask={archiveTask}
-                deleteTask={deleteTask}
-              />
-            ))}
-          </StyledPlanList>
+          <DragDropContext onDragEnd={reorderPlanTasks}>
+            <Droppable droppableId="plan-list">
+              {(provided) => (
+                <StyledPlanList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {planTasks.map((task, index) => (
+                    <PlanListItem
+                      key={index}
+                      task={task}
+                      index={index}
+                      setName={(v: string) =>
+                        setName(planTasks, setPlanTasks, index, v)
+                      }
+                      setEstimate={(v: number) =>
+                        setEstimate(planTasks, setPlanTasks, index, v)
+                      }
+                      setActual={(v: number) =>
+                        setActual(planTasks, setPlanTasks, index, v)
+                      }
+                      updateTask={(t: Task) => updateTask(t, setPlanError)}
+                      completeTask={(id: number) =>
+                        completeTask(id, setPlanError)
+                      }
+                      archiveTask={(id: number) =>
+                        archiveTask(id, setPlanError)
+                      }
+                      deleteTask={(id: number) => deleteTask(id, setPlanError)}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </StyledPlanList>
+              )}
+            </Droppable>
+          </DragDropContext>
           <ButtonWrapper>
-            <button onClick={addTask}>Add</button>
+            <button onClick={() => addTask()}>Add</button>
             <button onClick={() => setShow(true)}>Import</button>
           </ButtonWrapper>
-          <CalculatedTimes tasks={tasks} />
+          <CalculatedTimes tasks={planTasks} />
           {show && (
             <TemplateListLayer
               client={client}
-              reloadTasks={reloadTasks}
+              reloadTasks={reload}
               setShow={setShow}
             />
           )}
@@ -225,12 +202,12 @@ export const PlanList = ({
 };
 
 const StyledPlanList = styled.ul`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 80px auto 4px;
   padding: 0;
 `;
 
 const ButtonWrapper = styled.div`
-  width: 1024px;
+  width: min(1024px, 100%);
   margin: 4px auto;
 `;

@@ -19,11 +19,6 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
               );
           `);
         },
-        async down() {
-          sequelize.query(`
-              DROP TABLE tasks;
-          `);
-        },
       },
       {
         name: "01-add-status-column-to-tasks-table",
@@ -43,27 +38,6 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
           sequelize.query(`
               INSERT INTO tasks (id, name, status)
               SELECT id, name, 0 AS status
-              FROM tasksTemp;
-          `);
-          sequelize.query(`
-              DROP TABLE tasksTemp;
-          `);
-        },
-        async down() {
-          sequelize.query(`
-              ALTER TABLE tasks
-                  RENAME TO tasksTemp;
-          `);
-          sequelize.query(`
-              CREATE TABLE tasks
-              (
-                  id   INTEGER PRIMARY KEY AUTOINCREMENT,
-                  name TEXT NOT NULL
-              );
-          `);
-          sequelize.query(`
-              INSERT INTO tasks (id, name)
-              SELECT id, name
               FROM tasksTemp;
           `);
           sequelize.query(`
@@ -96,28 +70,6 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
               DROP TABLE tasksTemp;
           `);
         },
-        async down() {
-          sequelize.query(`
-              ALTER TABLE tasks
-                  RENAME TO tasksTemp;
-          `);
-          sequelize.query(`
-              CREATE TABLE tasks
-              (
-                  id     INTEGER PRIMARY KEY AUTOINCREMENT,
-                  name   TEXT    NOT NULL,
-                  status INTEGER NOT NULL
-              );
-          `);
-          sequelize.query(`
-              INSERT INTO tasks (id, name, status)
-              SELECT id, name, status
-              FROM tasksTemp;
-          `);
-          sequelize.query(`
-              DROP TABLE tasksTemp;
-          `);
-        },
       },
       {
         name: "03-add-actual-column-to-tasks-table",
@@ -139,29 +91,6 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
           sequelize.query(`
               INSERT INTO tasks (id, name, status, estimate, actual)
               SELECT id, name, status, estimate, NULL as actual
-              FROM tasksTemp;
-          `);
-          sequelize.query(`
-              DROP TABLE tasksTemp;
-          `);
-        },
-        async down() {
-          sequelize.query(`
-              ALTER TABLE tasks
-                  RENAME TO tasksTemp;
-          `);
-          sequelize.query(`
-              CREATE TABLE tasks
-              (
-                  id       INTEGER PRIMARY KEY AUTOINCREMENT,
-                  name     TEXT    NOT NULL,
-                  status   INTEGER NOT NULL,
-                  estimate INTEGER
-              );
-          `);
-          sequelize.query(`
-              INSERT INTO tasks (id, name, status, estimate)
-              SELECT id, name, status, estimate
               FROM tasksTemp;
           `);
           sequelize.query(`
@@ -196,30 +125,6 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
               DROP TABLE tasksTemp;
           `);
         },
-        async down() {
-          sequelize.query(`
-              ALTER TABLE tasks
-                  RENAME TO tasksTemp;
-          `);
-          sequelize.query(`
-              CREATE TABLE tasks
-              (
-                  id       INTEGER PRIMARY KEY AUTOINCREMENT,
-                  name     TEXT    NOT NULL,
-                  status   INTEGER NOT NULL,
-                  estimate INTEGER,
-                  actual   INTEGER
-              );
-          `);
-          sequelize.query(`
-              INSERT INTO tasks (id, name, status, estimate, actual)
-              SELECT id, name, status, estimate, actual
-              FROM tasksTemp;
-          `);
-          sequelize.query(`
-              DROP TABLE tasksTemp;
-          `);
-        },
       },
       {
         name: "05-create-templates-table-and-template-tasks-table",
@@ -244,12 +149,79 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
               );
           `);
         },
-        async down() {
+      },
+      {
+        name: "06-add-columns-to-sort-to-tasks-table",
+        async up() {
           sequelize.query(`
-              DROP TABLE template_tasks;
+              ALTER TABLE tasks
+                  RENAME TO tasksTemp;
           `);
           sequelize.query(`
-              DROP TABLE templates;
+              CREATE TABLE tasks
+              (
+                  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name              TEXT    NOT NULL,
+                  status            INTEGER NOT NULL,
+                  estimate          INTEGER,
+                  actual            INTEGER,
+                  status_changed_at INTEGER,
+                  previous_id       INTEGER,
+                  next_id           INTEGER,
+                  FOREIGN KEY (previous_id) REFERENCES tasks (id),
+                  FOREIGN KEY (next_id) REFERENCES tasks (id)
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO tasks (id, name, status, estimate, actual, status_changed_at, previous_id, next_id)
+              SELECT id,
+                     name,
+                     status,
+                     estimate,
+                     actual,
+                     status_changed_at,
+                     NULL as previous_id,
+                     NULL as next_id
+              FROM tasksTemp;
+          `);
+          sequelize.query(`
+              DROP TABLE tasksTemp;
+          `);
+        },
+      },
+      {
+        name: "07-add-columns-to-sort-to-template-tasks-table",
+        async up() {
+          sequelize.query(`
+              ALTER TABLE template_tasks
+                  RENAME TO template_tasks_temp;
+          `);
+          sequelize.query(`
+              CREATE TABLE template_tasks
+              (
+                  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                  templateId  INTEGER,
+                  name        TEXT NOT NULL,
+                  estimate    INTEGER,
+                  previous_id INTEGER,
+                  next_id     INTEGER,
+                  FOREIGN KEY (templateId) REFERENCES templates (id),
+                  FOREIGN KEY (previous_id) REFERENCES template_tasks (id),
+                  FOREIGN KEY (next_id) REFERENCES template_tasks (id)
+              );
+          `);
+          sequelize.query(`
+              INSERT INTO template_tasks (id, templateId, name, estimate, previous_id, next_id)
+              SELECT id,
+                     templateId,
+                     name,
+                     estimate,
+                     NULL as previous_id,
+                     NULL as next_id
+              FROM template_tasks_temp;
+          `);
+          sequelize.query(`
+              DROP TABLE template_tasks_temp;
           `);
         },
       },
