@@ -12,6 +12,8 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
   const [error, setError] = useState(false);
   const [templateIndex, setTemplateIndex] = React.useState(0);
   const [show, setShow] = React.useState(false);
+  const [reloadCount, setReloadCount] = useState(0);
+  const reload = () => setReloadCount((reloadCount) => reloadCount + 1);
 
   const fetchTemplates = () => {
     setError(false);
@@ -43,6 +45,7 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
   const editTasks = (index: number) => {
     setTemplateIndex(index);
     setShow(true);
+    reload();
   };
 
   const addTemplate = () => {
@@ -162,6 +165,8 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
               client={client}
               template={templates[templateIndex]}
               setShow={setShow}
+              reloadCount={reloadCount}
+              reload={reload}
             />
           )}
         </>

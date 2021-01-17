@@ -10,6 +10,12 @@ import {
   updatePlanTasksOrder,
   updateTask,
 } from "./plan";
+import {
+  addTemplateTask,
+  deleteTemplateTask,
+  updateTemplateTask,
+  updateTemplateTasksOrder,
+} from "./templates";
 
 const typeDefs = importSchema(
   path.join(__dirname, "./generated/schema.graphql")
@@ -146,27 +152,12 @@ const resolvers: Resolvers = {
         where: { id: args.id },
       });
     },
-    addTask: (parent, args, ctx) =>
-      ctx.prisma.template_tasks.create({
-        data: {
-          templates: { connect: { id: args.templateId } },
-          name: args.name,
-        },
-      }),
-    updateTask: (parent, args, ctx) => {
-      const data = {
-        ...(args.name ? { name: args.name } : {}),
-        ...(args.estimate ? { estimate: args.estimate } : {}),
-      };
-      return ctx.prisma.template_tasks.update({
-        where: { id: args.id },
-        data,
-      });
-    },
-    deleteTask: (parent, args, ctx) =>
-      ctx.prisma.template_tasks.delete({
-        where: { id: args.id },
-      }),
+    addTask: (parent, args, ctx) => addTemplateTask(ctx, args.templateId),
+    updateTask: (parent, args, ctx) =>
+      updateTemplateTask(ctx, args.id, args.name, args.estimate),
+    deleteTask: (parent, args, ctx) => deleteTemplateTask(ctx, args.id),
+    updateTemplateTasksOrder: (parent, args, ctx) =>
+      updateTemplateTasksOrder(ctx, args.updatedTemplateTasks),
   },
 };
 

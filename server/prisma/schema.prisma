@@ -28,11 +28,17 @@ model tasks {
 }
 
 model template_tasks {
-  id         Int        @id @default(autoincrement())
-  templateId Int?
-  name       String
-  estimate   Int?
-  templates  templates? @relation(fields: [templateId], references: [id])
+  id                                                              Int              @id @default(autoincrement())
+  templateId                                                      Int?
+  name                                                            String
+  estimate                                                        Int?
+  previous_id                                                     Int?
+  next_id                                                         Int?
+  template_tasks_template_tasksTotemplate_tasks_next_id           template_tasks?  @relation("template_tasksTotemplate_tasks_next_id", fields: [next_id], references: [id])
+  template_tasks_template_tasksTotemplate_tasks_previous_id       template_tasks?  @relation("template_tasksTotemplate_tasks_previous_id", fields: [previous_id], references: [id])
+  templates                                                       templates?       @relation(fields: [templateId], references: [id])
+  other_template_tasks_template_tasksTotemplate_tasks_next_id     template_tasks[] @relation("template_tasksTotemplate_tasks_next_id")
+  other_template_tasks_template_tasksTotemplate_tasks_previous_id template_tasks[] @relation("template_tasksTotemplate_tasks_previous_id")
 }
 
 model templates {

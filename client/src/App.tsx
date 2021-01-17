@@ -30,6 +30,8 @@ export interface TemplateTask {
   id: number;
   name: string;
   estimate?: number;
+  previous_id?: number;
+  next_id?: number;
 }
 
 export enum Status {

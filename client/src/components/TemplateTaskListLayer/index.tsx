@@ -9,10 +9,14 @@ export const TemplateTaskListLayer = ({
   client,
   template,
   setShow,
+  reloadCount,
+  reload,
 }: {
   client: DefaultClient<any>;
   template: Template;
   setShow: Function;
+  reloadCount: number;
+  reload: Function;
 }) => {
   return (
     <StyledLayer
@@ -21,7 +25,12 @@ export const TemplateTaskListLayer = ({
       onEsc={() => setShow(false)}
       onClickOutside={() => setShow(false)}
     >
-      <TemplateTaskList client={client} template={template} />
+      <TemplateTaskList
+        client={client}
+        template={template}
+        reloadCount={reloadCount}
+        reload={reload}
+      />
       <Button label="close" onClick={() => setShow(false)} />
     </StyledLayer>
   );
