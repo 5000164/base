@@ -2,11 +2,12 @@ import path from "path";
 import { makeExecutableSchema } from "graphql-tools";
 import { importSchema } from "graphql-import";
 import { Resolvers } from "./generated/graphql";
-import { Status, TemplateTask } from "./server";
+import { Status } from "./server";
 import {
   addTask,
   changeTaskStatus,
   deleteTask,
+  importTemplate,
   updatePlanTasksOrder,
   updateTask,
 } from "./plan";
@@ -90,24 +91,7 @@ const resolvers: Resolvers = {
     archiveTask: (parent, args, ctx) =>
       changeTaskStatus(ctx, args.id, Status.Archived),
     deleteTask: (parent, args, ctx) => deleteTask(ctx, args.id),
-    importTemplate: async (parent, args, ctx) => {
-      await Promise.all(
-        (
-          await ctx.prisma.template_tasks.findMany({
-            where: { templateId: args.id },
-          })
-        ).map((task: TemplateTask) =>
-          ctx.prisma.tasks.create({
-            data: {
-              name: task.name,
-              status: Status.Normal,
-              estimate: task.estimate,
-            },
-          })
-        )
-      );
-      return true;
-    },
+    importTemplate: async (parent, args, ctx) => importTemplate(ctx, args.id),
     updatePlanTasksOrder: (parent, args, ctx) =>
       updatePlanTasksOrder(ctx, args.updatedPlanTasks),
   },
