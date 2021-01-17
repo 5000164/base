@@ -35,6 +35,7 @@ export const TemplateTaskListItem = ({
           type="text"
           value={task.estimate ?? ""}
           onChange={(e) => setEstimate(Number(e.target.value))}
+          onBlur={() => updateTask(task)}
         />
         <button onClick={() => deleteTask(task)}>Delete</button>
       </StyledPlanListItem>
