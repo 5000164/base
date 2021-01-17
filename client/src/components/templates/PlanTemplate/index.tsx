@@ -29,6 +29,7 @@ export const PlanTemplate = ({
   completeTask,
   archiveTask,
   deleteTask,
+  updatePlanTasksOrder,
 }: {
   client: DefaultClient<any>;
   planTasks: Task[];
@@ -54,6 +55,7 @@ export const PlanTemplate = ({
   completeTask: Function;
   archiveTask: Function;
   deleteTask: Function;
+  updatePlanTasksOrder: Function;
 }) => {
   return (
     <>
@@ -75,6 +77,7 @@ export const PlanTemplate = ({
         completeTask={completeTask}
         archiveTask={archiveTask}
         deleteTask={deleteTask}
+        updatePlanTasksOrder={updatePlanTasksOrder}
       />
       <RecordedList
         recordedTasks={recordedTasks}

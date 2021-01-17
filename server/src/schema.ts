@@ -3,6 +3,13 @@ import { makeExecutableSchema } from "graphql-tools";
 import { importSchema } from "graphql-import";
 import { Resolvers } from "./generated/graphql";
 import { Status, TemplateTask } from "./server";
+import {
+  addTask,
+  changeTaskStatus,
+  deleteTask,
+  updatePlanTasksOrder,
+  updateTask,
+} from "./plan";
 
 const typeDefs = importSchema(
   path.join(__dirname, "./generated/schema.graphql")
@@ -21,6 +28,7 @@ const resolvers: Resolvers = {
       archiveTask: undefined,
       deleteTask: undefined,
       importTemplate: undefined,
+      updatePlanTasksOrder: undefined,
     }),
     templates: () => ({
       addTemplate: undefined,
@@ -68,44 +76,14 @@ const resolvers: Resolvers = {
     },
   },
   Plan_Mutation: {
-    addTask: (parent, args, ctx) =>
-      ctx.prisma.tasks.create({
-        data: {
-          name: args.name,
-          status: Status.Normal,
-        },
-      }),
-    updateTask: (parent, args, ctx) => {
-      const data = {
-        ...(args.name ? { name: args.name } : {}),
-        ...(args.estimate ? { estimate: args.estimate } : {}),
-        ...(args.actual ? { actual: args.actual } : {}),
-      };
-      return ctx.prisma.tasks.update({
-        where: { id: args.id },
-        data,
-      });
-    },
+    addTask: (parent, args, ctx) => addTask(ctx),
+    updateTask: (parent, args, ctx) =>
+      updateTask(ctx, args.id, args.name, args.estimate, args.actual),
     completeTask: (parent, args, ctx) =>
-      ctx.prisma.tasks.update({
-        where: { id: args.id },
-        data: {
-          status: Status.Completed,
-          status_changed_at: Math.floor(Date.now() / 1000),
-        },
-      }),
+      changeTaskStatus(ctx, args.id, Status.Completed),
     archiveTask: (parent, args, ctx) =>
-      ctx.prisma.tasks.update({
-        where: { id: args.id },
-        data: {
-          status: Status.Archived,
-          status_changed_at: Math.floor(Date.now() / 1000),
-        },
-      }),
-    deleteTask: (parent, args, ctx) =>
-      ctx.prisma.tasks.delete({
-        where: { id: args.id },
-      }),
+      changeTaskStatus(ctx, args.id, Status.Archived),
+    deleteTask: (parent, args, ctx) => deleteTask(ctx, args.id),
     importTemplate: async (parent, args, ctx) => {
       await Promise.all(
         (
@@ -124,6 +102,8 @@ const resolvers: Resolvers = {
       );
       return true;
     },
+    updatePlanTasksOrder: (parent, args, ctx) =>
+      updatePlanTasksOrder(ctx, args.updatedPlanTasks),
   },
   Templates_Query: {
     templates: (parent, args, ctx) =>

@@ -25,6 +25,7 @@ export const PlanList = ({
   completeTask,
   archiveTask,
   deleteTask,
+  updatePlanTasksOrder,
 }: {
   client: DefaultClient<any>;
   planTasks: Task[];
@@ -43,20 +44,98 @@ export const PlanList = ({
   completeTask: Function;
   archiveTask: Function;
   deleteTask: Function;
+  updatePlanTasksOrder: Function;
 }) => {
-  const orderPlanTasks = (result: DropResult) => {
+  const reorderPlanTasks = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
 
-    if (result.destination.index === result.source.index) {
+    const {
+      destination: { index: di },
+      source: { index: si },
+    } = result;
+
+    if (di === si) {
       return;
     }
 
     const newPlanTasks = [...planTasks];
-    const [reorderedPlanTask] = newPlanTasks.splice(result.source.index, 1);
-    newPlanTasks.splice(result.destination.index, 0, reorderedPlanTask);
+    const updatedPlanTasks = [] as {
+      id: number;
+      previous_id?: number | null;
+      next_id?: number | null;
+    }[];
+    const [reorderedPlanTask] = newPlanTasks.splice(si, 1);
+
+    if (reorderedPlanTask.previous_id && reorderedPlanTask.next_id) {
+      newPlanTasks[si - 1].next_id = reorderedPlanTask.next_id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si - 1].id,
+        next_id: newPlanTasks[si - 1].next_id,
+      });
+
+      newPlanTasks[si].previous_id = reorderedPlanTask.previous_id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si].id,
+        previous_id: newPlanTasks[si].previous_id,
+      });
+    } else if (!reorderedPlanTask.previous_id && reorderedPlanTask.next_id) {
+      newPlanTasks[si].previous_id = undefined;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si].id,
+        previous_id: null,
+      });
+    } else if (reorderedPlanTask.previous_id && !reorderedPlanTask.next_id) {
+      newPlanTasks[si - 1].next_id = undefined;
+      updatedPlanTasks.push({
+        id: newPlanTasks[si - 1].id,
+        next_id: null,
+      });
+    }
+
+    newPlanTasks.splice(di, 0, reorderedPlanTask);
     setPlanTasks(newPlanTasks);
+
+    if (di === 0) {
+      reorderedPlanTask.previous_id = undefined;
+    } else {
+      reorderedPlanTask.previous_id = newPlanTasks[di - 1].id;
+      newPlanTasks[di - 1].next_id = reorderedPlanTask.id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[di - 1].id,
+        next_id: newPlanTasks[di - 1].next_id,
+      });
+    }
+
+    if (di === newPlanTasks.length - 1) {
+      reorderedPlanTask.next_id = undefined;
+    } else {
+      reorderedPlanTask.next_id = newPlanTasks[di + 1].id;
+      newPlanTasks[di + 1].previous_id = reorderedPlanTask.id;
+      updatedPlanTasks.push({
+        id: newPlanTasks[di + 1].id,
+        previous_id: newPlanTasks[di + 1].previous_id,
+      });
+    }
+
+    updatedPlanTasks.push({
+      id: reorderedPlanTask.id,
+      next_id: reorderedPlanTask.next_id ?? null,
+      previous_id: reorderedPlanTask.previous_id ?? null,
+    });
+
+    updatePlanTasksOrder(
+      updatedPlanTasks.reduce((tasks, task) => {
+        const index = tasks.findIndex((t) => t.id === task.id);
+        if (index === -1) {
+          tasks.push(task);
+        } else {
+          tasks[index] = { ...tasks[index], ...task };
+        }
+        return tasks;
+      }, [] as { id: number; previous_id?: number | null; next_id?: number | null }[])
+    );
   };
 
   return (
@@ -68,7 +147,7 @@ export const PlanList = ({
         </>
       ) : (
         <>
-          <DragDropContext onDragEnd={orderPlanTasks}>
+          <DragDropContext onDragEnd={reorderPlanTasks}>
             <Droppable droppableId="plan-list">
               {(provided) => (
                 <StyledPlanList

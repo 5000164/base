@@ -16,6 +16,48 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
 
   const [show, setShow] = React.useState(false);
 
+  const sort = (tasks: Task[]): Task[] => {
+    const [firstTask] = tasks.splice(
+      tasks.findIndex((t) => !t.previous_id),
+      1
+    );
+
+    if (firstTask) {
+      const sortedTasks = [];
+      sortedTasks.push(firstTask);
+
+      const sort = (
+        nextId: number,
+        remainTasks: Task[],
+        sortedTasks: Task[]
+      ): Task[] => {
+        if (remainTasks.length === 0) {
+          return sortedTasks;
+        }
+
+        const [nextTask] = remainTasks.splice(
+          remainTasks.findIndex((t) => t.id === nextId),
+          1
+        );
+        sortedTasks.push(nextTask);
+
+        if (nextTask.next_id) {
+          return sort(nextTask.next_id, remainTasks, sortedTasks);
+        } else {
+          return [...sortedTasks, ...remainTasks];
+        }
+      };
+
+      if (firstTask.next_id) {
+        return sort(firstTask.next_id, tasks, sortedTasks);
+      } else {
+        return [...sortedTasks, ...tasks];
+      }
+    } else {
+      return tasks;
+    }
+  };
+
   const fetchPlanTasks = () => {
     setPlanError(false);
     client
@@ -29,15 +71,41 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
                 name
                 estimate
                 actual
+                previous_id
+                next_id
               }
             }
           }
         `,
       })
-      .then((result) => setPlanTasks(result.data?.plan?.tasks ?? []))
+      .then((result) => setPlanTasks(sort(result.data?.plan?.tasks ?? [])))
       .catch(() => setPlanError(true));
   };
   useEffect(fetchPlanTasks, [client, reloadCount]);
+
+  const updatePlanTasksOrder = (
+    updatedPlanTasks: {
+      id: number;
+      previous_id?: number | null;
+      next_id?: number | null;
+    }[]
+  ) => {
+    setPlanError(false);
+    client
+      .mutate<Mutation>({
+        mutation: gql`
+          mutation($updatedPlanTasks: [Plan_Updated_Plan_Task!]!) {
+            plan {
+              updatePlanTasksOrder(updatedPlanTasks: $updatedPlanTasks)
+            }
+          }
+        `,
+        variables: {
+          updatedPlanTasks,
+        },
+      })
+      .catch(() => setPlanError(true));
+  };
 
   const fetchRecordedTasks = () => {
     setRecordedError(false);
@@ -106,31 +174,12 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         mutation: gql`
           mutation {
             plan {
-              addTask(name: "") {
-                id
-                name
-                estimate
-                actual
-              }
+              addTask
             }
           }
         `,
       })
-      .then(({ data }) => {
-        if (data) {
-          setPlanTasks([
-            ...planTasks,
-            {
-              id: data.plan.addTask.id,
-              name: data.plan.addTask.name,
-              estimate: data?.plan?.addTask.estimate,
-              actual: data?.plan?.addTask.actual,
-            },
-          ]);
-        } else {
-          setPlanError(true);
-        }
-      })
+      .then(() => reload())
       .catch(() => setPlanError(true));
   };
 
@@ -146,9 +195,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
                 name: $name
                 estimate: $estimate
                 actual: $actual
-              ) {
-                id
-              }
+              )
             }
           }
         `,
@@ -164,9 +211,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         mutation: gql`
           mutation($id: Int!) {
             plan {
-              completeTask(id: $id) {
-                id
-              }
+              completeTask(id: $id)
             }
           }
         `,
@@ -183,9 +228,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         mutation: gql`
           mutation($id: Int!) {
             plan {
-              archiveTask(id: $id) {
-                id
-              }
+              archiveTask(id: $id)
             }
           }
         `,
@@ -202,9 +245,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         mutation: gql`
           mutation($id: Int!) {
             plan {
-              deleteTask(id: $id) {
-                id
-              }
+              deleteTask(id: $id)
             }
           }
         `,
@@ -240,6 +281,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
       completeTask={completeTask}
       archiveTask={archiveTask}
       deleteTask={deleteTask}
+      updatePlanTasksOrder={updatePlanTasksOrder}
     />
   );
 };

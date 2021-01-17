@@ -17,6 +17,8 @@ export interface Task {
   status?: Status;
   estimate?: number;
   actual?: number;
+  previous_id?: number;
+  next_id?: number;
 }
 
 export interface Template {
