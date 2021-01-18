@@ -1,7 +1,7 @@
 import path from "path";
 import { makeExecutableSchema } from "graphql-tools";
 import { importSchema } from "graphql-import";
-import { Resolvers } from "./generated/graphql";
+import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/graphql";
 import { Status } from "./server";
 import {
   addTask,
@@ -151,16 +151,28 @@ const resolvers: Resolvers = {
   },
   Task_Tracks_Query: {
     task_tracks: (parent, args, ctx) =>
-      ctx.prisma.task_tracks.findMany({
-        include: {
-          task: {
-            select: {
-              id: true,
-              name: true,
+      args.fetch_type === Task_Tracks_Fetch_Type.All
+        ? ctx.prisma.task_tracks.findMany({
+            include: {
+              task: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
-          },
-        },
-      }),
+          })
+        : ctx.prisma.task_tracks.findMany({
+            where: { stop_at: null },
+            include: {
+              task: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          }),
   },
   Task_Tracks_Mutation: {
     start_task_track: (parent, args, ctx) =>

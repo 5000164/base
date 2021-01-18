@@ -276,6 +276,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         `,
         variables: { task_id },
       })
+      .then(() => reload())
       .catch(() => setPlanError(true));
   };
 
@@ -292,6 +293,7 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
       setRecordedError={setRecordedError}
       date={date}
       setDate={setDate}
+      reloadCount={reloadCount}
       reload={reload}
       show={show}
       setShow={setShow}
