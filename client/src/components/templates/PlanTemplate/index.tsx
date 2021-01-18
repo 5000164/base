@@ -3,6 +3,7 @@ import DefaultClient from "apollo-boost";
 import { Task } from "../../../App";
 import { PlanList } from "../../PlanList";
 import { RecordedList } from "../../RecordedList";
+import { TaskTrackList } from "../../TaskTrackList";
 
 export const PlanTemplate = ({
   client,
@@ -16,6 +17,7 @@ export const PlanTemplate = ({
   setRecordedError,
   date,
   setDate,
+  reloadCount,
   reload,
   show,
   setShow,
@@ -43,6 +45,7 @@ export const PlanTemplate = ({
   setRecordedError: Function;
   date: string;
   setDate: Function;
+  reloadCount: number;
   reload: Function;
   show: boolean;
   setShow: Function;
@@ -61,6 +64,12 @@ export const PlanTemplate = ({
 }) => {
   return (
     <>
+      <TaskTrackList
+        client={client}
+        onlyWorking={true}
+        reloadCount={reloadCount}
+        reload={reload}
+      />
       <PlanList
         client={client}
         planTasks={planTasks}

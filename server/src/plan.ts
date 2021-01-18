@@ -215,7 +215,7 @@ export const importTemplate = async (
     })
   );
 
-  let previous_id = lastTask.id;
+  let previous_id = lastTask?.id;
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
 
@@ -224,20 +224,27 @@ export const importTemplate = async (
         name: task.name,
         status: Status.Normal,
         estimate: task.estimate,
-        tasks_tasksTotasks_previous_id: {
-          connect: { id: previous_id },
-        },
+        ...(previous_id
+          ? {
+              tasks_tasksTotasks_previous_id: {
+                connect: { id: previous_id },
+              },
+            }
+          : {}),
       },
     });
 
-    await ctx.prisma.tasks.update({
-      where: { id: previous_id },
-      data: {
-        tasks_tasksTotasks_next_id: {
-          connect: { id: createdTask.id },
+    if (previous_id) {
+      await ctx.prisma.tasks.update({
+        where: { id: previous_id },
+        data: {
+          tasks_tasksTotasks_next_id: {
+            connect: { id: createdTask.id },
+          },
         },
-      },
-    });
+      });
+    }
+
     previous_id = createdTask.id;
   }
 
