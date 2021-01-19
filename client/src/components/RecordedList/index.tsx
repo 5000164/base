@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Task } from "../../App";
 import { RecordedListItem } from "../RecordedListItem";
 import { RecordedDate } from "../RecordedDate";
-import { CalculatedTimes } from "../CalculatedTimes";
+import { CalculatedRecordedTimes } from "../CalculatedRecordedTimes";
 
 export const RecordedList = ({
   recordedTasks,
@@ -69,7 +69,7 @@ export const RecordedList = ({
               />
             ))}
           </StyledRecordedList>
-          <CalculatedTimes tasks={recordedTasks} />
+          <CalculatedRecordedTimes tasks={recordedTasks} />
         </>
       )}
     </>
