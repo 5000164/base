@@ -161,6 +161,9 @@ const resolvers: Resolvers = {
                 },
               },
             },
+            orderBy: {
+              start_at: "desc",
+            },
           })
         : ctx.prisma.task_tracks.findMany({
             where: { stop_at: null },
@@ -171,6 +174,9 @@ const resolvers: Resolvers = {
                   name: true,
                 },
               },
+            },
+            orderBy: {
+              start_at: "asc",
             },
           }),
   },
