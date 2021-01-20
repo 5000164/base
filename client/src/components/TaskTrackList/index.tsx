@@ -133,23 +133,56 @@ export const TaskTrackList = ({
           <button onClick={fetchTaskTracks}>Retry</button>
         </>
       ) : (
-        <>
-          <StyledTaskTrackList>
-            {taskTracks.map((taskTrack, index) => (
-              <TaskTrackListItem
-                key={index}
-                taskTrack={taskTrack}
-                stopTaskTrack={stopTaskTrack}
-                setStartAt={(v: string) => setStartAt(index, v)}
-                setStopAt={(v: string) => setStopAt(index, v)}
-                updateTaskTrack={updateTaskTrack}
-              />
-            ))}
-          </StyledTaskTrackList>
-        </>
+        (() => {
+          let taskTracksDate: string | undefined = undefined;
+          return (
+            <StyledTaskTrackList>
+              {taskTracks.map((taskTrack, index) => (
+                <React.Fragment key={index}>
+                  {(() => {
+                    const currentTaskTrackDate = taskTrack.start_at
+                      ? format(taskTrack.start_at)
+                      : undefined;
+                    if (
+                      !taskTracksDate ||
+                      currentTaskTrackDate !== taskTracksDate
+                    ) {
+                      taskTracksDate = currentTaskTrackDate;
+                      return <div>{taskTracksDate}</div>;
+                    } else {
+                      return <></>;
+                    }
+                  })()}
+                  <TaskTrackListItem
+                    taskTrack={taskTrack}
+                    stopTaskTrack={stopTaskTrack}
+                    setStartAt={(v: string) => setStartAt(index, v)}
+                    setStopAt={(v: string) => setStopAt(index, v)}
+                    updateTaskTrack={updateTaskTrack}
+                  />
+                </React.Fragment>
+              ))}
+            </StyledTaskTrackList>
+          );
+        })()
       )}
     </>
   );
+};
+
+const format = (time?: number) => {
+  if (time) {
+    const date = new Date(time * 1000);
+    return [
+      date.getFullYear().toString(),
+      "/",
+      (date.getMonth() + 1).toString(),
+      "/",
+      date.getDate().toString(),
+    ].join("");
+  } else {
+    return undefined;
+  }
 };
 
 const StyledTaskTrackList = styled.ul`
