@@ -1,6 +1,7 @@
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
+import { DragIndicator } from "@styled-icons/material";
 import { Task } from "../../App";
 
 export const PlanListItem = ({
@@ -28,11 +29,10 @@ export const PlanListItem = ({
 }) => (
   <Draggable draggableId={index.toString()} index={index}>
     {(provided) => (
-      <StyledPlanListItem
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-      >
+      <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
+        <Handle {...provided.dragHandleProps}>
+          <DragIndicator />
+        </Handle>
         <StyledInput
           type="text"
           value={task.name ?? ""}
@@ -62,9 +62,15 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px 50px repeat(4, 70px);
+  grid-template-columns: 16px 1fr 50px 50px repeat(4, 70px);
   grid-gap: 5px;
   margin: 5px 0;
+`;
+
+const Handle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StyledInput = styled.input`
