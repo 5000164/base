@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Button, TextInput } from "grommet";
 import { Template } from "../../App";
 
 export const TemplateListItem = ({
@@ -18,15 +19,15 @@ export const TemplateListItem = ({
   deleteTemplate: Function;
 }) => (
   <StyledTemplateListItem>
-    <StyledInput
+    <TextInput
       type="text"
       value={template.name ?? ""}
       onChange={(e) => setName(e.target.value)}
       onBlur={() => updateTemplate(template)}
     />
-    <button onClick={() => editTasks()}>Edit</button>
-    <button onClick={() => archiveTemplate(template.id)}>Archive</button>
-    <button onClick={() => deleteTemplate(template.id)}>Delete</button>
+    <Button label="Edit" onClick={() => editTasks()} />
+    <Button label="Archive" onClick={() => archiveTemplate(template.id)} />
+    <Button label="Delete" onClick={() => deleteTemplate(template.id)} />
   </StyledTemplateListItem>
 );
 
@@ -35,8 +36,4 @@ const StyledTemplateListItem = styled.li`
   grid-template-columns: 1fr repeat(3, 70px);
   grid-gap: 5px;
   margin: 5px 0;
-`;
-
-const StyledInput = styled.input`
-  font-size: 1.5rem;
 `;

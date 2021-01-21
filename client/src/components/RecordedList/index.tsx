@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Button } from "grommet";
 import { Task } from "../../App";
 import { RecordedListItem } from "../RecordedListItem";
 import { RecordedDate } from "../RecordedDate";
@@ -41,7 +42,7 @@ export const RecordedList = ({
       {recordedError ? (
         <>
           <div>Error</div>
-          <button onClick={() => fetchRecordedTasks}>Retry</button>
+          <Button label="Retry" onClick={() => fetchRecordedTasks} />
         </>
       ) : (
         <>

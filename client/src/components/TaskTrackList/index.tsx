@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
+import { Button } from "grommet";
 import {
   Mutation,
   Query,
@@ -130,7 +131,7 @@ export const TaskTrackList = ({
       {error ? (
         <>
           <div>Error</div>
-          <button onClick={fetchTaskTracks}>Retry</button>
+          <Button label="Retry" onClick={fetchTaskTracks} />
         </>
       ) : (
         (() => {

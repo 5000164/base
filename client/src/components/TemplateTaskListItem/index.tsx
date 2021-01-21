@@ -2,6 +2,7 @@ import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { DragIndicator } from "@styled-icons/material";
+import { Button, TextInput } from "grommet";
 import { TemplateTask } from "../../App";
 
 export const TemplateTaskListItem = ({
@@ -25,19 +26,19 @@ export const TemplateTaskListItem = ({
         <Handle {...provided.dragHandleProps}>
           <DragIndicator />
         </Handle>
-        <StyledInput
+        <TextInput
           type="text"
           value={task.name ?? ""}
           onChange={(e) => setName(e.target.value)}
           onBlur={() => updateTask(task)}
         />
-        <StyledInput
+        <TextInput
           type="text"
           value={task.estimate ?? ""}
           onChange={(e) => setEstimate(Number(e.target.value))}
           onBlur={() => updateTask(task)}
         />
-        <button onClick={() => deleteTask(task)}>Delete</button>
+        <Button label="Delete" onClick={() => deleteTask(task)} />
       </StyledPlanListItem>
     )}
   </Draggable>
@@ -54,8 +55,4 @@ const Handle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const StyledInput = styled.input`
-  font-size: 1.5rem;
 `;
