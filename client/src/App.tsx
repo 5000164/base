@@ -1,6 +1,6 @@
 import React from "react";
 import { MemoryRouter, NavLink, Route, Switch } from "react-router-dom";
-import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
+import { Box, Grid, Grommet } from "grommet";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
@@ -68,23 +68,22 @@ export const App = () => {
             />
           </Helmet>
           <Grid
-            rows={["fill"]}
-            columns={["xsmall", "fill"]}
+            fill={true}
+            rows={["flex"]}
+            columns={["small", "flex"]}
             gap="small"
             areas={[
               { name: "nav", start: [0, 0], end: [0, 0] },
               { name: "main", start: [1, 0], end: [1, 0] },
             ]}
           >
-            <Sidebar gridArea="nav">
-              <Nav gap="small">
-                <NavLink to="/">Top</NavLink>
-                <NavLink to="/plan">Plan</NavLink>
-                <NavLink to="/templates">Templates</NavLink>
-                <NavLink to="/task-tracks">Task Tracks</NavLink>
-              </Nav>
-            </Sidebar>
-            <Main gridArea="main">
+            <Box gridArea="nav">
+              <NavLink to="/">Top</NavLink>
+              <NavLink to="/plan">Plan</NavLink>
+              <NavLink to="/templates">Templates</NavLink>
+              <NavLink to="/task-tracks">Task Tracks</NavLink>
+            </Box>
+            <Box gridArea="main">
               <Switch>
                 <Route path="/plan">
                   <PlanPage client={client} />
@@ -100,7 +99,7 @@ export const App = () => {
                   </>
                 </Route>
               </Switch>
-            </Main>
+            </Box>
           </Grid>
         </HelmetProvider>
       </Grommet>
