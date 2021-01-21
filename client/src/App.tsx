@@ -78,14 +78,13 @@ export const App = () => {
             ]}
           >
             <Box gridArea="nav">
-              <NavLink to="/">Top</NavLink>
-              <NavLink to="/plan">Plan</NavLink>
+              <NavLink to="/">Plan</NavLink>
               <NavLink to="/templates">Templates</NavLink>
               <NavLink to="/task-tracks">Task Tracks</NavLink>
             </Box>
             <Box gridArea="main">
               <Switch>
-                <Route path="/plan">
+                <Route exact path="/">
                   <PlanPage client={client} />
                 </Route>
                 <Route path="/templates">
