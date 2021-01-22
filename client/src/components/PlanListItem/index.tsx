@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { DragIndicator } from "@styled-icons/material";
 import { Button, TextInput } from "grommet";
 import { Task } from "../../App";
+import { theme } from "../../theme";
 
 export const PlanListItem = ({
   task,
@@ -32,7 +33,7 @@ export const PlanListItem = ({
     {(provided) => (
       <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
         <Handle {...provided.dragHandleProps}>
-          <DragIndicator />
+          <StyledDragIndicator />
         </Handle>
         <TextInput
           type="text"
@@ -72,4 +73,8 @@ const Handle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const StyledDragIndicator = styled(DragIndicator)`
+  color: ${theme.global.colors.text};
 `;
