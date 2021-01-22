@@ -5,38 +5,48 @@ import { TaskTrack } from "../../App";
 
 export const TaskTrackListItem = ({
   taskTrack,
+  onlyWorking,
   stopTaskTrack,
   setStartAt,
   setStopAt,
   updateTaskTrack,
 }: {
   taskTrack: TaskTrack;
+  onlyWorking?: boolean;
   stopTaskTrack: Function;
   setStartAt: Function;
   setStopAt: Function;
   updateTaskTrack: Function;
 }) => (
-  <StyledTaskTrackListItem>
-    <div>{taskTrack.task.name}</div>
-    <TextInput
-      type="datetime-local"
-      value={format(taskTrack.start_at)}
-      onChange={(e) => setStartAt(e.target.value)}
-      onBlur={() => updateTaskTrack(taskTrack)}
-    />
-    <TextInput
-      type="datetime-local"
-      value={format(taskTrack.stop_at)}
-      onChange={(e) => setStopAt(e.target.value)}
-      onBlur={() => updateTaskTrack(taskTrack)}
-    />
-    <Button
-      label="Stop"
-      gap="none"
-      margin="xsmall"
-      onClick={() => stopTaskTrack(taskTrack.task_track_id)}
-    />
-  </StyledTaskTrackListItem>
+  <>
+    {onlyWorking ? (
+      <StyledWorkingTaskTrackListItem>
+        <div>{taskTrack.task.name}</div>
+        <Button
+          label="Stop"
+          gap="none"
+          margin="xsmall"
+          onClick={() => stopTaskTrack(taskTrack.task_track_id)}
+        />
+      </StyledWorkingTaskTrackListItem>
+    ) : (
+      <StyledTaskTrackListItem>
+        <div>{taskTrack.task.name}</div>
+        <TextInput
+          type="datetime-local"
+          value={format(taskTrack.start_at)}
+          onChange={(e) => setStartAt(e.target.value)}
+          onBlur={() => updateTaskTrack(taskTrack)}
+        />
+        <TextInput
+          type="datetime-local"
+          value={format(taskTrack.stop_at)}
+          onChange={(e) => setStopAt(e.target.value)}
+          onBlur={() => updateTaskTrack(taskTrack)}
+        />
+      </StyledTaskTrackListItem>
+    )}
+  </>
 );
 
 const format = (time?: number) => {
@@ -60,9 +70,16 @@ const format = (time?: number) => {
   }
 };
 
+const StyledWorkingTaskTrackListItem = styled.li`
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  grid-gap: 5px;
+  margin: 5px 0;
+`;
+
 const StyledTaskTrackListItem = styled.li`
   display: grid;
-  grid-template-columns: repeat(3, 1fr) repeat(1, 70px);
+  grid-template-columns: 1fr repeat(2, 320px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

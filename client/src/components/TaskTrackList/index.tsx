@@ -156,6 +156,7 @@ export const TaskTrackList = ({
                   })()}
                   <TaskTrackListItem
                     taskTrack={taskTrack}
+                    onlyWorking={onlyWorking}
                     stopTaskTrack={stopTaskTrack}
                     setStartAt={(v: string) => setStartAt(index, v)}
                     setStopAt={(v: string) => setStopAt(index, v)}
