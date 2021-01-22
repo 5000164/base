@@ -40,8 +40,13 @@ export const theme = {
     },
   },
   text: {
+    // Button の size を small にすると padding の調整ができなくなるので
+    // 一時的に medium を Button の small として扱うようにする
+    small: {
+      size: "18px",
+    },
     medium: {
-      size: "12px",
+      size: "14px",
     },
   },
   button: {

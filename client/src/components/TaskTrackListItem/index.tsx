@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, TextInput } from "grommet";
+import { Button, Text, TextInput } from "grommet";
 import { TaskTrack } from "../../App";
 
 export const TaskTrackListItem = ({
@@ -21,17 +21,15 @@ export const TaskTrackListItem = ({
   <>
     {onlyWorking ? (
       <StyledWorkingTaskTrackListItem>
-        <div>{taskTrack.task.name}</div>
+        <Text size="small">{taskTrack.task.name}</Text>
         <Button
           label="Stop"
-          gap="none"
-          margin="xsmall"
           onClick={() => stopTaskTrack(taskTrack.task_track_id)}
         />
       </StyledWorkingTaskTrackListItem>
     ) : (
       <StyledTaskTrackListItem>
-        <div>{taskTrack.task.name}</div>
+        <Text>{taskTrack.task.name}</Text>
         <TextInput
           type="datetime-local"
           value={format(taskTrack.start_at)}
@@ -72,6 +70,7 @@ const format = (time?: number) => {
 
 const StyledWorkingTaskTrackListItem = styled.li`
   display: grid;
+  align-items: center;
   grid-template-columns: 1fr 80px;
   grid-gap: 5px;
   margin: 5px 0;
@@ -79,6 +78,7 @@ const StyledWorkingTaskTrackListItem = styled.li`
 
 const StyledTaskTrackListItem = styled.li`
   display: grid;
+  align-items: center;
   grid-template-columns: 1fr repeat(2, 320px);
   grid-gap: 5px;
   margin: 5px 0;
