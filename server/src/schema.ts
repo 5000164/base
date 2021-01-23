@@ -217,6 +217,18 @@ const resolvers: Resolvers = {
           },
         },
       }),
+    stop_task_track_by_task_id: async (parent, args, ctx) => {
+      await ctx.prisma.task_tracks.updateMany({
+        where: {
+          task_id: args.task_id,
+          stop_at: null,
+        },
+        data: {
+          stop_at: Math.floor(Date.now() / 1000),
+        },
+      });
+      return true;
+    },
     update_task_track: (parent, args, ctx) => {
       const data = {
         ...(args.start_at ? { start_at: args.start_at } : {}),

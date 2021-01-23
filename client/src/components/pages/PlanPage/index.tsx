@@ -217,7 +217,20 @@ export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
         `,
         variables: { id },
       })
-      .then(() => reload())
+      .then(() =>
+        client
+          .mutate<Mutation>({
+            mutation: gql`
+              mutation($task_id: Int!) {
+                task_tracks {
+                  stop_task_track_by_task_id(task_id: $task_id)
+                }
+              }
+            `,
+            variables: { task_id: id },
+          })
+          .then(() => reload())
+      )
       .catch(() => setError(true));
   };
 
