@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Button, Text, TextInput } from "grommet";
 import { TaskTrack } from "../../App";
+import { Timer } from "../atoms/Timer";
 
 export const TaskTrackListItem = ({
   taskTrack,
@@ -22,6 +23,7 @@ export const TaskTrackListItem = ({
     {onlyWorking ? (
       <StyledWorkingTaskTrackListItem>
         <Text size="small">{taskTrack.task.name}</Text>
+        <Timer startAt={taskTrack.start_at!} />
         <Button
           label="Stop"
           onClick={() => stopTaskTrack(taskTrack.task_track_id)}
@@ -71,7 +73,7 @@ const format = (time?: number) => {
 const StyledWorkingTaskTrackListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr 80px;
+  grid-template-columns: 1fr 160px 80px;
   grid-gap: 5px;
   margin: 5px 0;
 `;
