@@ -33,7 +33,7 @@ export const PlanListItem = ({
     {(provided) => (
       <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
         <Handle {...provided.dragHandleProps}>
-          <StyledDragIndicator />
+          <StyledDragIndicator size="16" />
         </Handle>
         <TextInput
           type="text"
