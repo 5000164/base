@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Button, Text, TextInput } from "grommet";
 import { TaskTrack } from "../../App";
 import { Timer } from "../atoms/Timer";
+import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const TaskTrackListItem = ({
   taskTrack,
@@ -32,6 +33,7 @@ export const TaskTrackListItem = ({
     ) : (
       <StyledTaskTrackListItem>
         <Text size="small">{taskTrack.task.name}</Text>
+        <ElapsedTime startAt={taskTrack.start_at!} stopAt={taskTrack.stop_at} />
         <TextInput
           type="datetime-local"
           value={format(taskTrack.start_at)}
@@ -81,7 +83,7 @@ const StyledWorkingTaskTrackListItem = styled.li`
 const StyledTaskTrackListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr repeat(2, 320px);
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 5px;
   margin: 5px 0;
 `;
