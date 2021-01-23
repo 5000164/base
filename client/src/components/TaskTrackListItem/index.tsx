@@ -31,7 +31,7 @@ export const TaskTrackListItem = ({
       </StyledWorkingTaskTrackListItem>
     ) : (
       <StyledTaskTrackListItem>
-        <Text>{taskTrack.task.name}</Text>
+        <Text size="small">{taskTrack.task.name}</Text>
         <TextInput
           type="datetime-local"
           value={format(taskTrack.start_at)}
