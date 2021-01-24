@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "../../generated/graphql";
-import { Template } from "../../App";
-import { TemplateListItem } from "../TemplateListItem";
-import { TemplateTaskListLayer } from "../TemplateTaskListLayer";
+import { Mutation, Query } from "../generated/graphql";
+import { Template } from "../App";
+import { TemplateListItem } from "./TemplateListItem";
+import { TemplateTaskListLayer } from "./TemplateTaskListLayer";
 
 export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
   const [templates, setTemplates] = useState([] as Template[]);

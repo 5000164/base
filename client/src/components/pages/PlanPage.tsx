@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "../../../generated/graphql";
-import { Task } from "../../../App";
-import { PlanTemplate } from "../../templates/PlanTemplate";
+import { Mutation, Query } from "../../generated/graphql";
+import { Task } from "../../App";
+import { PlanTemplate } from "../templates/PlanTemplate";
 
 export const PlanPage = ({ client }: { client: DefaultClient<any> }) => {
   const [planTasks, setPlanTasks] = useState([] as Task[]);

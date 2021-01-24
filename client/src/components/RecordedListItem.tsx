@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "grommet";
-import { Status, Task } from "../../App";
+import { Status, Task } from "../App";
 
 export const RecordedListItem = ({
   task,

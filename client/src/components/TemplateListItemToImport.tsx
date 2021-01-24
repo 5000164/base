@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
 import { Button } from "grommet";
-import { Template } from "../../App";
-import { Mutation } from "../../generated/graphql";
+import { Template } from "../App";
+import { Mutation } from "../generated/graphql";
 
 export const TemplateListItemToImport = ({
   client,

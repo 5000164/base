@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Button, Layer } from "grommet";
 import DefaultClient from "apollo-boost";
-import { TemplateListToImport } from "../TemplateListToImport";
+import { TemplateListToImport } from "./TemplateListToImport";
 
 export const TemplateListLayer = ({
   client,

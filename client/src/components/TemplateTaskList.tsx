@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "../../generated/graphql";
-import { Task, Template, TemplateTask } from "../../App";
-import { TemplateTaskListItem } from "../TemplateTaskListItem";
+import { Mutation, Query } from "../generated/graphql";
+import { Task, Template, TemplateTask } from "../App";
+import { TemplateTaskListItem } from "./TemplateTaskListItem";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 export const TemplateTaskList = ({
