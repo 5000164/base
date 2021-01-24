@@ -91,6 +91,7 @@ enum Task_Tracks_Fetch_Type {
 type Task_Tracks_Mutation {
   start_task_track(task_id: Int!): Task_Tracks_Task_Track!
   stop_task_track(task_track_id: Int!): Task_Tracks_Task_Track!
+  stop_task_track_by_task_id(task_id: Int!): Boolean
   update_task_track(
     task_track_id: Int!
     start_at: Int

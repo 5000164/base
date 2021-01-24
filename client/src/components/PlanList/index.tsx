@@ -2,6 +2,7 @@ import React from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import DefaultClient from "apollo-boost";
 import styled from "styled-components";
+import { Button } from "grommet";
 import { PlanListItem } from "../PlanListItem";
 import { Task } from "../../App";
 import { CalculatedTimes } from "../CalculatedTimes";
@@ -145,7 +146,7 @@ export const PlanList = ({
       {planError ? (
         <>
           <div>Error</div>
-          <button onClick={() => fetchPlanTasks()}>Retry</button>
+          <Button label="Retry" onClick={() => fetchPlanTasks()} />
         </>
       ) : (
         <>
@@ -187,8 +188,8 @@ export const PlanList = ({
             </Droppable>
           </DragDropContext>
           <ButtonWrapper>
-            <button onClick={() => addTask()}>Add</button>
-            <button onClick={() => setShow(true)}>Import</button>
+            <Button label="Add" onClick={() => addTask()} />
+            <Button label="Import" onClick={() => setShow(true)} />
           </ButtonWrapper>
           <CalculatedTimes tasks={planTasks} />
           {show && (

@@ -1,7 +1,9 @@
 import React from "react";
-import styled from "styled-components";
-import { TemplateTask } from "../../App";
 import { Draggable } from "react-beautiful-dnd";
+import styled from "styled-components";
+import { DragIndicator } from "@styled-icons/material";
+import { Button, TextInput } from "grommet";
+import { TemplateTask } from "../../App";
 
 export const TemplateTaskListItem = ({
   task,
@@ -20,24 +22,23 @@ export const TemplateTaskListItem = ({
 }) => (
   <Draggable draggableId={index.toString()} index={index}>
     {(provided) => (
-      <StyledPlanListItem
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-      >
-        <StyledInput
+      <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
+        <Handle {...provided.dragHandleProps}>
+          <DragIndicator />
+        </Handle>
+        <TextInput
           type="text"
           value={task.name ?? ""}
           onChange={(e) => setName(e.target.value)}
           onBlur={() => updateTask(task)}
         />
-        <StyledInput
+        <TextInput
           type="text"
           value={task.estimate ?? ""}
           onChange={(e) => setEstimate(Number(e.target.value))}
           onBlur={() => updateTask(task)}
         />
-        <button onClick={() => deleteTask(task)}>Delete</button>
+        <Button label="Delete" onClick={() => deleteTask(task)} />
       </StyledPlanListItem>
     )}
   </Draggable>
@@ -45,11 +46,13 @@ export const TemplateTaskListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px repeat(1, 70px);
+  grid-template-columns: 16px 1fr 50px repeat(1, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;
 
-const StyledInput = styled.input`
-  font-size: 1.5rem;
+const Handle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

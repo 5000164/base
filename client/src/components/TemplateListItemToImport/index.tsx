@@ -40,7 +40,7 @@ export const TemplateListItemToImport = ({
       {error ? (
         <>
           <div>Error</div>
-          <button onClick={() => importTemplate(template.id)}>Retry</button>
+          <Button label="Retry" onClick={() => importTemplate(template.id)} />
         </>
       ) : (
         <>

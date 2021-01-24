@@ -140,7 +140,7 @@ export const TemplateList = ({ client }: { client: DefaultClient<any> }) => {
       {error ? (
         <>
           <div>Error</div>
-          <button onClick={fetchTemplates}>Retry</button>
+          <Button label="Retry" onClick={fetchTemplates} />
         </>
       ) : (
         <>

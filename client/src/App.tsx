@@ -1,12 +1,14 @@
 import React from "react";
-import { MemoryRouter, NavLink, Route, Switch } from "react-router-dom";
-import { Grid, Grommet, Main, Nav, Sidebar } from "grommet";
+import { MemoryRouter, Route, Switch } from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
+import { Box, Grid, Grommet } from "grommet";
+import { theme } from "./theme";
 import { TemplateList } from "./components/TemplateList";
 import { PlanPage } from "./components/pages/PlanPage";
 import { TaskTrackList } from "./components/TaskTrackList";
+import { AnchorLink } from "./components/atoms/AnchorLink";
 
 const client = new ApolloClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
@@ -56,7 +58,7 @@ export enum Status {
 export const App = () => {
   return (
     <MemoryRouter>
-      <Grommet plain themeMode="dark">
+      <Grommet full theme={theme} themeMode="dark">
         <HelmetProvider>
           <GlobalStyle />
           <Helmet>
@@ -68,25 +70,27 @@ export const App = () => {
             />
           </Helmet>
           <Grid
-            rows={["fill"]}
-            columns={["xsmall", "fill"]}
+            fill={true}
+            rows={["flex"]}
+            columns={["small", "flex"]}
             gap="small"
             areas={[
               { name: "nav", start: [0, 0], end: [0, 0] },
               { name: "main", start: [1, 0], end: [1, 0] },
             ]}
           >
-            <Sidebar gridArea="nav">
-              <Nav gap="small">
-                <NavLink to="/">Top</NavLink>
-                <NavLink to="/plan">Plan</NavLink>
-                <NavLink to="/templates">Templates</NavLink>
-                <NavLink to="/task-tracks">Task Tracks</NavLink>
-              </Nav>
-            </Sidebar>
-            <Main gridArea="main">
+            <Box gridArea="nav">
+              <AnchorLink to="/" label="Plan" margin="small" />
+              <AnchorLink to="/templates" label="Templates" margin="small" />
+              <AnchorLink
+                to="/task-tracks"
+                label="Task Tracks"
+                margin="small"
+              />
+            </Box>
+            <Box gridArea="main">
               <Switch>
-                <Route path="/plan">
+                <Route exact path="/">
                   <PlanPage client={client} />
                 </Route>
                 <Route path="/templates">
@@ -100,7 +104,7 @@ export const App = () => {
                   </>
                 </Route>
               </Switch>
-            </Main>
+            </Box>
           </Grid>
         </HelmetProvider>
       </Grommet>
@@ -113,7 +117,7 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     margin: 0;
-    font-family: serif;
+    font-family: sans-serif;
     font-weight: lighter;
     font-size: 10px;
     font-kerning: normal; // フォントのカーニングを常に有効にする

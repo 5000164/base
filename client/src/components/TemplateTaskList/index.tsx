@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Button } from "grommet";
 import DefaultClient, { gql } from "apollo-boost";
 import { Mutation, Query } from "../../generated/graphql";
 import { Task, Template, TemplateTask } from "../../App";
@@ -278,7 +279,7 @@ export const TemplateTaskList = ({
       {error ? (
         <>
           <div>Error</div>
-          <button onClick={fetchTasks}>Retry</button>
+          <Button label="Retry" onClick={fetchTasks} />
         </>
       ) : (
         <>
@@ -304,7 +305,7 @@ export const TemplateTaskList = ({
             </Droppable>
           </DragDropContext>
           <AddButtonWrapper>
-            <button onClick={addTask}>Add</button>
+            <Button label="Add" onClick={addTask} />
           </AddButtonWrapper>
         </>
       )}

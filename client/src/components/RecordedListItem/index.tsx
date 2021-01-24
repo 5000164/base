@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Button, TextInput } from "grommet";
 import { Status, Task } from "../../App";
 
 export const RecordedListItem = ({
@@ -31,27 +32,27 @@ export const RecordedListItem = ({
         ⬜️
       </span>
     )}
-    <StyledInput
+    <TextInput
       type="text"
       value={task.name ?? ""}
       onChange={(e) => setName(e.target.value)}
       onBlur={() => updateTask(task)}
     />
-    <StyledInput
+    <TextInput
       type="text"
       value={task.estimate ?? ""}
       onChange={(e) => setEstimate(Number(e.target.value))}
       onBlur={() => updateTask(task)}
     />
-    <StyledInput
+    <TextInput
       type="text"
       value={task.actual ?? ""}
       onChange={(e) => setActual(Number(e.target.value))}
       onBlur={() => updateTask(task)}
     />
-    <button onClick={() => completeTask(task.id)}>Complete</button>
-    <button onClick={() => archiveTask(task.id)}>Archive</button>
-    <button onClick={() => deleteTask(task.id)}>Delete</button>
+    <Button label="Complete" onClick={() => completeTask(task.id)} />
+    <Button label="Archive" onClick={() => archiveTask(task.id)} />
+    <Button label="Delete" onClick={() => deleteTask(task.id)} />
   </StyledRecordedListItem>
 );
 
@@ -60,8 +61,4 @@ const StyledRecordedListItem = styled.li`
   grid-template-columns: 20px 1fr 50px 50px repeat(3, 70px);
   grid-gap: 5px;
   margin: 5px 0;
-`;
-
-const StyledInput = styled.input`
-  font-size: 1.5rem;
 `;
