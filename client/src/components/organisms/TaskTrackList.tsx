@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
 import { Button } from "grommet";
-import { Mutation, Query, Task_Tracks_Fetch_Type } from "../generated/graphql";
-import { TaskTrack } from "../App";
-import { TaskTrackListItem } from "./TaskTrackListItem";
+import {
+  Mutation,
+  Query,
+  Task_Tracks_Fetch_Type,
+} from "../../generated/graphql";
+import { TaskTrack } from "../../App";
+import { TaskTrackListItem } from "../molecules/TaskTrackListItem";
 
 export const TaskTrackList = ({
   client,

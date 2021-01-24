@@ -3,7 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { DragIndicator } from "@styled-icons/material";
 import { Button, TextInput } from "grommet";
-import { TemplateTask } from "../App";
+import { TemplateTask } from "../../App";
 
 export const TemplateTaskListItem = ({
   task,

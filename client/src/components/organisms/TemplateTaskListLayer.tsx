@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, Layer } from "grommet";
-import { Template } from "../App";
+import { Template } from "../../App";
 import DefaultClient from "apollo-boost";
 import { TemplateTaskList } from "./TemplateTaskList";
 

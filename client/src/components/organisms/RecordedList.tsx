@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
-import { Task } from "../App";
-import { RecordedListItem } from "./RecordedListItem";
-import { RecordedDate } from "./RecordedDate";
-import { CalculatedRecordedTimes } from "./atoms/CalculatedRecordedTimes";
+import { Task } from "../../App";
+import { RecordedListItem } from "../molecules/RecordedListItem";
+import { RecordedDate } from "../atoms/RecordedDate";
+import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
 
 export const RecordedList = ({
   recordedTasks,

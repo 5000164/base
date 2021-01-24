@@ -5,9 +5,9 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
-import { TemplateList } from "./components/TemplateList";
+import { TemplateList } from "./components/organisms/TemplateList";
 import { PlanPage } from "./components/pages/PlanPage";
-import { TaskTrackList } from "./components/TaskTrackList";
+import { TaskTrackList } from "./components/organisms/TaskTrackList";
 import { AnchorLink } from "./components/atoms/AnchorLink";
 
 const client = new ApolloClient({

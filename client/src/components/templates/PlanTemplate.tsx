@@ -1,9 +1,9 @@
 import React from "react";
 import DefaultClient from "apollo-boost";
 import { Task } from "../../App";
-import { PlanList } from "../PlanList";
-import { RecordedList } from "../RecordedList";
-import { TaskTrackList } from "../TaskTrackList";
+import { PlanList } from "../organisms/PlanList";
+import { RecordedList } from "../organisms/RecordedList";
+import { TaskTrackList } from "../organisms/TaskTrackList";
 
 export const PlanTemplate = ({
   client,

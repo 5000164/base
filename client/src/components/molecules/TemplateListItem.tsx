@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "grommet";
-import { Template } from "../App";
+import { Template } from "../../App";
 
 export const TemplateListItem = ({
   template,

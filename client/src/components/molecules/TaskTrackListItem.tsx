@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, Text, TextInput } from "grommet";
-import { TaskTrack } from "../App";
-import { Timer } from "./atoms/Timer";
-import { ElapsedTime } from "./atoms/ElapsedTime";
+import { TaskTrack } from "../../App";
+import { Timer } from "../atoms/Timer";
+import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const TaskTrackListItem = ({
   taskTrack,

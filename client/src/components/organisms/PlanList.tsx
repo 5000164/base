@@ -3,9 +3,9 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import DefaultClient from "apollo-boost";
 import styled from "styled-components";
 import { Button } from "grommet";
-import { PlanListItem } from "./PlanListItem";
-import { Task } from "../App";
-import { CalculatedTimes } from "./atoms/CalculatedTimes";
+import { PlanListItem } from "../molecules/PlanListItem";
+import { Task } from "../../App";
+import { CalculatedTimes } from "../atoms/CalculatedTimes";
 import { TemplateListLayer } from "./TemplateListLayer";
 
 export const PlanList = ({

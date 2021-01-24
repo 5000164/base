@@ -3,8 +3,8 @@ import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { DragIndicator } from "@styled-icons/material";
 import { Button, TextInput } from "grommet";
-import { Task } from "../App";
-import { theme } from "../theme";
+import { Task } from "../../App";
+import { theme } from "../../theme";
 
 export const PlanListItem = ({
   task,
