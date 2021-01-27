@@ -1,48 +1,59 @@
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { DragIndicator } from "@styled-icons/material";
+import { DragIndicator } from "styled-icons/material";
 import { Button, TextInput } from "grommet";
-import { TemplateTask } from "../../App";
+import { Draggable } from "react-beautiful-dnd";
+import { theme } from "../../theme";
+import { TemplateTask } from "../../types/templateTask";
+import { deleteTask, updateTask } from "../../repositories/templates";
+import { AppContext } from "../../App";
+import { TemplatesPageContext } from "../pages/TemplatesPage";
 
 export const TemplateTaskListItem = ({
   task,
   index,
   setName,
   setEstimate,
-  updateTask,
-  deleteTask,
 }: {
   task: TemplateTask;
   index: number;
-  setName: Function;
-  setEstimate: Function;
-  updateTask: Function;
-  deleteTask: Function;
-}) => (
-  <Draggable draggableId={index.toString()} index={index}>
-    {(provided) => (
-      <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
-        <Handle {...provided.dragHandleProps}>
-          <DragIndicator />
-        </Handle>
-        <TextInput
-          type="text"
-          value={task.name ?? ""}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={() => updateTask(task)}
-        />
-        <TextInput
-          type="text"
-          value={task.estimate ?? ""}
-          onChange={(e) => setEstimate(Number(e.target.value))}
-          onBlur={() => updateTask(task)}
-        />
-        <Button label="Delete" onClick={() => deleteTask(task)} />
-      </StyledPlanListItem>
-    )}
-  </Draggable>
-);
+  setName: (name: string) => void;
+  setEstimate: (estimate: number) => void;
+}) => {
+  const { client } = React.useContext(AppContext);
+  const { reload } = React.useContext(TemplatesPageContext);
+
+  return (
+    <Draggable draggableId={index.toString()} index={index}>
+      {(provided) => (
+        <StyledPlanListItem
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
+          <Handle {...provided.dragHandleProps}>
+            <StyledDragIndicator size="16" />
+          </Handle>
+          <TextInput
+            type="text"
+            value={task.name ?? ""}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => updateTask(client, task).then()}
+          />
+          <TextInput
+            type="text"
+            value={task.estimate ?? ""}
+            onChange={(e) => setEstimate(Number(e.target.value))}
+            onBlur={() => updateTask(client, task).then()}
+          />
+          <Button
+            label="Delete"
+            onClick={() => deleteTask(client, task.id).then(() => reload())}
+          />
+        </StyledPlanListItem>
+      )}
+    </Draggable>
+  );
+};
 
 const StyledPlanListItem = styled.li`
   display: grid;
@@ -55,4 +66,8 @@ const Handle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const StyledDragIndicator = styled(DragIndicator)`
+  color: ${theme.global.colors.text};
 `;

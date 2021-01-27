@@ -1,6 +1,6 @@
-import { Anchor, AnchorProps } from "grommet/components/Anchor";
 import React from "react";
 import { NavLink, NavLinkProps } from "react-router-dom";
+import { Anchor, AnchorProps } from "grommet/components/Anchor";
 
 export const AnchorLink: React.FC<AnchorLinkProps> = (props) => {
   return (

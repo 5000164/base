@@ -1,10 +1,19 @@
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { DragIndicator } from "@styled-icons/material";
+import { DragIndicator } from "styled-icons/material";
 import { Button, TextInput } from "grommet";
-import { Task } from "../../App";
+import { Draggable } from "react-beautiful-dnd";
 import { theme } from "../../theme";
+import { PlanTask } from "../../types/planTask";
+import {
+  archivePlanTask,
+  completePlanTask,
+  deletePlanTask,
+  startTaskTrack,
+  updatePlanTask,
+} from "../../repositories/planTasks";
+import { AppContext } from "../../App";
+import { PlanPageContext } from "../pages/PlanPage";
 
 export const PlanListItem = ({
   task,
@@ -12,55 +21,69 @@ export const PlanListItem = ({
   setName,
   setEstimate,
   setActual,
-  updateTask,
-  completeTask,
-  archiveTask,
-  deleteTask,
-  startTaskTrack,
 }: {
-  task: Task;
+  task: PlanTask;
   index: number;
-  setName: Function;
-  setEstimate: Function;
-  setActual: Function;
-  updateTask: Function;
-  completeTask: Function;
-  archiveTask: Function;
-  deleteTask: Function;
-  startTaskTrack: Function;
-}) => (
-  <Draggable draggableId={index.toString()} index={index}>
-    {(provided) => (
-      <StyledPlanListItem ref={provided.innerRef} {...provided.draggableProps}>
-        <Handle {...provided.dragHandleProps}>
-          <StyledDragIndicator size="16" />
-        </Handle>
-        <TextInput
-          type="text"
-          value={task.name ?? ""}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={() => updateTask(task)}
-        />
-        <TextInput
-          type="text"
-          value={task.estimate ?? ""}
-          onChange={(e) => setEstimate(Number(e.target.value))}
-          onBlur={() => updateTask(task)}
-        />
-        <TextInput
-          type="text"
-          value={task.actual ?? ""}
-          onChange={(e) => setActual(Number(e.target.value))}
-          onBlur={() => updateTask(task)}
-        />
-        <Button label="Complete" onClick={() => completeTask(task.id)} />
-        <Button label="Archive" onClick={() => archiveTask(task.id)} />
-        <Button label="Delete" onClick={() => deleteTask(task.id)} />
-        <Button label="Start" onClick={() => startTaskTrack(task.id)} />
-      </StyledPlanListItem>
-    )}
-  </Draggable>
-);
+  setName: (name: string) => void;
+  setEstimate: (estimate: number) => void;
+  setActual: (actual: number) => void;
+}) => {
+  const { client } = React.useContext(AppContext);
+  const { reload } = React.useContext(PlanPageContext);
+
+  return (
+    <Draggable draggableId={index.toString()} index={index}>
+      {(provided) => (
+        <StyledPlanListItem
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+        >
+          <Handle {...provided.dragHandleProps}>
+            <StyledDragIndicator size="16" />
+          </Handle>
+          <TextInput
+            type="text"
+            value={task.name ?? ""}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => updatePlanTask(client, task).then()}
+          />
+          <TextInput
+            type="text"
+            value={task.estimate ?? ""}
+            onChange={(e) => setEstimate(Number(e.target.value))}
+            onBlur={() => updatePlanTask(client, task).then()}
+          />
+          <TextInput
+            type="text"
+            value={task.actual ?? ""}
+            onChange={(e) => setActual(Number(e.target.value))}
+            onBlur={() => updatePlanTask(client, task).then()}
+          />
+          <Button
+            label="Complete"
+            onClick={() =>
+              completePlanTask(client, task.id).then(() => reload())
+            }
+          />
+          <Button
+            label="Archive"
+            onClick={() =>
+              archivePlanTask(client, task.id).then(() => reload())
+            }
+          />
+          <Button
+            label="Delete"
+            onClick={() => deletePlanTask(client, task.id).then(() => reload())}
+          />
+          <Button
+            label="Start"
+            onClick={() => startTaskTrack(client, task.id).then(() => reload())}
+          />
+        </StyledPlanListItem>
+      )}
+    </Draggable>
+  );
+};
 
 const StyledPlanListItem = styled.li`
   display: grid;

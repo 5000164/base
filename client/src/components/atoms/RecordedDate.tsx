@@ -7,7 +7,7 @@ export const RecordedDate = ({
   setDate,
 }: {
   date: string;
-  setDate: Function;
+  setDate: (date: string) => void;
 }) => (
   <StyledRecordedDate>
     <span>Recorded Tasks at</span>

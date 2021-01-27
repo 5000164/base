@@ -1,55 +1,41 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Text, TextInput } from "grommet";
-import { TaskTrack } from "../../App";
-import { Timer } from "../atoms/Timer";
+import { Text, TextInput } from "grommet";
+import { TaskTrack } from "../../types/taskTrack";
+import { updateTaskTrack } from "../../repositories/taskTracks";
+import { AppContext } from "../../App";
 import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const TaskTrackListItem = ({
   taskTrack,
-  onlyWorking,
-  stopTaskTrack,
   setStartAt,
   setStopAt,
-  updateTaskTrack,
 }: {
   taskTrack: TaskTrack;
-  onlyWorking?: boolean;
-  stopTaskTrack: Function;
-  setStartAt: Function;
-  setStopAt: Function;
-  updateTaskTrack: Function;
-}) => (
-  <>
-    {onlyWorking ? (
-      <StyledWorkingTaskTrackListItem>
-        <Text size="small">{taskTrack.task.name}</Text>
-        <Timer startAt={taskTrack.start_at!} />
-        <Button
-          label="Stop"
-          onClick={() => stopTaskTrack(taskTrack.task_track_id)}
-        />
-      </StyledWorkingTaskTrackListItem>
-    ) : (
-      <StyledTaskTrackListItem>
-        <Text size="small">{taskTrack.task.name}</Text>
-        <ElapsedTime startAt={taskTrack.start_at!} stopAt={taskTrack.stop_at} />
-        <TextInput
-          type="datetime-local"
-          value={format(taskTrack.start_at)}
-          onChange={(e) => setStartAt(e.target.value)}
-          onBlur={() => updateTaskTrack(taskTrack)}
-        />
-        <TextInput
-          type="datetime-local"
-          value={format(taskTrack.stop_at)}
-          onChange={(e) => setStopAt(e.target.value)}
-          onBlur={() => updateTaskTrack(taskTrack)}
-        />
-      </StyledTaskTrackListItem>
-    )}
-  </>
-);
+  setStartAt: (startAt: string) => void;
+  setStopAt: (stopAt: string) => void;
+}) => {
+  const { client } = React.useContext(AppContext);
+
+  return (
+    <StyledTaskTrackListItem>
+      <Text size="small">{taskTrack.task.name}</Text>
+      <ElapsedTime startAt={taskTrack.start_at!} stopAt={taskTrack.stop_at} />
+      <TextInput
+        type="datetime-local"
+        value={format(taskTrack.start_at)}
+        onChange={(e) => setStartAt(e.target.value)}
+        onBlur={() => updateTaskTrack(client, taskTrack).then()}
+      />
+      <TextInput
+        type="datetime-local"
+        value={format(taskTrack.stop_at)}
+        onChange={(e) => setStopAt(e.target.value)}
+        onBlur={() => updateTaskTrack(client, taskTrack).then()}
+      />
+    </StyledTaskTrackListItem>
+  );
+};
 
 const format = (time?: number) => {
   if (time) {
@@ -71,14 +57,6 @@ const format = (time?: number) => {
     return "";
   }
 };
-
-const StyledWorkingTaskTrackListItem = styled.li`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 160px 80px;
-  grid-gap: 5px;
-  margin: 5px 0;
-`;
 
 const StyledTaskTrackListItem = styled.li`
   display: grid;

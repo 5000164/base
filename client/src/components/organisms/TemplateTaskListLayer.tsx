@@ -1,37 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, Layer } from "grommet";
-import { Template } from "../../App";
-import DefaultClient from "apollo-boost";
+import { TemplatesPageContext } from "../pages/TemplatesPage";
 import { TemplateTaskList } from "./TemplateTaskList";
 
-export const TemplateTaskListLayer = ({
-  client,
-  template,
-  setShow,
-  reloadCount,
-  reload,
-}: {
-  client: DefaultClient<any>;
-  template: Template;
-  setShow: Function;
-  reloadCount: number;
-  reload: Function;
-}) => {
+export const TemplateTaskListLayer = () => {
+  const { closeEditDialog } = React.useContext(TemplatesPageContext);
+
   return (
     <StyledLayer
       full={"vertical"}
       margin={"large"}
-      onEsc={() => setShow(false)}
-      onClickOutside={() => setShow(false)}
+      onEsc={() => closeEditDialog()}
+      onClickOutside={() => closeEditDialog()}
     >
-      <TemplateTaskList
-        client={client}
-        template={template}
-        reloadCount={reloadCount}
-        reload={reload}
-      />
-      <Button label="close" onClick={() => setShow(false)} />
+      <TemplateTaskList />
+      <Button label="close" onClick={() => closeEditDialog()} />
     </StyledLayer>
   );
 };

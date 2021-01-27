@@ -1,63 +1,25 @@
 import React, { useEffect, useState } from "react";
-import DefaultClient, { gql } from "apollo-boost";
 import styled from "styled-components";
-import { Button } from "grommet";
-import { Query } from "../../generated/graphql";
-import { Template } from "../../App";
-import { TemplateListItemToImport } from "../molecules/TemplateListItemToImport";
+import { Template } from "../../types/template";
+import { fetchTemplates } from "../../repositories/templates";
+import { AppContext } from "../../App";
+import { TemplateListToImportItem } from "../molecules/TemplateListToImportItem";
 
-export const TemplateListToImport = ({
-  client,
-  reloadTasks,
-}: {
-  client: DefaultClient<any>;
-  reloadTasks: Function;
-}) => {
+export const TemplateListToImport = () => {
+  const { client } = React.useContext(AppContext);
+
   const [templates, setTemplates] = useState([] as Template[]);
-  const [error, setError] = useState(false);
-
-  const fetchTemplates = () => {
-    setError(false);
-    client
-      .query<Query>({
-        fetchPolicy: "no-cache",
-        query: gql`
-          {
-            templates {
-              templates {
-                id
-                name
-              }
-            }
-          }
-        `,
-      })
-      .then((result) => setTemplates(result.data?.templates?.templates ?? []))
-      .catch(() => setError(true));
-  };
-  useEffect(fetchTemplates, [client]);
+  useEffect(() => {
+    fetchTemplates(client).then((templates) => setTemplates(templates));
+  }, [client]);
 
   return (
     <>
-      {error ? (
-        <>
-          <div>Error</div>
-          <Button label="Retry" onClick={fetchTemplates} />
-        </>
-      ) : (
-        <>
-          <StyledTemplateList>
-            {templates.map((template, index) => (
-              <TemplateListItemToImport
-                key={index}
-                client={client}
-                reloadTasks={reloadTasks}
-                template={template}
-              />
-            ))}
-          </StyledTemplateList>
-        </>
-      )}
+      <StyledTemplateList>
+        {templates.map((template, index) => (
+          <TemplateListToImportItem key={index} template={template} />
+        ))}
+      </StyledTemplateList>
     </>
   );
 };

@@ -1,78 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Button } from "grommet";
-import { Task } from "../../App";
+import {
+  PlanTask,
+  setActual,
+  setEstimate,
+  setName,
+} from "../../types/planTask";
+import { fetchRecordedTasks } from "../../repositories/planTasks";
+import { AppContext } from "../../App";
+import { PlanPageContext } from "../pages/PlanPage";
 import { RecordedListItem } from "../molecules/RecordedListItem";
 import { RecordedDate } from "../atoms/RecordedDate";
 import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
 
-export const RecordedList = ({
-  recordedTasks,
-  setRecordedTasks,
-  recordedError,
-  setRecordedError,
-  date,
-  setDate,
-  fetchRecordedTasks,
-  setName,
-  setEstimate,
-  setActual,
-  updateTask,
-  completeTask,
-  archiveTask,
-  deleteTask,
-}: {
-  recordedTasks: Task[];
-  setRecordedTasks: Function;
-  recordedError: boolean;
-  setRecordedError: Function;
-  date: string;
-  setDate: Function;
-  fetchRecordedTasks: Function;
-  setName: Function;
-  setEstimate: Function;
-  setActual: Function;
-  updateTask: Function;
-  completeTask: Function;
-  archiveTask: Function;
-  deleteTask: Function;
-}) => {
+export const RecordedList = () => {
+  const { client } = React.useContext(AppContext);
+  const { reloadCount } = React.useContext(PlanPageContext);
+
+  const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  useEffect(() => {
+    fetchRecordedTasks(client, date).then((recordedTasks) =>
+      setRecordedTasks(recordedTasks)
+    );
+  }, [client, reloadCount, date]);
+
   return (
     <>
-      {recordedError ? (
-        <>
-          <div>Error</div>
-          <Button label="Retry" onClick={() => fetchRecordedTasks} />
-        </>
-      ) : (
-        <>
-          <RecordedDate date={date} setDate={setDate} />
-          <StyledRecordedList>
-            {recordedTasks.map((task, index) => (
-              <RecordedListItem
-                key={index}
-                task={task}
-                setName={(v: string) =>
-                  setName(recordedTasks, setRecordedTasks, index, v)
-                }
-                setEstimate={(v: number) =>
-                  setEstimate(recordedTasks, setRecordedTasks, index, v)
-                }
-                setActual={(v: number) =>
-                  setActual(recordedTasks, setRecordedTasks, index, v)
-                }
-                updateTask={(t: Task) => updateTask(t, setRecordedError)}
-                completeTask={(id: number) =>
-                  completeTask(id, setRecordedError)
-                }
-                archiveTask={(id: number) => archiveTask(id, setRecordedError)}
-                deleteTask={(id: number) => deleteTask(id, setRecordedError)}
-              />
-            ))}
-          </StyledRecordedList>
-          <CalculatedRecordedTimes tasks={recordedTasks} />
-        </>
-      )}
+      <RecordedDate date={date} setDate={setDate} />
+      <StyledRecordedList>
+        {recordedTasks.map((task, index) => (
+          <RecordedListItem
+            key={index}
+            task={task}
+            setName={(v: string) =>
+              setName(recordedTasks, setRecordedTasks, index, v)
+            }
+            setEstimate={(v: number) =>
+              setEstimate(recordedTasks, setRecordedTasks, index, v)
+            }
+            setActual={(v: number) =>
+              setActual(recordedTasks, setRecordedTasks, index, v)
+            }
+          />
+        ))}
+      </StyledRecordedList>
+      <CalculatedRecordedTimes tasks={recordedTasks} />
     </>
   );
 };
