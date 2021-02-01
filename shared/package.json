@@ -1,0 +1,12 @@
+{
+  "name": "shared",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "build": "rm -rf ../server/src/generated/shared && mkdir -p ../server/src/generated/shared && cp -RT src ../server/src/generated/shared"
+  },
+  "devDependencies": {
+    "prettier": "2.2.1",
+    "typescript": "4.1.3"
+  }
+}

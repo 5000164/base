@@ -1,5 +1,5 @@
 {
-  "name": "base",
+  "name": "Base",
   "private": true,
   "version": "0.0.1",
   "scripts": {
@@ -11,20 +11,17 @@
     "files": [
       "index.js",
       {
-        "from": "../server/build",
-        "to": "./server",
-        "filter": [
-          "!prismaClient"
-        ]
+        "from": "../dist/server",
+        "to": "./server"
       },
       {
-        "from": "../client/build",
+        "from": "../dist/client",
         "to": "./client"
       }
     ],
     "extraResources": [
       {
-        "from": "../server/build/prismaClient",
+        "from": "../prismaClient",
         "to": "./prismaClient"
       }
     ]

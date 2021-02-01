@@ -1,5 +1,7 @@
-import { Status } from "./server";
-import { Plan_Updated_Plan_Task, Templates_Task } from "./generated/graphql";
+import { Plan_Updated_Plan_Task } from "./generated/schema/graphql";
+import { Status } from "./generated/shared/types/status";
+import { sort } from "./generated/shared/utils/sort";
+import { TemplateTask } from "./types/templateTask";
 
 export const addTask = async (ctx: any): Promise<boolean> => {
   const task = await ctx.prisma.tasks.findFirst({
@@ -160,48 +162,6 @@ export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
   return true;
 };
 
-const sort = (tasks: Templates_Task[]): Templates_Task[] => {
-  const [firstTask] = tasks.splice(
-    tasks.findIndex((t) => !t.previous_id),
-    1
-  );
-
-  if (firstTask) {
-    const sortedTasks = [];
-    sortedTasks.push(firstTask);
-
-    const sort = (
-      nextId: number,
-      remainTasks: Templates_Task[],
-      sortedTasks: Templates_Task[]
-    ): Templates_Task[] => {
-      if (remainTasks.length === 0) {
-        return sortedTasks;
-      }
-
-      const [nextTask] = remainTasks.splice(
-        remainTasks.findIndex((t) => t.id === nextId),
-        1
-      );
-      sortedTasks.push(nextTask);
-
-      if (nextTask.next_id) {
-        return sort(nextTask.next_id, remainTasks, sortedTasks);
-      } else {
-        return [...sortedTasks, ...remainTasks];
-      }
-    };
-
-    if (firstTask.next_id) {
-      return sort(firstTask.next_id, tasks, sortedTasks);
-    } else {
-      return [...sortedTasks, ...tasks];
-    }
-  } else {
-    return tasks;
-  }
-};
-
 export const importTemplate = async (
   ctx: any,
   templateId: number
@@ -209,7 +169,7 @@ export const importTemplate = async (
   const lastTask = await ctx.prisma.tasks.findFirst({
     where: { status: Status.Normal, next_id: null },
   });
-  const tasks = sort(
+  const tasks = sort<TemplateTask>(
     await ctx.prisma.template_tasks.findMany({
       where: { templateId },
     })

@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "workspaces": [
+    "schema",
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "build": "yarn workspace schema build && yarn workspace shared build && yarn workspace server build && yarn workspace client build",
+    "postbuild": "yarn --cwd app build",
+    "postinstall": "yarn --cwd app install"
+  }
+}

@@ -1,4 +1,4 @@
-import { Templates_Updated_Template_Task } from "./generated/graphql";
+import { Templates_Updated_Template_Task } from "./generated/schema/graphql";
 
 export const addTemplateTask = async (
   ctx: any,

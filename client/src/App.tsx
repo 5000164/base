@@ -5,55 +5,18 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { createGlobalStyle } from "styled-components";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
-import { TemplateList } from "./components/TemplateList";
 import { PlanPage } from "./components/pages/PlanPage";
-import { TaskTrackList } from "./components/TaskTrackList";
+import { TemplatesPage } from "./components/pages/TemplatesPage";
+import { TaskTracksPage } from "./components/pages/TaskTracksPage";
 import { AnchorLink } from "./components/atoms/AnchorLink";
 
 const client = new ApolloClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
 });
 
-export interface Task {
-  id: number;
-  name: string;
-  status?: Status;
-  estimate?: number;
-  actual?: number;
-  previous_id?: number;
-  next_id?: number;
-}
-
-export interface Template {
-  id: number;
-  name: string;
-}
-
-export interface TemplateTask {
-  id: number;
-  name: string;
-  estimate?: number;
-  previous_id?: number;
-  next_id?: number;
-}
-
-export interface TaskTrack {
-  task_track_id: number;
-  task: TaskTrackTask;
-  start_at?: number;
-  stop_at?: number;
-}
-
-export interface TaskTrackTask {
-  id: number;
-  name: string;
-}
-
-export enum Status {
-  Normal = 0,
-  Completed = 1,
-  Archived = 2,
-}
+export const AppContext = React.createContext({
+  client,
+});
 
 export const App = () => {
   return (
@@ -91,17 +54,13 @@ export const App = () => {
             <Box gridArea="main">
               <Switch>
                 <Route exact path="/">
-                  <PlanPage client={client} />
+                  <PlanPage />
                 </Route>
                 <Route path="/templates">
-                  <>
-                    <TemplateList client={client} />
-                  </>
+                  <TemplatesPage />
                 </Route>
                 <Route path="/task-tracks">
-                  <>
-                    <TaskTrackList client={client} />
-                  </>
+                  <TaskTracksPage />
                 </Route>
               </Switch>
             </Box>
