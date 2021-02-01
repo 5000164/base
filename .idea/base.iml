@@ -8,6 +8,10 @@
       <excludeFolder url="file://$MODULE_DIR$/server/build" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/client/src/generated" />
+      <excludeFolder url="file://$MODULE_DIR$/schema/src/generated" />
+      <excludeFolder url="file://$MODULE_DIR$/prismaClient" />
+      <excludeFolder url="file://$MODULE_DIR$/server/src/generated" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
