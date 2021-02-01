@@ -38,6 +38,18 @@ export const theme = {
       background: "selected-background",
       color: "selected-text",
     },
+    control: {
+      border: {
+        radius: "0",
+        width: "0",
+      },
+    },
+    input: {
+      padding: {
+        horizontal: "0",
+        vertical: "8px",
+      },
+    },
   },
   text: {
     // Button の size を small にすると padding の調整ができなくなるので
@@ -48,6 +60,9 @@ export const theme = {
     medium: {
       size: "14px",
     },
+  },
+  textInput: {
+    extend: "border-bottom: 1px solid #444444;",
   },
   button: {
     padding: {
