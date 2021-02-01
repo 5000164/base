@@ -1,6 +1,23 @@
 const path = require("path");
 const { fork } = require("child_process");
 const { app, BrowserWindow } = require("electron");
+const log = require("electron-log");
+
+const date = new Date();
+const prefix = [
+  date.getFullYear().toString().padStart(4, "0"),
+  (date.getMonth() + 1).toString().padStart(2, "0"),
+  date.getDate().toString().padStart(2, "0"),
+].join("");
+const fileName = log.transports.file.fileName;
+log.transports.file.fileName = `${prefix}_${fileName}`;
+
+process.on("uncaughtException", function (err) {
+  log.error("electron:event:uncaughtException");
+  log.error(err);
+  log.error(err.stack);
+  app.quit();
+});
 
 // To run a script file inside an asar file
 const cwd = path.join(__dirname, "..");

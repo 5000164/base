@@ -1,5 +1,5 @@
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "../generated/graphql";
+import { Mutation, Query } from "schema/src/generated/client/graphql";
 import { PlanTask } from "../types/planTask";
 
 export const fetchPlanTasks = (

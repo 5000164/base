@@ -1,4 +1,4 @@
-import { Sortable } from "./sortable";
+import { Sortable } from "shared/src/types/sortable";
 
 export interface TemplateTask extends Sortable {
   id: number;

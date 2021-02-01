@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { sort } from "shared/src/utils/sort";
 import {
   PlanTask,
   setActual,
@@ -13,7 +14,7 @@ import {
   fetchPlanTasks,
   updatePlanTasksOrder,
 } from "../../repositories/planTasks";
-import { reorder, sort } from "../../utils/sort";
+import { reorder } from "../../utils/sort";
 import { AppContext } from "../../App";
 import { PlanPageContext } from "../pages/PlanPage";
 import { PlanListItem } from "../molecules/PlanListItem";

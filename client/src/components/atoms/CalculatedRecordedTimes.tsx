@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Status } from "shared/src/types/status";
 import { PlanTask } from "../../types/planTask";
-import { Status } from "../../types/status";
 
 export const CalculatedRecordedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
   const [totalCompletedEstimateTime, setTotalCompletedEstimateTime] = useState(

@@ -6,11 +6,9 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "esModuleInterop": true,
-    "outDir": "build",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    }
+    "incremental": false,
+    "outDir": "../dist/server",
+    "rootDir": "./src"
   },
   "include": ["src/**/*"]
 }

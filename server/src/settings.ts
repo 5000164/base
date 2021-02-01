@@ -1,10 +1,16 @@
 import os from "os";
 import fs from "fs";
 import path from "path";
-import log from "electron-log";
+import { LogLevel } from "electron-log";
+
+interface UserSettings {
+  dbPath?: string;
+  logLevel?: LogLevel;
+}
 
 export interface Settings {
-  dbPath?: string;
+  dbPath: string;
+  logLevel: LogLevel;
 }
 
 const userDataPath = `${os.homedir()}/Library/Application Support/base`;
@@ -17,13 +23,16 @@ try {
   fs.writeFileSync(settingPath, "{}\n");
 }
 
-const userSettings: Settings = JSON.parse(fs.readFileSync(settingPath, "utf8"));
-log.debug(userSettings);
+const userSettings: UserSettings = JSON.parse(
+  fs.readFileSync(settingPath, "utf8")
+);
 
 const dbPath =
   process.env.BASE_DB_PATH ??
   userSettings.dbPath ??
   path.join(userDataPath, "app.db");
 
-export const settings = { ...userSettings, ...{ dbPath } };
-log.debug(settings);
+const logLevel =
+  (process.env.BASE_LOG_LEVEL as LogLevel) ?? userSettings.logLevel ?? "info";
+
+export const settings: Settings = { dbPath, logLevel };

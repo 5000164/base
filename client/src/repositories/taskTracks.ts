@@ -1,5 +1,9 @@
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query, Task_Tracks_Fetch_Type } from "../generated/graphql";
+import {
+  Mutation,
+  Query,
+  Task_Tracks_Fetch_Type,
+} from "schema/src/generated/client/graphql";
 import { TaskTrack } from "../types/taskTrack";
 
 export const fetchTaskTracks = (

@@ -1,8 +1,8 @@
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "../generated/graphql";
+import { Mutation, Query } from "schema/src/generated/client/graphql";
+import { Sortable } from "shared/src/types/sortable";
 import { Template } from "../types/template";
 import { TemplateTask } from "../types/templateTask";
-import { Sortable } from "../types/sortable";
 
 export const fetchTemplates = (
   client: DefaultClient<any>

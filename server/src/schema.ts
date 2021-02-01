@@ -1,8 +1,8 @@
 import path from "path";
 import { makeExecutableSchema } from "graphql-tools";
 import { importSchema } from "graphql-import";
-import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/graphql";
-import { Status } from "./server";
+import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/schema/graphql";
+import { Status } from "./generated/shared/types/status";
 import {
   addTask,
   changeTaskStatus,
@@ -19,7 +19,7 @@ import {
 } from "./templates";
 
 const typeDefs = importSchema(
-  path.join(__dirname, "./generated/schema.graphql")
+  path.join(__dirname, "./generated/schema/schema.graphql")
 );
 
 const resolvers: Resolvers = {

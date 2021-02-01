@@ -1,5 +1,5 @@
-import { Status } from "./status";
-import { Sortable } from "./sortable";
+import { Status } from "shared/src/types/status";
+import { Sortable } from "shared/src/types/sortable";
 
 export interface PlanTask extends Sortable {
   id: number;

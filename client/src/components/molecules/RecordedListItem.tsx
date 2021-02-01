@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "grommet";
+import { Status } from "shared/src/types/status";
 import { PlanTask } from "../../types/planTask";
-import { Status } from "../../types/status";
 import {
   archivePlanTask,
   completePlanTask,

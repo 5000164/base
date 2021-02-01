@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { sort } from "shared/src/utils/sort";
 import { setEstimate, setName, TemplateTask } from "../../types/templateTask";
 import {
   addTask,
   fetchTasks,
   updateTemplateTasksOrder,
 } from "../../repositories/templates";
-import { reorder, sort } from "../../utils/sort";
+import { reorder } from "../../utils/sort";
 import { AppContext } from "../../App";
 import { TemplatesPageContext } from "../pages/TemplatesPage";
 import { TemplateTaskListItem } from "../molecules/TemplateTaskListItem";
