@@ -49,6 +49,7 @@ export const theme = {
         horizontal: "0",
         vertical: "8px",
       },
+      weight: "200",
     },
   },
   text: {

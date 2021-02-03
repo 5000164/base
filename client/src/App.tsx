@@ -72,12 +72,18 @@ export const App = () => {
 };
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: "Hiragino Sans";
+    src: local(HiraginoSans-W1);
+    font-weight: 200;
+  }
+
   html {
     width: 100%;
     height: 100%;
     margin: 0;
-    font-family: sans-serif;
-    font-weight: lighter;
+    font-family: "Hiragino Sans", sans-serif;
+    font-weight: 200;
     font-size: 10px;
     font-kerning: normal; // フォントのカーニングを常に有効にする
     font-feature-settings: "palt"; // 自動カーニングさせる
