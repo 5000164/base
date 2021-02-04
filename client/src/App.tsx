@@ -42,7 +42,7 @@ export const App = () => {
               { name: "main", start: [1, 0], end: [1, 0] },
             ]}
           >
-            <Box gridArea="nav">
+            <Box gridArea="nav" overflow="scroll">
               <AnchorLink to="/" label="Plan" margin="small" />
               <AnchorLink to="/templates" label="Templates" margin="small" />
               <AnchorLink
@@ -51,7 +51,7 @@ export const App = () => {
                 margin="small"
               />
             </Box>
-            <Box gridArea="main">
+            <Box gridArea="main" overflow="scroll" pad={{ bottom: "160px" }}>
               <Switch>
                 <Route exact path="/">
                   <PlanPage />

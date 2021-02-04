@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { theme } from "../../theme";
 import { TaskTrack } from "../../types/taskTrack";
 import { fetchWorkingTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
@@ -27,7 +28,12 @@ export const WorkingTaskTrackList = () => {
 };
 
 const StyledTaskTrackList = styled.ul`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: min(1024px, 100%);
-  margin: 80px auto 4px;
+  margin: 0 auto;
   padding: 0;
+  background: ${theme.global.colors.background};
 `;
