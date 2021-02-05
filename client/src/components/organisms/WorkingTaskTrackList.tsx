@@ -32,8 +32,9 @@ const StyledTaskTrackList = styled.ul`
   bottom: 0;
   left: 0;
   right: 0;
-  width: min(1024px, 100%);
+  width: 100%;
   margin: 0 auto;
-  padding: 0;
+  padding: 16px;
   background: ${theme.global.colors.background};
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
 `;
