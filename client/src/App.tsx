@@ -2,7 +2,9 @@ import React from "react";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
+import { ClockFill, ListTask } from "styled-icons/bootstrap";
+import { Template } from "styled-icons/heroicons-solid";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
 import { PlanPage } from "./components/pages/PlanPage";
@@ -35,21 +37,22 @@ export const App = () => {
           <Grid
             fill={true}
             rows={["flex"]}
-            columns={["small", "flex"]}
-            gap="small"
+            columns={["40px", "flex"]}
             areas={[
               { name: "nav", start: [0, 0], end: [0, 0] },
               { name: "main", start: [1, 0], end: [1, 0] },
             ]}
           >
-            <Box gridArea="nav" overflow="scroll">
-              <AnchorLink to="/" label="Plan" margin="small" />
-              <AnchorLink to="/templates" label="Templates" margin="small" />
-              <AnchorLink
-                to="/task-tracks"
-                label="Task Tracks"
-                margin="small"
-              />
+            <Box gridArea="nav" overflow="hidden">
+              <StyledAnchorLink to="/">
+                <ListTask size="30" />
+              </StyledAnchorLink>
+              <StyledAnchorLink to="/templates">
+                <Template size="32" />
+              </StyledAnchorLink>
+              <StyledAnchorLink to="/task-tracks">
+                <ClockFill size="26" />
+              </StyledAnchorLink>
             </Box>
             <Box gridArea="main" overflow="scroll" pad={{ bottom: "160px" }}>
               <Switch>
@@ -113,4 +116,11 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+`;
+
+const StyledAnchorLink = styled(AnchorLink)`
+  width: 32px;
+  margin: 8px 0 0 8px;
+  padding: 0;
+  text-align: center;
 `;
