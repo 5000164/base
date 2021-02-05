@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Layer } from "grommet";
+import { Box, Button, Layer } from "grommet";
 import { TemplatesPageContext } from "../pages/TemplatesPage";
 import { TemplateTaskList } from "./TemplateTaskList";
 
@@ -14,8 +14,10 @@ export const TemplateTaskListLayer = () => {
       onEsc={() => closeEditDialog()}
       onClickOutside={() => closeEditDialog()}
     >
-      <TemplateTaskList />
-      <Button label="close" onClick={() => closeEditDialog()} />
+      <Box fill="vertical" overflow="scroll">
+        <TemplateTaskList />
+        <Button label="close" onClick={() => closeEditDialog()} />
+      </Box>
     </StyledLayer>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Layer } from "grommet";
+import { Box, Button, Layer } from "grommet";
 import { PlanPageContext } from "../pages/PlanPage";
 import { TemplateListToImport } from "./TemplateListToImport";
 
@@ -14,8 +14,10 @@ export const TemplateListToImportLayer = () => {
       onEsc={() => closeImportDialog()}
       onClickOutside={() => closeImportDialog()}
     >
-      <TemplateListToImport />
-      <Button label="close" onClick={() => closeImportDialog()} />
+      <Box fill="vertical" overflow="scroll">
+        <TemplateListToImport />
+        <Button label="close" onClick={() => closeImportDialog()} />
+      </Box>
     </StyledLayer>
   );
 };
