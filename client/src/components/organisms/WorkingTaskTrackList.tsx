@@ -19,11 +19,17 @@ export const WorkingTaskTrackList = () => {
   }, [client, reloadCount]);
 
   return (
-    <StyledTaskTrackList>
-      {taskTracks.map((taskTrack, index) => (
-        <WorkingTaskTrackListItem key={index} taskTrack={taskTrack} />
-      ))}
-    </StyledTaskTrackList>
+    <>
+      {taskTracks.length > 0 ? (
+        <StyledTaskTrackList>
+          {taskTracks.map((taskTrack, index) => (
+            <WorkingTaskTrackListItem key={index} taskTrack={taskTrack} />
+          ))}
+        </StyledTaskTrackList>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
