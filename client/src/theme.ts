@@ -38,6 +38,11 @@ export const theme = {
       background: "selected-background",
       color: "selected-text",
     },
+    focus: {
+      outline: {
+        size: "0",
+      },
+    },
     control: {
       border: {
         radius: "0",
@@ -71,7 +76,7 @@ export const theme = {
     },
   },
   anchor: {
-    color: "accent-1",
+    color: "text",
   },
   layer: {
     background: "#111111",

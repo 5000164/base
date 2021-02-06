@@ -93,6 +93,8 @@ const GlobalStyle = createGlobalStyle`
     letter-spacing: 0.03rem; // 字間を調整
     -webkit-font-smoothing: antialiased; // フォントにアンチエイリアスをかける (少し細く見える)
     -moz-osx-font-smoothing: grayscale;
+    color: ${theme.global.colors.text};
+    background: ${theme.global.colors.background};
   }
 
   body {
@@ -101,16 +103,14 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-size: 1.8rem;
     line-height: 1.55;
-    color: hsl(235, 10%, 28%);
-    background-color: hsl(0, 100%, 100%);
   }
 
   a {
-    color: hsl(235, 10%, 50%);
+    color: ${theme.global.colors.text};
   }
 
   a:visited {
-    color: hsl(235, 10%, 50%);
+    color: ${theme.global.colors.text};
   }
 
   * {
