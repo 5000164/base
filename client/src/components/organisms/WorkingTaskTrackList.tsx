@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { theme } from "../../theme";
 import { TaskTrack } from "../../types/taskTrack";
 import { fetchWorkingTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
@@ -18,16 +19,28 @@ export const WorkingTaskTrackList = () => {
   }, [client, reloadCount]);
 
   return (
-    <StyledTaskTrackList>
-      {taskTracks.map((taskTrack, index) => (
-        <WorkingTaskTrackListItem key={index} taskTrack={taskTrack} />
-      ))}
-    </StyledTaskTrackList>
+    <>
+      {taskTracks.length > 0 ? (
+        <StyledTaskTrackList>
+          {taskTracks.map((taskTrack, index) => (
+            <WorkingTaskTrackListItem key={index} taskTrack={taskTrack} />
+          ))}
+        </StyledTaskTrackList>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
 const StyledTaskTrackList = styled.ul`
-  width: min(1024px, 100%);
-  margin: 80px auto 4px;
-  padding: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+  background: ${theme.global.colors.background};
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
 `;

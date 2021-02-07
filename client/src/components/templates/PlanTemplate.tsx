@@ -10,9 +10,9 @@ export const PlanTemplate = () => {
 
   return (
     <>
-      <WorkingTaskTrackList />
       <PlanList />
       <RecordedList />
+      <WorkingTaskTrackList />
       {isImportDialogShown && <TemplateListToImportLayer />}
     </>
   );

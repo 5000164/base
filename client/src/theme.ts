@@ -38,6 +38,24 @@ export const theme = {
       background: "selected-background",
       color: "selected-text",
     },
+    focus: {
+      outline: {
+        size: "0",
+      },
+    },
+    control: {
+      border: {
+        radius: "0",
+        width: "0",
+      },
+    },
+    input: {
+      padding: {
+        horizontal: "0",
+        vertical: "8px",
+      },
+      weight: "200",
+    },
   },
   text: {
     // Button の size を small にすると padding の調整ができなくなるので
@@ -49,13 +67,16 @@ export const theme = {
       size: "14px",
     },
   },
+  textInput: {
+    extend: "border-bottom: 1px solid #444444;",
+  },
   button: {
     padding: {
       horizontal: "4px",
     },
   },
   anchor: {
-    color: "accent-1",
+    color: "text",
   },
   layer: {
     background: "#111111",

@@ -28,6 +28,10 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    backgroundColor: "#111111",
+    webPreferences: {
+      scrollBounce: true,
+    },
   });
   setTimeout(() => {
     win.loadFile(path.join(__dirname, "./client/index.html"));
