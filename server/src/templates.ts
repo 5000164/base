@@ -1,13 +1,13 @@
 import { Templates_Updated_Template_Task } from "./generated/schema/graphql";
 
 export const addTemplateTask = async (
-  ctx: any,
+  context: any,
   templateId: number
 ): Promise<boolean> => {
-  const lastTask = await ctx.prisma.template_tasks.findFirst({
+  const lastTask = await context.prisma.template_tasks.findFirst({
     where: { templateId, next_id: null },
   });
-  const createdTask = await ctx.prisma.template_tasks.create({
+  const createdTask = await context.prisma.template_tasks.create({
     data: {
       templates: {
         connect: {
@@ -25,7 +25,7 @@ export const addTemplateTask = async (
     },
   });
   if (lastTask) {
-    await ctx.prisma.template_tasks.update({
+    await context.prisma.template_tasks.update({
       where: {
         id: lastTask.id,
       },
@@ -40,12 +40,12 @@ export const addTemplateTask = async (
 };
 
 export const updateTemplateTask = async (
-  ctx: any,
+  context: any,
   id: number,
   name?: string,
   estimate?: number
 ): Promise<boolean> => {
-  await ctx.prisma.template_tasks.update({
+  await context.prisma.template_tasks.update({
     where: { id: id },
     data: {
       ...(name ? { name } : {}),
@@ -56,16 +56,16 @@ export const updateTemplateTask = async (
 };
 
 export const deleteTemplateTask = async (
-  ctx: any,
+  context: any,
   id: number
 ): Promise<boolean> => {
-  const task = await ctx.prisma.template_tasks.findUnique({
+  const task = await context.prisma.template_tasks.findUnique({
     where: { id },
   });
-  await ctx.prisma.$transaction([
+  await context.prisma.$transaction([
     ...(task.previous_id
       ? [
-          ctx.prisma.template_tasks.update({
+          context.prisma.template_tasks.update({
             where: { id: task.previous_id },
             data: {
               template_tasks_template_tasksTotemplate_tasks_next_id: {
@@ -79,7 +79,7 @@ export const deleteTemplateTask = async (
       : []),
     ...(task.next_id
       ? [
-          ctx.prisma.template_tasks.update({
+          context.prisma.template_tasks.update({
             where: { id: task.next_id },
             data: {
               template_tasks_template_tasksTotemplate_tasks_previous_id: {
@@ -91,7 +91,7 @@ export const deleteTemplateTask = async (
           }),
         ]
       : []),
-    ctx.prisma.template_tasks.delete({
+    context.prisma.template_tasks.delete({
       where: { id: task.id },
     }),
   ]);
@@ -99,12 +99,12 @@ export const deleteTemplateTask = async (
 };
 
 export const updateTemplateTasksOrder = async (
-  ctx: any,
+  context: any,
   updatedTemplateTasks: Templates_Updated_Template_Task[]
 ): Promise<boolean> => {
-  await ctx.prisma.$transaction(
+  await context.prisma.$transaction(
     updatedTemplateTasks.map(({ id, previous_id, next_id }) =>
-      ctx.prisma.template_tasks.update({
+      context.prisma.template_tasks.update({
         where: { id: id },
         data: {
           ...(previous_id

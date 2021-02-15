@@ -1,6 +1,7 @@
-import path from "path";
-import { makeExecutableSchema } from "graphql-tools";
-import { importSchema } from "graphql-import";
+import { join } from "path";
+import { loadSchemaSync } from "@graphql-tools/load";
+import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
+import { addResolversToSchema } from "@graphql-tools/schema";
 import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
 import {
@@ -18,8 +19,11 @@ import {
   updateTemplateTasksOrder,
 } from "./templates";
 
-const typeDefs = importSchema(
-  path.join(__dirname, "./generated/schema/schema.graphql")
+const schema = loadSchemaSync(
+  join(__dirname, "./generated/schema/schema.graphql"),
+  {
+    loaders: [new GraphQLFileLoader()],
+  }
 );
 
 const resolvers: Resolvers = {
@@ -54,9 +58,9 @@ const resolvers: Resolvers = {
     }),
   },
   Plan_Query: {
-    tasks: (parent, args, ctx) =>
-      ctx.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-    recordedTasks: (parent, args, ctx) => {
+    tasks: (parent, args, context) =>
+      context.prisma.tasks.findMany({ where: { status: Status.Normal } }),
+    recordedTasks: (parent, args, context) => {
       const date = new Date(
         new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
       );
@@ -68,7 +72,7 @@ const resolvers: Resolvers = {
           0
         )
       );
-      return ctx.prisma.tasks.findMany({
+      return context.prisma.tasks.findMany({
         where: {
           status: { in: [Status.Completed, Status.Archived] },
           AND: [
@@ -89,70 +93,72 @@ const resolvers: Resolvers = {
     },
   },
   Plan_Mutation: {
-    addTask: (parent, args, ctx) => addTask(ctx),
-    updateTask: (parent, args, ctx) =>
-      updateTask(ctx, args.id, args.name, args.estimate, args.actual),
-    completeTask: (parent, args, ctx) =>
-      changeTaskStatus(ctx, args.id, Status.Completed),
-    archiveTask: (parent, args, ctx) =>
-      changeTaskStatus(ctx, args.id, Status.Archived),
-    deleteTask: (parent, args, ctx) => deleteTask(ctx, args.id),
-    importTemplate: async (parent, args, ctx) => importTemplate(ctx, args.id),
-    updatePlanTasksOrder: (parent, args, ctx) =>
-      updatePlanTasksOrder(ctx, args.updatedPlanTasks),
+    addTask: (parent, args, context) => addTask(context),
+    updateTask: (parent, args, context) =>
+      updateTask(context, args.id, args.name, args.estimate, args.actual),
+    completeTask: (parent, args, context) =>
+      changeTaskStatus(context, args.id, Status.Completed),
+    archiveTask: (parent, args, context) =>
+      changeTaskStatus(context, args.id, Status.Archived),
+    deleteTask: (parent, args, context) => deleteTask(context, args.id),
+    importTemplate: async (parent, args, context) =>
+      importTemplate(context, args.id),
+    updatePlanTasksOrder: (parent, args, context) =>
+      updatePlanTasksOrder(context, args.updatedPlanTasks),
   },
   Templates_Query: {
-    templates: (parent, args, ctx) =>
-      ctx.prisma.templates.findMany({ where: { status: Status.Normal } }),
-    tasks: (parent, args, ctx) =>
-      ctx.prisma.template_tasks.findMany({
+    templates: (parent, args, context) =>
+      context.prisma.templates.findMany({ where: { status: Status.Normal } }),
+    tasks: (parent, args, context) =>
+      context.prisma.template_tasks.findMany({
         where: { templateId: args.templateId },
       }),
   },
   Templates_Mutation: {
-    addTemplate: (parent, args, ctx) =>
-      ctx.prisma.templates.create({
+    addTemplate: (parent, args, context) =>
+      context.prisma.templates.create({
         data: {
           name: args.name,
           status: Status.Normal,
         },
       }),
-    updateTemplate: (parent, args, ctx) => {
+    updateTemplate: (parent, args, context) => {
       const data = {
         ...(args.name ? { name: args.name } : {}),
       };
-      return ctx.prisma.templates.update({
+      return context.prisma.templates.update({
         where: { id: args.id },
         data,
       });
     },
-    archiveTemplate: (parent, args, ctx) =>
-      ctx.prisma.templates.update({
+    archiveTemplate: (parent, args, context) =>
+      context.prisma.templates.update({
         where: { id: args.id },
         data: {
           status: Status.Archived,
           status_changed_at: Math.floor(Date.now() / 1000),
         },
       }),
-    deleteTemplate: async (parent, args, ctx) => {
-      await ctx.prisma.template_tasks.deleteMany({
+    deleteTemplate: async (parent, args, context) => {
+      await context.prisma.template_tasks.deleteMany({
         where: { templateId: args.id },
       });
-      return ctx.prisma.templates.delete({
+      return context.prisma.templates.delete({
         where: { id: args.id },
       });
     },
-    addTask: (parent, args, ctx) => addTemplateTask(ctx, args.templateId),
-    updateTask: (parent, args, ctx) =>
-      updateTemplateTask(ctx, args.id, args.name, args.estimate),
-    deleteTask: (parent, args, ctx) => deleteTemplateTask(ctx, args.id),
-    updateTemplateTasksOrder: (parent, args, ctx) =>
-      updateTemplateTasksOrder(ctx, args.updatedTemplateTasks),
+    addTask: (parent, args, context) =>
+      addTemplateTask(context, args.templateId),
+    updateTask: (parent, args, context) =>
+      updateTemplateTask(context, args.id, args.name, args.estimate),
+    deleteTask: (parent, args, context) => deleteTemplateTask(context, args.id),
+    updateTemplateTasksOrder: (parent, args, context) =>
+      updateTemplateTasksOrder(context, args.updatedTemplateTasks),
   },
   Task_Tracks_Query: {
-    task_tracks: (parent, args, ctx) =>
+    task_tracks: (parent, args, context) =>
       args.fetch_type === Task_Tracks_Fetch_Type.All
-        ? ctx.prisma.task_tracks.findMany({
+        ? context.prisma.task_tracks.findMany({
             include: {
               task: {
                 select: {
@@ -165,7 +171,7 @@ const resolvers: Resolvers = {
               start_at: "desc",
             },
           })
-        : ctx.prisma.task_tracks.findMany({
+        : context.prisma.task_tracks.findMany({
             where: { stop_at: null },
             include: {
               task: {
@@ -181,8 +187,8 @@ const resolvers: Resolvers = {
           }),
   },
   Task_Tracks_Mutation: {
-    start_task_track: (parent, args, ctx) =>
-      ctx.prisma.task_tracks.create({
+    start_task_track: (parent, args, context) =>
+      context.prisma.task_tracks.create({
         data: {
           start_at: Math.floor(Date.now() / 1000),
           task: {
@@ -200,8 +206,8 @@ const resolvers: Resolvers = {
           },
         },
       }),
-    stop_task_track: (parent, args, ctx) =>
-      ctx.prisma.task_tracks.update({
+    stop_task_track: (parent, args, context) =>
+      context.prisma.task_tracks.update({
         where: {
           task_track_id: args.task_track_id,
         },
@@ -217,8 +223,8 @@ const resolvers: Resolvers = {
           },
         },
       }),
-    stop_task_track_by_task_id: async (parent, args, ctx) => {
-      await ctx.prisma.task_tracks.updateMany({
+    stop_task_track_by_task_id: async (parent, args, context) => {
+      await context.prisma.task_tracks.updateMany({
         where: {
           task_id: args.task_id,
           stop_at: null,
@@ -229,12 +235,12 @@ const resolvers: Resolvers = {
       });
       return true;
     },
-    update_task_track: (parent, args, ctx) => {
+    update_task_track: (parent, args, context) => {
       const data = {
         ...(args.start_at ? { start_at: args.start_at } : {}),
         ...(args.stop_at ? { stop_at: args.stop_at } : {}),
       };
-      return ctx.prisma.task_tracks.update({
+      return context.prisma.task_tracks.update({
         where: { task_track_id: args.task_track_id },
         data,
         include: {
@@ -250,7 +256,7 @@ const resolvers: Resolvers = {
   },
 };
 
-export const schema = makeExecutableSchema({
+export const schemaWithResolvers = addResolversToSchema({
+  schema,
   resolvers,
-  typeDefs,
 });
