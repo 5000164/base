@@ -66,6 +66,12 @@ export const theme = {
     medium: {
       size: "14px",
     },
+    // ThemeType 型の optional となるべき部分が optional になっていないのでそれに対処する
+    "2xl?": {},
+    "3xl?": {},
+    "4xl?": {},
+    "5xl?": {},
+    "6xl?": {},
   },
   textInput: {
     extend: "border-bottom: 1px solid #444444;",

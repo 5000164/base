@@ -1,9 +1,11 @@
+import express from "express";
+import cors from "cors";
+import { graphqlHTTP } from "express-graphql";
 import log from "electron-log";
-import { GraphQLServer } from "graphql-yoga";
 import { PrismaClient } from "../../prismaClient"; // Electron の asar 内から呼び出すことができないため、arar の外に置いた時に相対的にパスが一致するようにする
 import { settings } from "./settings";
 import { migrate } from "./migration";
-import { schema } from "./schema";
+import { schemaWithResolvers } from "./schema";
 
 log.transports.file.level = settings.logLevel;
 const date = new Date();
@@ -40,17 +42,17 @@ log.debug(settings);
       },
     },
   });
-  const createContext = () => ({ prisma });
 
-  await new GraphQLServer({
-    schema,
-    context: createContext,
-  })
-    .start({
-      port: process.env.BASE_PORT ?? 5164,
-      subscriptions: false,
+  const app = express();
+  app.use(cors());
+  app.use(
+    graphqlHTTP({
+      schema: schemaWithResolvers,
+      context: { prisma },
+      graphiql: true,
     })
-    .catch((e) => log.error(e));
-
-  log.debug("Server is running");
+  );
+  app.listen(process.env.BASE_PORT ?? 5164, () => {
+    log.debug("Server is running");
+  });
 })();

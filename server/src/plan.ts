@@ -3,11 +3,11 @@ import { Status } from "./generated/shared/types/status";
 import { sort } from "./generated/shared/utils/sort";
 import { TemplateTask } from "./types/templateTask";
 
-export const addTask = async (ctx: any): Promise<boolean> => {
-  const task = await ctx.prisma.tasks.findFirst({
+export const addTask = async (context: any): Promise<boolean> => {
+  const task = await context.prisma.tasks.findFirst({
     where: { status: Status.Normal, next_id: null },
   });
-  const createdTask = await ctx.prisma.tasks.create({
+  const createdTask = await context.prisma.tasks.create({
     data: {
       name: "",
       status: Status.Normal,
@@ -21,7 +21,7 @@ export const addTask = async (ctx: any): Promise<boolean> => {
     },
   });
   if (task) {
-    await ctx.prisma.tasks.update({
+    await context.prisma.tasks.update({
       where: {
         id: task.id,
       },
@@ -36,13 +36,13 @@ export const addTask = async (ctx: any): Promise<boolean> => {
 };
 
 export const updateTask = async (
-  ctx: any,
+  context: any,
   id: number,
   name?: string,
   estimate?: number,
   actual?: number
 ): Promise<boolean> => {
-  await ctx.prisma.tasks.update({
+  await context.prisma.tasks.update({
     where: { id: id },
     data: {
       ...(name ? { name } : {}),
@@ -54,15 +54,15 @@ export const updateTask = async (
 };
 
 export const changeTaskStatus = async (
-  ctx: any,
+  context: any,
   id: number,
   status: Status
 ): Promise<boolean> => {
-  const task = await ctx.prisma.tasks.findUnique({
+  const task = await context.prisma.tasks.findUnique({
     where: { id },
   });
-  await ctx.prisma.$transaction([
-    ctx.prisma.tasks.update({
+  await context.prisma.$transaction([
+    context.prisma.tasks.update({
       where: { id: task.id },
       data: {
         status,
@@ -85,7 +85,7 @@ export const changeTaskStatus = async (
     }),
     ...(task.previous_id
       ? [
-          ctx.prisma.tasks.update({
+          context.prisma.tasks.update({
             where: { id: task.previous_id },
             data: {
               tasks_tasksTotasks_next_id: {
@@ -99,7 +99,7 @@ export const changeTaskStatus = async (
       : []),
     ...(task.next_id
       ? [
-          ctx.prisma.tasks.update({
+          context.prisma.tasks.update({
             where: { id: task.next_id },
             data: {
               tasks_tasksTotasks_previous_id: {
@@ -119,14 +119,17 @@ export const changeTaskStatus = async (
   return true;
 };
 
-export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
-  const task = await ctx.prisma.tasks.findUnique({
+export const deleteTask = async (
+  context: any,
+  id: number
+): Promise<boolean> => {
+  const task = await context.prisma.tasks.findUnique({
     where: { id },
   });
-  await ctx.prisma.$transaction([
+  await context.prisma.$transaction([
     ...(task.previous_id
       ? [
-          ctx.prisma.tasks.update({
+          context.prisma.tasks.update({
             where: { id: task.previous_id },
             data: {
               tasks_tasksTotasks_next_id: {
@@ -140,7 +143,7 @@ export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
       : []),
     ...(task.next_id
       ? [
-          ctx.prisma.tasks.update({
+          context.prisma.tasks.update({
             where: { id: task.next_id },
             data: {
               tasks_tasksTotasks_previous_id: {
@@ -152,10 +155,10 @@ export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
           }),
         ]
       : []),
-    ctx.prisma.task_tracks.deleteMany({
+    context.prisma.task_tracks.deleteMany({
       where: { task_id: task.id },
     }),
-    ctx.prisma.tasks.delete({
+    context.prisma.tasks.delete({
       where: { id: task.id },
     }),
   ]);
@@ -163,14 +166,14 @@ export const deleteTask = async (ctx: any, id: number): Promise<boolean> => {
 };
 
 export const importTemplate = async (
-  ctx: any,
+  context: any,
   templateId: number
 ): Promise<boolean> => {
-  const lastTask = await ctx.prisma.tasks.findFirst({
+  const lastTask = await context.prisma.tasks.findFirst({
     where: { status: Status.Normal, next_id: null },
   });
   const tasks = sort<TemplateTask>(
-    await ctx.prisma.template_tasks.findMany({
+    await context.prisma.template_tasks.findMany({
       where: { templateId },
     })
   );
@@ -179,7 +182,7 @@ export const importTemplate = async (
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
 
-    const createdTask = await ctx.prisma.tasks.create({
+    const createdTask = await context.prisma.tasks.create({
       data: {
         name: task.name,
         status: Status.Normal,
@@ -195,7 +198,7 @@ export const importTemplate = async (
     });
 
     if (previous_id) {
-      await ctx.prisma.tasks.update({
+      await context.prisma.tasks.update({
         where: { id: previous_id },
         data: {
           tasks_tasksTotasks_next_id: {
@@ -212,12 +215,12 @@ export const importTemplate = async (
 };
 
 export const updatePlanTasksOrder = async (
-  ctx: any,
+  context: any,
   updatedPlanTasks: Plan_Updated_Plan_Task[]
 ): Promise<boolean> => {
-  await ctx.prisma.$transaction(
+  await context.prisma.$transaction(
     updatedPlanTasks.map(({ id, previous_id, next_id }) =>
-      ctx.prisma.tasks.update({
+      context.prisma.tasks.update({
         where: { id: id },
         data: {
           ...(previous_id
