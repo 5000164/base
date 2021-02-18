@@ -752,17 +752,17 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@prisma/client@^2.13.1":
-  version "2.13.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.13.1.tgz#7379eeca980afc2fe64d2c745eb90480877f30f4"
-  integrity sha512-aD33DJpVHU3VqwDk5PEgnffbQeilUqmwVgqIxstVEiZ7TSs5oXQjwsSWAEfuvzPsR/rMJdeauAov58WHlMbVVA==
+"@prisma/client@^2.16.1":
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.16.1.tgz#3aed1506f4090734735d1036bfdaee997032e793"
+  integrity sha512-g4zXwC9PRtlrad/CBu+lXHRhvkEz4QW9tDn7bJGwCVNeLi+gLzSbEHjo3xLZgI3+Jp+40flOzrJrYP0bkNCpdQ==
   dependencies:
-    "@prisma/engines-version" "2.13.1-2.fcbc4bb2d306c86c28014f596b1e8c7980af8bd4"
+    "@prisma/engines-version" "2.16.1-1.8b74ad57aaf2cc6c155f382a18a8e3ba95aceb03"
 
-"@prisma/engines-version@2.13.1-2.fcbc4bb2d306c86c28014f596b1e8c7980af8bd4":
-  version "2.13.1-2.fcbc4bb2d306c86c28014f596b1e8c7980af8bd4"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-2.13.1-2.fcbc4bb2d306c86c28014f596b1e8c7980af8bd4.tgz#9f5d48054aeeea0dfffeb45572aba7097e33c198"
-  integrity sha512-xMfD9iu03XSTgZqgWYqTnKYfmabjY+U2tj7ClA1WQqLziY0ZGI48tZQpNe6WGzv+6nVss3PpfHfkKlM0kzhZbw==
+"@prisma/engines-version@2.16.1-1.8b74ad57aaf2cc6c155f382a18a8e3ba95aceb03":
+  version "2.16.1-1.8b74ad57aaf2cc6c155f382a18a8e3ba95aceb03"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-2.16.1-1.8b74ad57aaf2cc6c155f382a18a8e3ba95aceb03.tgz#52c026a05f6c109dd642c1edcc60ca45b01021ca"
+  integrity sha512-BkqxSWOc9aNYXjtmRtaLy2fKIeJ3+NKimRL1gKWXMjtxhKS5E3wvyxwZamtfIpEaZELGAO3x5+gqwoR9kS2oZA==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -1690,10 +1690,10 @@ electron-publish@22.9.1:
     lazy-val "^1.0.4"
     mime "^2.4.6"
 
-electron@11.1.1:
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-11.1.1.tgz#188f036f8282798398dca9513e9bb3b10213e3aa"
-  integrity sha512-tlbex3xosJgfileN6BAQRotevPRXB/wQIq48QeQ08tUJJrXwE72c8smsM/hbHx5eDgnbfJ2G3a60PmRjHU2NhA==
+electron@11.2.3:
+  version "11.2.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-11.2.3.tgz#8ad1d9858436cfca0e2e5ea7fea326794ae58ebb"
+  integrity sha512-6yxOc42nDAptHKNlUG/vcOh2GI9x2fqp2nQbZO0/3sz2CrwsJkwR3i3oMN9XhVJaqI7GK1vSCJz0verOkWlXcQ==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
@@ -2691,7 +2691,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash@4.17.20, lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.19:
+lodash@4.17.20, lodash@^4.17.10, lodash@^4.17.19, lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -2884,10 +2884,10 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-addon-api@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-2.0.0.tgz#f9afb8d777a91525244b01775ea0ddbe1125483b"
-  integrity sha512-ASCL5U13as7HhOExbT6OlWJJUV/lLzL2voOSP1UVehpRD8FbSrSDjfScK/KwAvVTI5AS6r4VwbOMlIqtvRidnA==
+node-addon-api@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.1.0.tgz#98b21931557466c6729e51cb77cd39c965f42239"
+  integrity sha512-flmrDNB06LIl5lywUz7YlNGZH/5p0M7W28k8hzd9Lshtdh1wshD2Y+U4h9LD6KObOy1f+fEVdgprPrEymjM5uw==
 
 node-fetch@2.6.1, node-fetch@^2.6.1:
   version "2.6.1"
@@ -3584,15 +3584,15 @@ sequelize-pool@^6.0.0:
   resolved "https://registry.yarnpkg.com/sequelize-pool/-/sequelize-pool-6.1.0.tgz#caaa0c1e324d3c2c3a399fed2c7998970925d668"
   integrity sha512-4YwEw3ZgK/tY/so+GfnSgXkdwIJJ1I32uZJztIEgZeAO6HMgj64OzySbWLgxj+tXhZCJnzRfkY9gINw8Ft8ZMg==
 
-sequelize@^6.3.5:
-  version "6.3.5"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.3.5.tgz#80e3db7ac8b76d98c45ca93334197eb6e2335158"
-  integrity sha512-MiwiPkYSA8NWttRKAXdU9h0TxP6HAc1fl7qZmMO/VQqQOND83G4nZLXd0kWILtAoT9cxtZgFqeb/MPYgEeXwsw==
+sequelize@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.5.0.tgz#c968a03f6fbbcda40717f73edb39fadf27b85e96"
+  integrity sha512-owBt8fnzVy8E1OvyCyfCdVk7OOLyPVrBCMEf+CvRReC5oCyo+UqeXCtwaex9L6LM9ifZ1i3TG3sFeM5MgLK0CQ==
   dependencies:
     debug "^4.1.1"
     dottie "^2.0.0"
     inflection "1.12.0"
-    lodash "^4.17.15"
+    lodash "^4.17.20"
     moment "^2.26.0"
     moment-timezone "^0.5.31"
     retry-as-promised "^3.2.0"
@@ -3709,12 +3709,12 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-sqlite3@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-5.0.0.tgz#1bfef2151c6bc48a3ab1a6c126088bb8dd233566"
-  integrity sha512-rjvqHFUaSGnzxDy2AHCwhHy6Zp6MNJzCPGYju4kD8yi6bze4d1/zMTg6C7JI49b7/EM7jKMTvyfN/4ylBKdwfw==
+sqlite3@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-5.0.2.tgz#00924adcc001c17686e0a6643b6cbbc2d3965083"
+  integrity sha512-1SdTNo+BVU211Xj1csWa8lV6KM0CtucDwRyA0VHl91wEH1Mgh7RxUpI4rVvG7OhHrzCSGaVyW5g8vKvlrk9DJA==
   dependencies:
-    node-addon-api "2.0.0"
+    node-addon-api "^3.0.0"
     node-pre-gyp "^0.11.0"
   optionalDependencies:
     node-gyp "3.x"
