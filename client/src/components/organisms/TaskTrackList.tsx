@@ -30,7 +30,7 @@ export const TaskTrackList = () => {
                     currentTaskTrackDate !== taskTracksDate
                   ) {
                     taskTracksDate = currentTaskTrackDate;
-                    return <div>{taskTracksDate}</div>;
+                    return <StyledDate>{taskTracksDate}</StyledDate>;
                   } else {
                     return <></>;
                   }
@@ -67,6 +67,10 @@ const format = (time?: number) => {
     return undefined;
   }
 };
+
+const StyledDate = styled.div`
+  margin-top: 80px;
+`;
 
 const StyledTaskTrackList = styled.ul`
   width: min(1024px, 100%);
