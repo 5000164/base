@@ -15,7 +15,6 @@ export const fetchPlanTasks = (
               id
               name
               estimate
-              actual
               previous_id
               next_id
             }
@@ -45,14 +44,9 @@ export const updatePlanTask = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($id: Int!, $name: String, $estimate: Int, $actual: Int) {
+        mutation($id: Int!, $name: String, $estimate: Int) {
           plan {
-            updateTask(
-              id: $id
-              name: $name
-              estimate: $estimate
-              actual: $actual
-            )
+            updateTask(id: $id, name: $name, estimate: $estimate)
           }
         }
       `,
@@ -187,7 +181,6 @@ export const fetchRecordedTasks = (
               name
               status
               estimate
-              actual
             }
           }
         }

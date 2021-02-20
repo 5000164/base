@@ -39,15 +39,13 @@ export const updateTask = async (
   context: any,
   id: number,
   name?: string,
-  estimate?: number,
-  actual?: number
+  estimate?: number
 ): Promise<boolean> => {
   await context.prisma.tasks.update({
     where: { id: id },
     data: {
       ...(name ? { name } : {}),
       ...(estimate ? { estimate } : {}),
-      ...(actual ? { actual } : {}),
     },
   });
   return true;

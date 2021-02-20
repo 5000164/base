@@ -17,7 +17,7 @@ type Plan_Query {
 
 type Plan_Mutation {
   addTask: Boolean
-  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Boolean
+  updateTask(id: Int!, name: String, estimate: Int): Boolean
   completeTask(id: Int!): Boolean
   archiveTask(id: Int!): Boolean
   deleteTask(id: Int!): Boolean
@@ -30,7 +30,6 @@ type Plan_Task {
   name: String!
   status: Int
   estimate: Int
-  actual: Int
   status_changed_at: Int
   previous_id: Int
   next_id: Int

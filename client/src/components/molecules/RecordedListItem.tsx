@@ -16,12 +16,10 @@ export const RecordedListItem = ({
   task,
   setName,
   setEstimate,
-  setActual,
 }: {
   task: PlanTask;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
-  setActual: (actual: number) => void;
 }) => {
   const { client } = React.useContext(AppContext);
   const { reload } = React.useContext(PlanPageContext);
@@ -49,12 +47,6 @@ export const RecordedListItem = ({
         onChange={(e) => setEstimate(Number(e.target.value))}
         onBlur={() => updatePlanTask(client, task).then()}
       />
-      <TextInput
-        type="text"
-        value={task.actual ?? ""}
-        onChange={(e) => setActual(Number(e.target.value))}
-        onBlur={() => updatePlanTask(client, task).then()}
-      />
       <Button
         label="Complete"
         onClick={() => completePlanTask(client, task.id).then(() => reload())}
@@ -73,7 +65,7 @@ export const RecordedListItem = ({
 
 const StyledRecordedListItem = styled.li`
   display: grid;
-  grid-template-columns: 20px 1fr 50px 50px repeat(3, 70px);
+  grid-template-columns: 20px 1fr 50px repeat(3, 70px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

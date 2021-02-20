@@ -8,22 +8,13 @@ export const CalculatedRecordedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
     0
   );
   const [totalArchivedEstimateTime, setTotalArchivedEstimateTime] = useState(0);
-  const [totalActualTime, setTotalActualTime] = useState(0);
 
   const calculateTimes = () => {
     const {
       totalCompletedEstimateTime,
       totalArchivedEstimateTime,
-      totalActualTime,
     } = tasks.reduce(
-      (
-        {
-          totalCompletedEstimateTime,
-          totalArchivedEstimateTime,
-          totalActualTime,
-        },
-        task
-      ) => ({
+      ({ totalCompletedEstimateTime, totalArchivedEstimateTime }, task) => ({
         totalCompletedEstimateTime:
           task.status === Status.Completed
             ? totalCompletedEstimateTime + (task?.estimate ?? 0)
@@ -32,17 +23,14 @@ export const CalculatedRecordedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
           task.status === Status.Archived
             ? totalArchivedEstimateTime + (task?.estimate ?? 0)
             : totalArchivedEstimateTime,
-        totalActualTime: totalActualTime + (task?.actual ?? 0),
       }),
       {
         totalCompletedEstimateTime: 0,
         totalArchivedEstimateTime: 0,
-        totalActualTime: 0,
       }
     );
     setTotalCompletedEstimateTime(totalCompletedEstimateTime);
     setTotalArchivedEstimateTime(totalArchivedEstimateTime);
-    setTotalActualTime(totalActualTime);
   };
   useEffect(calculateTimes, [tasks]);
 
@@ -52,7 +40,6 @@ export const CalculatedRecordedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
         Total Completed Estimate Time: {totalCompletedEstimateTime} min
       </Time>
       <Time>Total Archived Estimate Time: {totalArchivedEstimateTime} min</Time>
-      <Time>Total Actual Time: {totalActualTime} min</Time>
     </>
   );
 };

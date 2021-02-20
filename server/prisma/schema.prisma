@@ -25,7 +25,6 @@ model tasks {
   name                                 String
   status                               Int
   estimate                             Int?
-  actual                               Int?
   status_changed_at                    Int?
   previous_id                          Int?
   next_id                              Int?

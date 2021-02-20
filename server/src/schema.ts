@@ -95,7 +95,7 @@ const resolvers: Resolvers = {
   Plan_Mutation: {
     addTask: (parent, args, context) => addTask(context),
     updateTask: (parent, args, context) =>
-      updateTask(context, args.id, args.name, args.estimate, args.actual),
+      updateTask(context, args.id, args.name, args.estimate),
     completeTask: (parent, args, context) =>
       changeTaskStatus(context, args.id, Status.Completed),
     archiveTask: (parent, args, context) =>

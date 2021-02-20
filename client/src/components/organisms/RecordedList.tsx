@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import {
-  PlanTask,
-  setActual,
-  setEstimate,
-  setName,
-} from "../../types/planTask";
+import { PlanTask, setEstimate, setName } from "../../types/planTask";
 import { fetchRecordedTasks } from "../../repositories/planTasks";
 import { AppContext } from "../../App";
 import { PlanPageContext } from "../pages/PlanPage";
@@ -38,9 +33,6 @@ export const RecordedList = () => {
             }
             setEstimate={(v: number) =>
               setEstimate(recordedTasks, setRecordedTasks, index, v)
-            }
-            setActual={(v: number) =>
-              setActual(recordedTasks, setRecordedTasks, index, v)
             }
           />
         ))}
