@@ -101,7 +101,7 @@ type Task_Tracks_Mutation {
 type Task_Tracks_Task_Track {
   task_track_id: Int!
   task: Task_Tracks_Task!
-  start_at: Int
+  start_at: Int!
   stop_at: Int
 }
 

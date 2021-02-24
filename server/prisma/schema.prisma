@@ -15,7 +15,7 @@ model SequelizeMeta {
 model task_tracks {
   task_track_id Int   @id @default(autoincrement())
   task_id       Int
-  start_at      Int?
+  start_at      Int
   stop_at       Int?
   task          tasks @relation(fields: [task_id], references: [id])
 }
