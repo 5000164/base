@@ -28,7 +28,7 @@ type Plan_Mutation {
 type Plan_Task {
   id: Int!
   name: String!
-  status: Int
+  status: Int!
   estimate: Int
   status_changed_at: Int
   previous_id: Int
