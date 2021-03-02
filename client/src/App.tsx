@@ -4,10 +4,12 @@ import ApolloClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
 import { ClockFill, ListTask } from "styled-icons/bootstrap";
+import { Today } from "styled-icons/material";
 import { Template } from "styled-icons/heroicons-solid";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
 import { PlanPage } from "./components/pages/PlanPage";
+import { ReviewPage } from "./components/pages/ReviewPage";
 import { TemplatesPage } from "./components/pages/TemplatesPage";
 import { TaskTracksPage } from "./components/pages/TaskTracksPage";
 import { AnchorLink } from "./components/atoms/AnchorLink";
@@ -47,6 +49,9 @@ export const App = () => {
               <StyledAnchorLink to="/">
                 <ListTask size="30" />
               </StyledAnchorLink>
+              <StyledAnchorLink to="/review">
+                <Today size="32" />
+              </StyledAnchorLink>
               <StyledAnchorLink to="/templates">
                 <Template size="32" />
               </StyledAnchorLink>
@@ -58,6 +63,9 @@ export const App = () => {
               <Switch>
                 <Route exact path="/">
                   <PlanPage />
+                </Route>
+                <Route path="/review">
+                  <ReviewPage />
                 </Route>
                 <Route path="/templates">
                   <TemplatesPage />
