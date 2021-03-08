@@ -46,6 +46,7 @@ log.debug(settings);
   const app = express();
   app.use(cors());
   app.use(
+    "/",
     graphqlHTTP({
       schema: schemaWithResolvers,
       context: { prisma },
