@@ -4,73 +4,38 @@ import { setStartAt, setStopAt, TaskTrack } from "../../types/taskTrack";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
 import { TaskTrackListItem } from "../molecules/TaskTrackListItem";
+import { TaskTracksDate } from "../atoms/TaskTracksDate";
 
 export const TaskTrackList = () => {
   const { client } = React.useContext(AppContext);
 
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   useEffect(() => {
-    fetchTaskTracks(client).then((taskTracks) => setTaskTracks(taskTracks));
-  }, [client]);
+    fetchTaskTracks(client, date).then((taskTracks) =>
+      setTaskTracks(taskTracks)
+    );
+  }, [client, date]);
 
   return (
     <>
-      {(() => {
-        let taskTracksDate: string | undefined = undefined;
-        return (
-          <StyledTaskTrackList>
-            {taskTracks.map((taskTrack, index) => (
-              <React.Fragment key={index}>
-                {(() => {
-                  const currentTaskTrackDate = taskTrack.start_at
-                    ? format(taskTrack.start_at)
-                    : undefined;
-                  if (
-                    !taskTracksDate ||
-                    currentTaskTrackDate !== taskTracksDate
-                  ) {
-                    taskTracksDate = currentTaskTrackDate;
-                    return <StyledDate>{taskTracksDate}</StyledDate>;
-                  } else {
-                    return <></>;
-                  }
-                })()}
-                <TaskTrackListItem
-                  taskTrack={taskTrack}
-                  setStartAt={(v: string) =>
-                    setStartAt(taskTracks, setTaskTracks, index, v)
-                  }
-                  setStopAt={(v: string) =>
-                    setStopAt(taskTracks, setTaskTracks, index, v)
-                  }
-                />
-              </React.Fragment>
-            ))}
-          </StyledTaskTrackList>
-        );
-      })()}
+      <TaskTracksDate date={date} setDate={setDate} />
+      <StyledTaskTrackList>
+        {taskTracks.map((taskTrack, index) => (
+          <TaskTrackListItem
+            taskTrack={taskTrack}
+            setStartAt={(v: string) =>
+              setStartAt(taskTracks, setTaskTracks, index, v)
+            }
+            setStopAt={(v: string) =>
+              setStopAt(taskTracks, setTaskTracks, index, v)
+            }
+          />
+        ))}
+      </StyledTaskTrackList>
     </>
   );
 };
-
-const format = (time?: number) => {
-  if (time) {
-    const date = new Date(time * 1000);
-    return [
-      date.getFullYear().toString(),
-      "/",
-      (date.getMonth() + 1).toString(),
-      "/",
-      date.getDate().toString(),
-    ].join("");
-  } else {
-    return undefined;
-  }
-};
-
-const StyledDate = styled.div`
-  margin-top: 80px;
-`;
 
 const StyledTaskTrackList = styled.ul`
   width: min(1024px, 100%);

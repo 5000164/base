@@ -2,7 +2,7 @@ import { join } from "path";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
-import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/schema/graphql";
+import { Resolvers } from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
 import {
   addTask,
@@ -18,6 +18,7 @@ import {
   updateTemplateTask,
   updateTemplateTasksOrder,
 } from "./templates";
+import { taskTracks, workingTaskTracks } from "./taskTracks";
 
 const schema = loadSchemaSync(
   join(__dirname, "./generated/schema/schema.graphql"),
@@ -30,7 +31,10 @@ const resolvers: Resolvers = {
   Query: {
     plan: () => ({ tasks: undefined, recordedTasks: undefined }),
     templates: () => ({ templates: undefined, tasks: undefined }),
-    task_tracks: () => ({ task_tracks: undefined }),
+    task_tracks: () => ({
+      taskTracks: undefined,
+      workingTaskTracks: undefined,
+    }),
   },
   Mutation: {
     plan: () => ({
@@ -156,35 +160,8 @@ const resolvers: Resolvers = {
       updateTemplateTasksOrder(context, args.updatedTemplateTasks),
   },
   Task_Tracks_Query: {
-    task_tracks: (parent, args, context) =>
-      args.fetch_type === Task_Tracks_Fetch_Type.All
-        ? context.prisma.task_tracks.findMany({
-            include: {
-              task: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              start_at: "desc",
-            },
-          })
-        : context.prisma.task_tracks.findMany({
-            where: { stop_at: null },
-            include: {
-              task: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              start_at: "asc",
-            },
-          }),
+    taskTracks: (parent, args, context) => taskTracks(context, args.date),
+    workingTaskTracks: (parent, args, context) => workingTaskTracks(context),
   },
   Task_Tracks_Mutation: {
     start_task_track: (parent, args, context) =>
