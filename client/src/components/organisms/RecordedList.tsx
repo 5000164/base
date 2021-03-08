@@ -3,14 +3,12 @@ import styled from "styled-components";
 import { PlanTask, setEstimate, setName } from "../../types/planTask";
 import { fetchRecordedTasks } from "../../repositories/planTasks";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
 import { RecordedListItem } from "../molecules/RecordedListItem";
 import { RecordedDate } from "../atoms/RecordedDate";
 import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
 
 export const RecordedList = () => {
   const { client } = React.useContext(AppContext);
-  const { reloadCount } = React.useContext(PlanPageContext);
 
   const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -18,7 +16,7 @@ export const RecordedList = () => {
     fetchRecordedTasks(client, date).then((recordedTasks) =>
       setRecordedTasks(recordedTasks)
     );
-  }, [client, reloadCount, date]);
+  }, [client, date]);
 
   return (
     <>
