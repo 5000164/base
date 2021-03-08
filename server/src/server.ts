@@ -42,6 +42,7 @@ log.debug(settings);
         url: `file:${settings.dbPath}`,
       },
     },
+    log: ["query", "info", `warn`, `error`],
   });
 
   const app = express();
