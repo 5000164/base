@@ -20,7 +20,7 @@ export const TaskTrackListItem = ({
   return (
     <StyledTaskTrackListItem>
       <Text size="small">{taskTrack.task.name}</Text>
-      <ElapsedTime startAt={taskTrack.start_at!} stopAt={taskTrack.stop_at} />
+      <ElapsedTime startAt={taskTrack.start_at} stopAt={taskTrack.stop_at} />
       <TextInput
         type="datetime-local"
         value={format(taskTrack.start_at)}

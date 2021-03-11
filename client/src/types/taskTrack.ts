@@ -3,7 +3,7 @@ import { TaskTrackTask } from "./taskTrackTask";
 export interface TaskTrack {
   task_track_id: number;
   task: TaskTrackTask;
-  start_at?: number;
+  start_at: number;
   stop_at?: number;
 }
 

@@ -21,7 +21,7 @@ export const WorkingTaskTrackListItem = ({
     <StyledWorkingTaskTrackListItem>
       <WorkingIcon size="26" />
       <Text size="small">{taskTrack.task.name}</Text>
-      <Timer startAt={taskTrack.start_at!} />
+      <Timer startAt={taskTrack.start_at} />
       <Button
         label="Stop"
         onClick={() =>
