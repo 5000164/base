@@ -20,19 +20,23 @@ export const TaskTrackListItem = ({
   return (
     <StyledTaskTrackListItem>
       <Text size="small">{taskTrack.task.name}</Text>
-      <ElapsedTime startAt={taskTrack.start_at} stopAt={taskTrack.stop_at} />
+      {taskTrack.stop_at && (
+        <ElapsedTime seconds={taskTrack.stop_at - taskTrack.start_at} />
+      )}
       <TextInput
         type="datetime-local"
         value={format(taskTrack.start_at)}
         onChange={(e) => setStartAt(e.target.value)}
         onBlur={() => updateTaskTrack(client, taskTrack).then()}
       />
-      <TextInput
-        type="datetime-local"
-        value={format(taskTrack.stop_at)}
-        onChange={(e) => setStopAt(e.target.value)}
-        onBlur={() => updateTaskTrack(client, taskTrack).then()}
-      />
+      {taskTrack.stop_at && (
+        <TextInput
+          type="datetime-local"
+          value={format(taskTrack.stop_at)}
+          onChange={(e) => setStopAt(e.target.value)}
+          onBlur={() => updateTaskTrack(client, taskTrack).then()}
+        />
+      )}
     </StyledTaskTrackListItem>
   );
 };
