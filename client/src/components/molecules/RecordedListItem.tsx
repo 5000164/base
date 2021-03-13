@@ -10,7 +10,7 @@ import {
   updatePlanTask,
 } from "../../repositories/planTasks";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
+import { ReviewPageContext } from "../pages/ReviewPage";
 import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const RecordedListItem = ({
@@ -25,7 +25,7 @@ export const RecordedListItem = ({
   setEstimate: (estimate: number) => void;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(PlanPageContext);
+  const { reload } = React.useContext(ReviewPageContext);
 
   return (
     <StyledRecordedListItem>

@@ -8,23 +8,23 @@ import { RecordedDate } from "../atoms/RecordedDate";
 import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
 import { TaskTrack } from "../../types/taskTrack";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
+import { ReviewPageContext } from "../pages/ReviewPage";
 
 export const RecordedList = () => {
   const { client } = React.useContext(AppContext);
+  const { reloadCount } = React.useContext(ReviewPageContext);
 
   const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   useEffect(() => {
     fetchRecordedTasks(client, date).then((recordedTasks) =>
-      setRecordedTasks(recordedTasks)
+      fetchTaskTracks(client, date).then((taskTracks) => {
+        setRecordedTasks(recordedTasks);
+        setTaskTracks(taskTracks);
+      })
     );
-  }, [client, date]);
-  useEffect(() => {
-    fetchTaskTracks(client, date).then((taskTracks) =>
-      setTaskTracks(taskTracks)
-    );
-  }, [client, date]);
+  }, [client, date, reloadCount]);
 
   return (
     <>
