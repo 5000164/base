@@ -4,19 +4,17 @@ import { PlanTask, setEstimate, setName } from "../../types/planTask";
 import { fetchRecordedTasks } from "../../repositories/planTasks";
 import { AppContext } from "../../App";
 import { RecordedListItem } from "../molecules/RecordedListItem";
-import { RecordedDate } from "../atoms/RecordedDate";
 import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
 import { TaskTrack } from "../../types/taskTrack";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { ReviewPageContext } from "../pages/ReviewPage";
 
 export const RecordedList = () => {
-  const { client } = React.useContext(AppContext);
+  const { client, date } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(ReviewPageContext);
 
   const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   useEffect(() => {
     fetchRecordedTasks(client, date).then((recordedTasks) =>
       fetchTaskTracks(client, date).then((taskTracks) => {
@@ -28,7 +26,6 @@ export const RecordedList = () => {
 
   return (
     <>
-      <RecordedDate date={date} setDate={setDate} />
       <StyledRecordedList>
         {tasksWithTracks(recordedTasks, taskTracks).map(
           ({ task, seconds }, index) => (

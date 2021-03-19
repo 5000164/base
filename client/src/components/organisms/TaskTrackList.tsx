@@ -4,13 +4,11 @@ import { setStartAt, setStopAt, TaskTrack } from "../../types/taskTrack";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
 import { TaskTrackListItem } from "../molecules/TaskTrackListItem";
-import { TaskTracksDate } from "../atoms/TaskTracksDate";
 
 export const TaskTrackList = () => {
-  const { client } = React.useContext(AppContext);
+  const { client, date } = React.useContext(AppContext);
 
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   useEffect(() => {
     fetchTaskTracks(client, date).then((taskTracks) =>
       setTaskTracks(taskTracks)
@@ -19,7 +17,6 @@ export const TaskTrackList = () => {
 
   return (
     <>
-      <TaskTracksDate date={date} setDate={setDate} />
       <StyledTaskTrackList>
         {taskTracks.map((taskTrack, index) => (
           <TaskTrackListItem
