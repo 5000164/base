@@ -64,7 +64,11 @@ export const changeTaskStatus = async (
       where: { id: task.id },
       data: {
         status,
-        status_changed_at: Math.floor(Date.now() / 1000),
+        ...(task.status_changed_at
+          ? {}
+          : {
+              status_changed_at: Math.floor(Date.now() / 1000),
+            }),
         ...(task.previous_id
           ? {
               tasks_tasksTotasks_previous_id: {
