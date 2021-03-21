@@ -107,3 +107,20 @@ export const stopTaskTrack = (
       variables: { task_track_id: taskTrackId },
     })
     .then(() => true);
+
+export const deleteTaskTrack = (
+  client: DefaultClient<any>,
+  taskTrackId: number
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation($task_track_id: Int!) {
+          task_tracks {
+            delete_task_track(task_track_id: $task_track_id)
+          }
+        }
+      `,
+      variables: { task_track_id: taskTrackId },
+    })
+    .then(() => true);

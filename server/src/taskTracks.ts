@@ -46,3 +46,15 @@ export const workingTaskTracks = async (context: any) => {
     },
   });
 };
+
+export const deleteTaskTrack = async (
+  context: any,
+  taskTrackId: number
+): Promise<boolean> => {
+  await context.prisma.task_tracks.delete({
+    where: {
+      task_track_id: taskTrackId,
+    },
+  });
+  return true;
+};

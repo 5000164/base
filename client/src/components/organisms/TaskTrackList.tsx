@@ -3,17 +3,19 @@ import styled from "styled-components";
 import { setStartAt, setStopAt, TaskTrack } from "../../types/taskTrack";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
+import { TaskTracksPageContext } from "../pages/TaskTracksPage";
 import { TaskTrackListItem } from "../molecules/TaskTrackListItem";
 
 export const TaskTrackList = () => {
   const { client, date } = React.useContext(AppContext);
+  const { reloadCount } = React.useContext(TaskTracksPageContext);
 
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
     fetchTaskTracks(client, date).then((taskTracks) =>
       setTaskTracks(taskTracks)
     );
-  }, [client, date]);
+  }, [client, date, reloadCount]);
 
   return (
     <>

@@ -18,7 +18,7 @@ import {
   updateTemplateTask,
   updateTemplateTasksOrder,
 } from "./templates";
-import { taskTracks, workingTaskTracks } from "./taskTracks";
+import { deleteTaskTrack, taskTracks, workingTaskTracks } from "./taskTracks";
 
 const schema = loadSchemaSync(
   join(__dirname, "./generated/schema/schema.graphql"),
@@ -230,6 +230,8 @@ const resolvers: Resolvers = {
         },
       });
     },
+    delete_task_track: (parent, args, context) =>
+      deleteTaskTrack(context, args.task_track_id),
   },
 };
 

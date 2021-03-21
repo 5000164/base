@@ -1,9 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { Text, TextInput } from "grommet";
+import { Button, Text, TextInput } from "grommet";
 import { TaskTrack } from "../../types/taskTrack";
-import { updateTaskTrack } from "../../repositories/taskTracks";
+import {
+  deleteTaskTrack,
+  updateTaskTrack,
+} from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
+import { TaskTracksPageContext } from "../pages/TaskTracksPage";
 import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const TaskTrackListItem = ({
@@ -16,6 +20,7 @@ export const TaskTrackListItem = ({
   setStopAt: (stopAt: string) => void;
 }) => {
   const { client } = React.useContext(AppContext);
+  const { reload } = React.useContext(TaskTracksPageContext);
 
   return (
     <StyledTaskTrackListItem>
@@ -37,6 +42,16 @@ export const TaskTrackListItem = ({
           onBlur={() => updateTaskTrack(client, taskTrack).then()}
         />
       )}
+      <Button
+        label="Delete"
+        onClick={() =>
+          window.confirm("削除しますか？")
+            ? deleteTaskTrack(client, taskTrack.task_track_id).then(() =>
+                reload()
+              )
+            : undefined
+        }
+      />
     </StyledTaskTrackListItem>
   );
 };
