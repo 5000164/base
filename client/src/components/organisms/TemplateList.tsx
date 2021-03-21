@@ -47,8 +47,8 @@ export const TemplateList = () => {
 };
 
 const StyledTemplateList = styled.ul`
-  width: min(1024px, 100%);
-  margin: 80px auto 4px;
+  width: min(1024px, calc(100% - 16px));
+  margin: 8px auto 0;
   padding: 0;
 `;
 

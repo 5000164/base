@@ -49,8 +49,8 @@ export const RecordedList = () => {
 };
 
 const StyledRecordedList = styled.ul`
-  width: min(1024px, 100%);
-  margin: 4px auto;
+  width: min(1024px, calc(100% - 16px));
+  margin: 8px auto 0;
   padding: 0;
 `;
 
