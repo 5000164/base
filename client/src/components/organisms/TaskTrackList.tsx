@@ -22,6 +22,7 @@ export const TaskTrackList = () => {
       <StyledTaskTrackList>
         {taskTracks.map((taskTrack, index) => (
           <TaskTrackListItem
+            key={index}
             taskTrack={taskTrack}
             setStartAt={(v: string) =>
               setStartAt(taskTracks, setTaskTracks, index, v)
