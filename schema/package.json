@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "generate": "graphql-codegen",
-    "build": "rm -rf ../server/src/generated/schema && mkdir -p ../server/src/generated/schema && cp src/schema.graphql ../server/src/generated/schema/schema.graphql && cp src/generated/server/graphql.ts ../server/src/generated/schema/graphql.ts"
+    "postgenerate": "rm -rf ../server/src/generated/schema && mkdir -p ../server/src/generated/schema && cp src/schema.graphql ../server/src/generated/schema/schema.graphql && cp src/generated/server/graphql.ts ../server/src/generated/schema/graphql.ts"
   },
   "dependencies": {
     "graphql": "^15.5.0"

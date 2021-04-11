@@ -20,13 +20,11 @@ export const PlanListItem = ({
   index,
   setName,
   setEstimate,
-  setActual,
 }: {
   task: PlanTask;
   index: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
-  setActual: (actual: number) => void;
 }) => {
   const { client } = React.useContext(AppContext);
   const { reload } = React.useContext(PlanPageContext);
@@ -51,12 +49,6 @@ export const PlanListItem = ({
             type="text"
             value={task.estimate ?? ""}
             onChange={(e) => setEstimate(Number(e.target.value))}
-            onBlur={() => updatePlanTask(client, task).then()}
-          />
-          <TextInput
-            type="text"
-            value={task.actual ?? ""}
-            onChange={(e) => setActual(Number(e.target.value))}
             onBlur={() => updatePlanTask(client, task).then()}
           />
           <Button
@@ -87,7 +79,7 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 16px 1fr 50px 50px repeat(4, 80px);
+  grid-template-columns: 16px 1fr 50px repeat(4, 80px);
   grid-gap: 5px;
   margin: 5px 0;
 `;

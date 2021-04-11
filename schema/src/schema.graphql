@@ -17,7 +17,7 @@ type Plan_Query {
 
 type Plan_Mutation {
   addTask: Boolean
-  updateTask(id: Int!, name: String, estimate: Int, actual: Int): Boolean
+  updateTask(id: Int!, name: String, estimate: Int): Boolean
   completeTask(id: Int!): Boolean
   archiveTask(id: Int!): Boolean
   deleteTask(id: Int!): Boolean
@@ -28,9 +28,8 @@ type Plan_Mutation {
 type Plan_Task {
   id: Int!
   name: String!
-  status: Int
+  status: Int!
   estimate: Int
-  actual: Int
   status_changed_at: Int
   previous_id: Int
   next_id: Int
@@ -80,12 +79,8 @@ input Templates_Updated_Template_Task {
 }
 
 type Task_Tracks_Query {
-  task_tracks(fetch_type: Task_Tracks_Fetch_Type!): [Task_Tracks_Task_Track!]!
-}
-
-enum Task_Tracks_Fetch_Type {
-  ALL
-  ONLY_WORKING
+  taskTracks(date: String!): [Task_Tracks_Task_Track!]!
+  workingTaskTracks: [Task_Tracks_Task_Track!]!
 }
 
 type Task_Tracks_Mutation {
@@ -97,12 +92,13 @@ type Task_Tracks_Mutation {
     start_at: Int
     stop_at: Int
   ): Task_Tracks_Task_Track
+  delete_task_track(task_track_id: Int!): Boolean
 }
 
 type Task_Tracks_Task_Track {
   task_track_id: Int!
   task: Task_Tracks_Task!
-  start_at: Int
+  start_at: Int!
   stop_at: Int
 }
 

@@ -1,21 +1,18 @@
 import DefaultClient, { gql } from "apollo-boost";
-import {
-  Mutation,
-  Query,
-  Task_Tracks_Fetch_Type,
-} from "schema/src/generated/client/graphql";
+import { Mutation, Query } from "schema/src/generated/client/graphql";
 import { TaskTrack } from "../types/taskTrack";
 
 export const fetchTaskTracks = (
-  client: DefaultClient<any>
+  client: DefaultClient<any>,
+  date: string
 ): Promise<TaskTrack[]> =>
   client
     .query<Query>({
       fetchPolicy: "no-cache",
       query: gql`
-        query($fetch_type: Task_Tracks_Fetch_Type!) {
+        query($date: String!) {
           task_tracks {
-            task_tracks(fetch_type: $fetch_type) {
+            taskTracks(date: $date) {
               task_track_id
               task {
                 id
@@ -28,10 +25,10 @@ export const fetchTaskTracks = (
         }
       `,
       variables: {
-        fetch_type: Task_Tracks_Fetch_Type.All,
+        date,
       },
     })
-    .then((result) => result.data.task_tracks.task_tracks);
+    .then((result) => result.data.task_tracks.taskTracks);
 
 export const fetchWorkingTaskTracks = (
   client: DefaultClient<any>
@@ -40,9 +37,9 @@ export const fetchWorkingTaskTracks = (
     .query<Query>({
       fetchPolicy: "no-cache",
       query: gql`
-        query($fetch_type: Task_Tracks_Fetch_Type!) {
+        {
           task_tracks {
-            task_tracks(fetch_type: $fetch_type) {
+            workingTaskTracks {
               task_track_id
               task {
                 id
@@ -54,11 +51,8 @@ export const fetchWorkingTaskTracks = (
           }
         }
       `,
-      variables: {
-        fetch_type: Task_Tracks_Fetch_Type.OnlyWorking,
-      },
     })
-    .then((result) => result.data.task_tracks.task_tracks);
+    .then((result) => result.data.task_tracks.workingTaskTracks);
 
 export const updateTaskTrack = (
   client: DefaultClient<any>,
@@ -107,6 +101,23 @@ export const stopTaskTrack = (
               start_at
               stop_at
             }
+          }
+        }
+      `,
+      variables: { task_track_id: taskTrackId },
+    })
+    .then(() => true);
+
+export const deleteTaskTrack = (
+  client: DefaultClient<any>,
+  taskTrackId: number
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation($task_track_id: Int!) {
+          task_tracks {
+            delete_task_track(task_track_id: $task_track_id)
           }
         }
       `,

@@ -6,7 +6,6 @@ export interface PlanTask extends Sortable {
   name: string;
   status?: Status;
   estimate?: number;
-  actual?: number;
   previous_id?: number;
   next_id?: number;
 }
@@ -30,16 +29,5 @@ export const setEstimate = (
 ) => {
   const newTasks = [...tasks];
   newTasks[index].estimate = estimate;
-  setTasks(newTasks);
-};
-
-export const setActual = (
-  tasks: PlanTask[],
-  setTasks: Function,
-  index: number,
-  actual: number
-) => {
-  const newTasks = [...tasks];
-  newTasks[index].actual = actual;
   setTasks(newTasks);
 };

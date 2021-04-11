@@ -1,16 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-export const ElapsedTime = ({
-  startAt,
-  stopAt,
-}: {
-  startAt: number;
-  stopAt?: number;
-}) => {
-  const elapsedTime = stopAt
-    ? Math.floor((stopAt - startAt) / 60).toString()
-    : "";
+export const ElapsedTime = ({ seconds }: { seconds: number }) => {
+  const elapsedTime = Math.floor(seconds / 60).toString();
 
   return (
     <>

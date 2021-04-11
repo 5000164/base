@@ -40,7 +40,7 @@ const StyledTaskTrackList = styled.ul`
   right: 0;
   width: 100%;
   margin: 0 auto;
-  padding: 16px;
+  padding: 4px 16px 8px 16px;
   background: ${theme.global.colors.background};
   box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
 `;

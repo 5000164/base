@@ -2,7 +2,7 @@ import { join } from "path";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
-import { Resolvers, Task_Tracks_Fetch_Type } from "./generated/schema/graphql";
+import { Resolvers } from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
 import {
   addTask,
@@ -18,6 +18,7 @@ import {
   updateTemplateTask,
   updateTemplateTasksOrder,
 } from "./templates";
+import { deleteTaskTrack, taskTracks, workingTaskTracks } from "./taskTracks";
 
 const schema = loadSchemaSync(
   join(__dirname, "./generated/schema/schema.graphql"),
@@ -30,7 +31,10 @@ const resolvers: Resolvers = {
   Query: {
     plan: () => ({ tasks: undefined, recordedTasks: undefined }),
     templates: () => ({ templates: undefined, tasks: undefined }),
-    task_tracks: () => ({ task_tracks: undefined }),
+    task_tracks: () => ({
+      taskTracks: undefined,
+      workingTaskTracks: undefined,
+    }),
   },
   Mutation: {
     plan: () => ({
@@ -72,19 +76,69 @@ const resolvers: Resolvers = {
           0
         )
       );
+      const conditions = {
+        OR: [
+          {
+            AND: [
+              {
+                start_at: {
+                  gte: Math.floor(date.getTime() / 1000),
+                },
+              },
+              {
+                start_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                stop_at: {
+                  gte: Math.floor(date.getTime() / 1000),
+                },
+              },
+              {
+                stop_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
+          },
+        ],
+      };
       return context.prisma.tasks.findMany({
         where: {
-          status: { in: [Status.Completed, Status.Archived] },
-          AND: [
-            {
-              status_changed_at: { gte: Math.floor(date.getTime() / 1000) },
-            },
-            {
-              status_changed_at: {
-                lt: Math.floor(nextDate.getTime() / 1000),
+          AND: {
+            status: { in: [Status.Completed, Status.Archived] },
+            OR: [
+              {
+                AND: [
+                  {
+                    status_changed_at: {
+                      gte: Math.floor(date.getTime() / 1000),
+                    },
+                  },
+                  {
+                    status_changed_at: {
+                      lt: Math.floor(nextDate.getTime() / 1000),
+                    },
+                  },
+                ],
               },
-            },
-          ],
+              {
+                task_tracks: {
+                  some: conditions,
+                },
+              },
+            ],
+          },
+        },
+        include: {
+          task_tracks: {
+            where: conditions,
+          },
         },
         orderBy: {
           status_changed_at: "desc",
@@ -95,7 +149,7 @@ const resolvers: Resolvers = {
   Plan_Mutation: {
     addTask: (parent, args, context) => addTask(context),
     updateTask: (parent, args, context) =>
-      updateTask(context, args.id, args.name, args.estimate, args.actual),
+      updateTask(context, args.id, args.name, args.estimate),
     completeTask: (parent, args, context) =>
       changeTaskStatus(context, args.id, Status.Completed),
     archiveTask: (parent, args, context) =>
@@ -156,35 +210,8 @@ const resolvers: Resolvers = {
       updateTemplateTasksOrder(context, args.updatedTemplateTasks),
   },
   Task_Tracks_Query: {
-    task_tracks: (parent, args, context) =>
-      args.fetch_type === Task_Tracks_Fetch_Type.All
-        ? context.prisma.task_tracks.findMany({
-            include: {
-              task: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              start_at: "desc",
-            },
-          })
-        : context.prisma.task_tracks.findMany({
-            where: { stop_at: null },
-            include: {
-              task: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              start_at: "asc",
-            },
-          }),
+    taskTracks: (parent, args, context) => taskTracks(context, args.date),
+    workingTaskTracks: (parent, args, context) => workingTaskTracks(context),
   },
   Task_Tracks_Mutation: {
     start_task_track: (parent, args, context) =>
@@ -253,6 +280,8 @@ const resolvers: Resolvers = {
         },
       });
     },
+    delete_task_track: (parent, args, context) =>
+      deleteTaskTrack(context, args.task_track_id),
   },
 };
 

@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import { PlayArrow } from "styled-icons/material";
 import { Button, Text } from "grommet";
+import { theme } from "../../theme";
 import { TaskTrack } from "../../types/taskTrack";
 import { stopTaskTrack } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
@@ -17,8 +19,9 @@ export const WorkingTaskTrackListItem = ({
 
   return (
     <StyledWorkingTaskTrackListItem>
+      <WorkingIcon size="26" />
       <Text size="small">{taskTrack.task.name}</Text>
-      <Timer startAt={taskTrack.start_at!} />
+      <Timer startAt={taskTrack.start_at} />
       <Button
         label="Stop"
         onClick={() =>
@@ -32,7 +35,11 @@ export const WorkingTaskTrackListItem = ({
 const StyledWorkingTaskTrackListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr 160px 80px;
-  grid-gap: 5px;
-  margin: 5px 0;
+  grid-template-columns: 26px 1fr 160px 80px;
+  grid-gap: 8px;
+  margin: 8px 0;
+`;
+
+const WorkingIcon = styled(PlayArrow)`
+  color: ${theme.global.colors["status-ok"]};
 `;

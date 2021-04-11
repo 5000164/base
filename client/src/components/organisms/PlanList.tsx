@@ -3,12 +3,7 @@ import styled from "styled-components";
 import { Button } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { sort } from "shared/src/utils/sort";
-import {
-  PlanTask,
-  setActual,
-  setEstimate,
-  setName,
-} from "../../types/planTask";
+import { PlanTask, setEstimate, setName } from "../../types/planTask";
 import {
   addPlanTask,
   fetchPlanTasks,
@@ -58,9 +53,6 @@ export const PlanList = () => {
                   }
                   setEstimate={(v: number) =>
                     setEstimate(planTasks, setPlanTasks, index, v)
-                  }
-                  setActual={(v: number) =>
-                    setActual(planTasks, setPlanTasks, index, v)
                   }
                 />
               ))}

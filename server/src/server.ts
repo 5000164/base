@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { graphqlHTTP } from "express-graphql";
+import { formatError } from "graphql";
 import log from "electron-log";
 import { PrismaClient } from "../../prismaClient"; // Electron の asar 内から呼び出すことができないため、arar の外に置いた時に相対的にパスが一致するようにする
 import { settings } from "./settings";
@@ -41,15 +42,21 @@ log.debug(settings);
         url: `file:${settings.dbPath}`,
       },
     },
+    log: ["query", "info", `warn`, `error`],
   });
 
   const app = express();
   app.use(cors());
   app.use(
+    "/",
     graphqlHTTP({
       schema: schemaWithResolvers,
       context: { prisma },
       graphiql: true,
+      customFormatErrorFn: (error) => {
+        log.error(error);
+        return formatError(error);
+      },
     })
   );
   app.listen(process.env.BASE_PORT ?? 5164, () => {

@@ -10,21 +10,22 @@ import {
   updatePlanTask,
 } from "../../repositories/planTasks";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
+import { ReviewPageContext } from "../pages/ReviewPage";
+import { ElapsedTime } from "../atoms/ElapsedTime";
 
 export const RecordedListItem = ({
   task,
+  seconds,
   setName,
   setEstimate,
-  setActual,
 }: {
   task: PlanTask;
+  seconds: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
-  setActual: (actual: number) => void;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(PlanPageContext);
+  const { reload } = React.useContext(ReviewPageContext);
 
   return (
     <StyledRecordedListItem>
@@ -49,12 +50,7 @@ export const RecordedListItem = ({
         onChange={(e) => setEstimate(Number(e.target.value))}
         onBlur={() => updatePlanTask(client, task).then()}
       />
-      <TextInput
-        type="text"
-        value={task.actual ?? ""}
-        onChange={(e) => setActual(Number(e.target.value))}
-        onBlur={() => updatePlanTask(client, task).then()}
-      />
+      <ElapsedTime seconds={seconds} />
       <Button
         label="Complete"
         onClick={() => completePlanTask(client, task.id).then(() => reload())}
@@ -73,7 +69,8 @@ export const RecordedListItem = ({
 
 const StyledRecordedListItem = styled.li`
   display: grid;
-  grid-template-columns: 20px 1fr 50px 50px repeat(3, 70px);
+  grid-template-columns: 20px 1fr 50px 100px repeat(3, 70px);
   grid-gap: 5px;
+  align-items: center;
   margin: 5px 0;
 `;

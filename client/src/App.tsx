@@ -1,76 +1,116 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
-import ApolloClient from "apollo-boost";
+import DefaultClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
 import { ClockFill, ListTask } from "styled-icons/bootstrap";
+import { Today } from "styled-icons/material";
 import { Template } from "styled-icons/heroicons-solid";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
 import { PlanPage } from "./components/pages/PlanPage";
+import { ReviewPage } from "./components/pages/ReviewPage";
 import { TemplatesPage } from "./components/pages/TemplatesPage";
 import { TaskTracksPage } from "./components/pages/TaskTracksPage";
 import { AnchorLink } from "./components/atoms/AnchorLink";
+import { AppDate } from "./components/molecules/AppDate";
 
-const client = new ApolloClient({
+const client = new DefaultClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
 });
 
+const jstDate = new Date(new Date().toLocaleString());
+const initialDate = [
+  jstDate.getFullYear().toString().padStart(4, "0"),
+  "-",
+  (jstDate.getMonth() + 1).toString().padStart(2, "0"),
+  "-",
+  jstDate.getDate().toString().padStart(2, "0"),
+].join("");
+
 export const AppContext = React.createContext({
   client,
+  date: initialDate,
+  setDate: () => {},
+} as {
+  client: DefaultClient<any>;
+  date: string;
+  setDate: (date: string) => void;
 });
+
+const useAppContext = () => {
+  const [date, setDate] = useState(initialDate);
+  return {
+    client,
+    date,
+    setDate: useCallback((date) => setDate(date), []),
+  };
+};
 
 export const App = () => {
   return (
-    <MemoryRouter>
-      <Grommet full theme={theme} themeMode="dark">
-        <HelmetProvider>
-          <GlobalStyle />
-          <Helmet>
-            <meta charSet="utf-8" />
-            <title>Base</title>
-            <meta
-              httpEquiv="Content-Security-Policy"
-              content="script-src 'self' 'unsafe-inline';"
-            />
-          </Helmet>
-          <Grid
-            fill={true}
-            rows={["flex"]}
-            columns={["40px", "flex"]}
-            areas={[
-              { name: "nav", start: [0, 0], end: [0, 0] },
-              { name: "main", start: [1, 0], end: [1, 0] },
-            ]}
-          >
-            <Box gridArea="nav" overflow="hidden">
-              <StyledAnchorLink to="/">
-                <ListTask size="30" />
-              </StyledAnchorLink>
-              <StyledAnchorLink to="/templates">
-                <Template size="32" />
-              </StyledAnchorLink>
-              <StyledAnchorLink to="/task-tracks">
-                <ClockFill size="26" />
-              </StyledAnchorLink>
-            </Box>
-            <Box gridArea="main" overflow="scroll" pad={{ bottom: "160px" }}>
-              <Switch>
-                <Route exact path="/">
-                  <PlanPage />
-                </Route>
-                <Route path="/templates">
-                  <TemplatesPage />
-                </Route>
-                <Route path="/task-tracks">
-                  <TaskTracksPage />
-                </Route>
-              </Switch>
-            </Box>
-          </Grid>
-        </HelmetProvider>
-      </Grommet>
-    </MemoryRouter>
+    <AppContext.Provider value={useAppContext()}>
+      <MemoryRouter>
+        <Grommet full theme={theme} themeMode="dark">
+          <HelmetProvider>
+            <GlobalStyle />
+            <Helmet>
+              <meta charSet="utf-8" />
+              <title>Base</title>
+              <meta
+                httpEquiv="Content-Security-Policy"
+                content="script-src 'self' 'unsafe-inline';"
+              />
+            </Helmet>
+            <Grid
+              rows={["xxsmall", "flex"]}
+              columns={["xxsmall", "flex"]}
+              fill={true}
+              gap="small"
+              areas={[
+                { name: "header", start: [0, 0], end: [1, 0] },
+                { name: "nav", start: [0, 1], end: [0, 1] },
+                { name: "main", start: [1, 1], end: [1, 1] },
+              ]}
+            >
+              <Box gridArea="header">
+                <AppDate />
+              </Box>
+              <Box gridArea="nav" overflow="hidden">
+                <StyledAnchorLink to="/">
+                  <ListTask size="30" />
+                </StyledAnchorLink>
+                <StyledAnchorLink to="/review">
+                  <Today size="32" />
+                </StyledAnchorLink>
+                <StyledAnchorLink to="/templates">
+                  <Template size="32" />
+                </StyledAnchorLink>
+                <StyledAnchorLink to="/task-tracks">
+                  <ClockFill size="26" />
+                </StyledAnchorLink>
+              </Box>
+              <Box gridArea="main" overflow="scroll" pad={{ bottom: "160px" }}>
+                <Switch>
+                  <Route exact path="/">
+                    <PlanPage />
+                  </Route>
+                  <Route path="/review">
+                    <ReviewPage />
+                  </Route>
+                  <Route path="/templates">
+                    <TemplatesPage />
+                  </Route>
+                  <Route path="/task-tracks">
+                    <TaskTracksPage />
+                  </Route>
+                </Switch>
+              </Box>
+            </Grid>
+          </HelmetProvider>
+        </Grommet>
+      </MemoryRouter>
+    </AppContext.Provider>
   );
 };
 
