@@ -76,19 +76,69 @@ const resolvers: Resolvers = {
           0
         )
       );
+      const conditions = {
+        OR: [
+          {
+            AND: [
+              {
+                start_at: {
+                  gte: Math.floor(date.getTime() / 1000),
+                },
+              },
+              {
+                start_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                stop_at: {
+                  gte: Math.floor(date.getTime() / 1000),
+                },
+              },
+              {
+                stop_at: {
+                  lt: Math.floor(nextDate.getTime() / 1000),
+                },
+              },
+            ],
+          },
+        ],
+      };
       return context.prisma.tasks.findMany({
         where: {
-          status: { in: [Status.Completed, Status.Archived] },
-          AND: [
-            {
-              status_changed_at: { gte: Math.floor(date.getTime() / 1000) },
-            },
-            {
-              status_changed_at: {
-                lt: Math.floor(nextDate.getTime() / 1000),
+          AND: {
+            status: { in: [Status.Completed, Status.Archived] },
+            OR: [
+              {
+                AND: [
+                  {
+                    status_changed_at: {
+                      gte: Math.floor(date.getTime() / 1000),
+                    },
+                  },
+                  {
+                    status_changed_at: {
+                      lt: Math.floor(nextDate.getTime() / 1000),
+                    },
+                  },
+                ],
               },
-            },
-          ],
+              {
+                task_tracks: {
+                  some: conditions,
+                },
+              },
+            ],
+          },
+        },
+        include: {
+          task_tracks: {
+            where: conditions,
+          },
         },
         orderBy: {
           status_changed_at: "desc",
