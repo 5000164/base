@@ -11,27 +11,27 @@
   },
   "dependencies": {
     "@craco/craco": "^6.1.1",
-    "@fullcalendar/react": "^5.5.0",
-    "@fullcalendar/timegrid": "^5.5.1",
-    "@types/react": "^17.0.2",
+    "@fullcalendar/react": "^5.6.0",
+    "@fullcalendar/timegrid": "^5.6.0",
+    "@types/react": "^17.0.3",
     "@types/react-beautiful-dnd": "^13.0.0",
-    "@types/react-dom": "^17.0.1",
+    "@types/react-dom": "^17.0.3",
     "@types/react-router-dom": "^5.1.7",
     "apollo-boost": "^0.4.9",
     "graphql": "^15.5.0",
-    "grommet": "^2.16.3",
+    "grommet": "^2.17.1",
     "grommet-icons": "^4.5.0",
     "prettier": "2.2.1",
-    "react": "^17.0.1",
-    "react-beautiful-dnd": "^13.0.0",
-    "react-dom": "^17.0.1",
-    "react-helmet-async": "^1.0.7",
+    "react": "^17.0.2",
+    "react-beautiful-dnd": "^13.1.0",
+    "react-dom": "^17.0.2",
+    "react-helmet-async": "^1.0.9",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.2",
-    "styled-components": "^5.2.1",
-    "styled-icons": "^10.27.0",
-    "typescript": "4.1.5"
+    "react-scripts": "4.0.3",
+    "styled-components": "^5.2.3",
+    "styled-icons": "^10.33.0",
+    "typescript": "4.2.4"
   },
   "resolutions": {
     "websocket-extensions": "0.1.4"
@@ -53,6 +53,6 @@
     ]
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.7"
+    "@types/styled-components": "^5.1.9"
   }
 }
