@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { DragIndicator } from "styled-icons/material";
-import { Button, TextInput } from "grommet";
+import { DragIndicator, PlayArrow } from "styled-icons/material";
+import { Archive, Check, Trash } from "styled-icons/boxicons-regular";
+import { TextInput } from "grommet";
 import { Draggable } from "react-beautiful-dnd";
 import { theme } from "../../theme";
 import { PlanTask } from "../../types/planTask";
@@ -51,26 +52,44 @@ export const PlanListItem = ({
             onChange={(e) => setEstimate(Number(e.target.value))}
             onBlur={() => updatePlanTask(client, task).then()}
           />
-          <Button
-            label="Complete"
-            onClick={() =>
-              completePlanTask(client, task.id).then(() => reload())
-            }
-          />
-          <Button
-            label="Archive"
-            onClick={() =>
-              archivePlanTask(client, task.id).then(() => reload())
-            }
-          />
-          <Button
-            label="Delete"
-            onClick={() => deletePlanTask(client, task.id).then(() => reload())}
-          />
-          <Button
-            label="Start"
-            onClick={() => startTaskTrack(client, task.id).then(() => reload())}
-          />
+          <div>
+            <StyledIcon>
+              <Check
+                title="Complete"
+                size="28"
+                onClick={() =>
+                  completePlanTask(client, task.id).then(() => reload())
+                }
+              />
+            </StyledIcon>
+            <StyledIcon>
+              <Archive
+                title="Archive"
+                size="24"
+                onClick={() =>
+                  archivePlanTask(client, task.id).then(() => reload())
+                }
+              />
+            </StyledIcon>
+            <StyledIcon>
+              <Trash
+                title="Delete"
+                size="24"
+                onClick={() =>
+                  deletePlanTask(client, task.id).then(() => reload())
+                }
+              />
+            </StyledIcon>
+            <StyledIcon>
+              <PlayArrow
+                title="Start"
+                size="28"
+                onClick={() =>
+                  startTaskTrack(client, task.id).then(() => reload())
+                }
+              />
+            </StyledIcon>
+          </div>
         </StyledPlanListItem>
       )}
     </Draggable>
@@ -79,7 +98,8 @@ export const PlanListItem = ({
 
 const StyledPlanListItem = styled.li`
   display: grid;
-  grid-template-columns: 16px 1fr 50px repeat(4, 80px);
+  align-items: center;
+  grid-template-columns: 16px 1fr 50px 160px;
   grid-gap: 5px;
   margin: 5px 0;
 `;
@@ -92,4 +112,12 @@ const Handle = styled.div`
 
 const StyledDragIndicator = styled(DragIndicator)`
   color: ${theme.global.colors.text};
+`;
+
+const StyledIcon = styled.div`
+  display: inline-block;
+  width: 32px;
+  margin-left: 8px;
+  text-align: center;
+  cursor: pointer;
 `;

@@ -4,7 +4,7 @@ export const theme = {
   global: {
     colors: {
       brand: "#7700cc",
-      background: "#111111",
+      background: "hsl(0, 0%, 10%)",
       "background-back": "#111111",
       "background-front": "#222222",
       "background-contrast": "#FFFFFF11",

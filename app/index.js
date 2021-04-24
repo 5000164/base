@@ -26,12 +26,11 @@ const server = fork(cp_path, [], { cwd });
 
 const createWindow = () => {
   const win = new BrowserWindow({
+    transparent: true,
+    vibrancy: "sidebar",
+    titleBarStyle: "hiddenInset",
     width: 800,
     height: 600,
-    backgroundColor: "#111111",
-    webPreferences: {
-      scrollBounce: true,
-    },
   });
   setTimeout(() => {
     win.loadFile(path.join(__dirname, "./client/index.html"));
