@@ -5,35 +5,35 @@ import { Archive, Check, Trash } from "styled-icons/boxicons-regular";
 import { TextInput } from "grommet";
 import { Draggable } from "react-beautiful-dnd";
 import { theme } from "../../theme";
-import { PlanTask } from "../../types/planTask";
+import { Task } from "../../types/task";
 import {
-  archivePlanTask,
-  completePlanTask,
-  deletePlanTask,
+  archiveTask,
+  completeTask,
+  deleteTask,
   startTaskTrack,
-  updatePlanTask,
-} from "../../repositories/planTasks";
+  updateTask,
+} from "../../repositories/tasks";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
+import { TasksPageContext } from "../pages/TasksPage";
 
-export const PlanListItem = ({
+export const TaskListItem = ({
   task,
   index,
   setName,
   setEstimate,
 }: {
-  task: PlanTask;
+  task: Task;
   index: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(PlanPageContext);
+  const { reload } = React.useContext(TasksPageContext);
 
   return (
     <Draggable draggableId={index.toString()} index={index}>
       {(provided) => (
-        <StyledPlanListItem
+        <StyledTaskListItem
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -44,13 +44,13 @@ export const PlanListItem = ({
             type="text"
             value={task.name ?? ""}
             onChange={(e) => setName(e.target.value)}
-            onBlur={() => updatePlanTask(client, task).then()}
+            onBlur={() => updateTask(client, task).then()}
           />
           <TextInput
             type="text"
             value={task.estimate ?? ""}
             onChange={(e) => setEstimate(Number(e.target.value))}
-            onBlur={() => updatePlanTask(client, task).then()}
+            onBlur={() => updateTask(client, task).then()}
           />
           <div>
             <StyledIcon>
@@ -58,7 +58,7 @@ export const PlanListItem = ({
                 title="Complete"
                 size="28"
                 onClick={() =>
-                  completePlanTask(client, task.id).then(() => reload())
+                  completeTask(client, task.id).then(() => reload())
                 }
               />
             </StyledIcon>
@@ -67,7 +67,7 @@ export const PlanListItem = ({
                 title="Archive"
                 size="24"
                 onClick={() =>
-                  archivePlanTask(client, task.id).then(() => reload())
+                  archiveTask(client, task.id).then(() => reload())
                 }
               />
             </StyledIcon>
@@ -75,9 +75,7 @@ export const PlanListItem = ({
               <Trash
                 title="Delete"
                 size="24"
-                onClick={() =>
-                  deletePlanTask(client, task.id).then(() => reload())
-                }
+                onClick={() => deleteTask(client, task.id).then(() => reload())}
               />
             </StyledIcon>
             <StyledIcon>
@@ -90,13 +88,13 @@ export const PlanListItem = ({
               />
             </StyledIcon>
           </div>
-        </StyledPlanListItem>
+        </StyledTaskListItem>
       )}
     </Draggable>
   );
 };
 
-const StyledPlanListItem = styled.li`
+const StyledTaskListItem = styled.li`
   display: grid;
   align-items: center;
   grid-template-columns: 16px 1fr 50px 160px;

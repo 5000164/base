@@ -1,4 +1,4 @@
-import { Plan_Updated_Plan_Task } from "./generated/schema/graphql";
+import { Tasks_Updated_Task } from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
 import { sort } from "./generated/shared/utils/sort";
 import { TemplateTask } from "./types/templateTask";
@@ -216,12 +216,12 @@ export const importTemplate = async (
   return true;
 };
 
-export const updatePlanTasksOrder = async (
+export const updateTasksOrder = async (
   context: any,
-  updatedPlanTasks: Plan_Updated_Plan_Task[]
+  updatedTasks: Tasks_Updated_Task[]
 ): Promise<boolean> => {
   await context.prisma.$transaction(
-    updatedPlanTasks.map(({ id, previous_id, next_id }) =>
+    updatedTasks.map(({ id, previous_id, next_id }) =>
       context.prisma.tasks.update({
         where: { id: id },
         data: {

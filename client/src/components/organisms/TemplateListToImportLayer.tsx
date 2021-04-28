@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { Box, Button, Layer } from "grommet";
-import { PlanPageContext } from "../pages/PlanPage";
+import { TasksPageContext } from "../pages/TasksPage";
 import { TemplateListToImport } from "./TemplateListToImport";
 
 export const TemplateListToImportLayer = () => {
-  const { closeImportDialog } = React.useContext(PlanPageContext);
+  const { closeImportDialog } = React.useContext(TasksPageContext);
 
   return (
     <StyledLayer

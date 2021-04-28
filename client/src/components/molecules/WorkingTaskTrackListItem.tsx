@@ -6,7 +6,7 @@ import { theme } from "../../theme";
 import { TaskTrack } from "../../types/taskTrack";
 import { stopTaskTrack } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
+import { TasksPageContext } from "../pages/TasksPage";
 import { Timer } from "../atoms/Timer";
 
 export const WorkingTaskTrackListItem = ({
@@ -15,7 +15,7 @@ export const WorkingTaskTrackListItem = ({
   taskTrack: TaskTrack;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(PlanPageContext);
+  const { reload } = React.useContext(TasksPageContext);
 
   return (
     <StyledWorkingTaskTrackListItem>

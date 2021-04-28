@@ -5,7 +5,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
-import { PlanPage } from "./components/pages/PlanPage";
+import { TasksPage } from "./components/pages/TasksPage";
 import { ReviewPage } from "./components/pages/ReviewPage";
 import { TemplatesPage } from "./components/pages/TemplatesPage";
 import { TaskTracksPage } from "./components/pages/TaskTracksPage";
@@ -78,7 +78,7 @@ export const App = () => {
               >
                 <Switch>
                   <Route exact path="/">
-                    <PlanPage />
+                    <TasksPage />
                   </Route>
                   <Route path="/review">
                     <ReviewPage />

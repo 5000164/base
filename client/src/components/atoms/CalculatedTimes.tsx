@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { PlanTask } from "../../types/planTask";
+import { Task } from "../../types/task";
 
-export const CalculatedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
+export const CalculatedTimes = ({ tasks }: { tasks: Task[] }) => {
   const [totalEstimateTime, setTotalEstimateTime] = useState(0);
 
   const calculateTimes = () => {

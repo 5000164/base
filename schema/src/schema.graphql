@@ -1,31 +1,31 @@
 type Query {
-  plan: Plan_Query!
+  tasks: Tasks_Query!
   templates: Templates_Query!
   task_tracks: Task_Tracks_Query!
 }
 
 type Mutation {
-  plan: Plan_Mutation!
+  tasks: Tasks_Mutation!
   templates: Templates_Mutation!
   task_tracks: Task_Tracks_Mutation!
 }
 
-type Plan_Query {
-  tasks: [Plan_Task!]!
-  recordedTasks(date: String!): [Plan_Task!]!
+type Tasks_Query {
+  all: [Tasks_Task!]!
+  recordedTasks(date: String!): [Tasks_Task!]!
 }
 
-type Plan_Mutation {
+type Tasks_Mutation {
   addTask: Boolean
   updateTask(id: Int!, name: String, estimate: Int): Boolean
   completeTask(id: Int!): Boolean
   archiveTask(id: Int!): Boolean
   deleteTask(id: Int!): Boolean
   importTemplate(id: Int!): Boolean
-  updatePlanTasksOrder(updatedPlanTasks: [Plan_Updated_Plan_Task!]!): Boolean
+  updateTasksOrder(updatedTasks: [Tasks_Updated_Task!]!): Boolean
 }
 
-type Plan_Task {
+type Tasks_Task {
   id: Int!
   name: String!
   status: Int!
@@ -35,7 +35,7 @@ type Plan_Task {
   next_id: Int
 }
 
-input Plan_Updated_Plan_Task {
+input Tasks_Updated_Task {
   id: Int!
   previous_id: Int
   next_id: Int

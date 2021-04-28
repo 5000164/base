@@ -9,9 +9,9 @@ import {
   changeTaskStatus,
   deleteTask,
   importTemplate,
-  updatePlanTasksOrder,
   updateTask,
-} from "./plan";
+  updateTasksOrder,
+} from "./tasks";
 import {
   addTemplateTask,
   deleteTemplateTask,
@@ -29,7 +29,7 @@ const schema = loadSchemaSync(
 
 const resolvers: Resolvers = {
   Query: {
-    plan: () => ({ tasks: undefined, recordedTasks: undefined }),
+    tasks: () => ({ all: undefined, recordedTasks: undefined }),
     templates: () => ({ templates: undefined, tasks: undefined }),
     task_tracks: () => ({
       taskTracks: undefined,
@@ -37,14 +37,14 @@ const resolvers: Resolvers = {
     }),
   },
   Mutation: {
-    plan: () => ({
+    tasks: () => ({
       addTask: undefined,
       updateTask: undefined,
       completeTask: undefined,
       archiveTask: undefined,
       deleteTask: undefined,
       importTemplate: undefined,
-      updatePlanTasksOrder: undefined,
+      updateTasksOrder: undefined,
     }),
     templates: () => ({
       addTemplate: undefined,
@@ -61,8 +61,8 @@ const resolvers: Resolvers = {
       update_task_track: undefined,
     }),
   },
-  Plan_Query: {
-    tasks: (parent, args, context) =>
+  Tasks_Query: {
+    all: (parent, args, context) =>
       context.prisma.tasks.findMany({ where: { status: Status.Normal } }),
     recordedTasks: (parent, args, context) => {
       const date = new Date(
@@ -146,7 +146,7 @@ const resolvers: Resolvers = {
       });
     },
   },
-  Plan_Mutation: {
+  Tasks_Mutation: {
     addTask: (parent, args, context) => addTask(context),
     updateTask: (parent, args, context) =>
       updateTask(context, args.id, args.name, args.estimate),
@@ -157,8 +157,8 @@ const resolvers: Resolvers = {
     deleteTask: (parent, args, context) => deleteTask(context, args.id),
     importTemplate: async (parent, args, context) =>
       importTemplate(context, args.id),
-    updatePlanTasksOrder: (parent, args, context) =>
-      updatePlanTasksOrder(context, args.updatedPlanTasks),
+    updateTasksOrder: (parent, args, context) =>
+      updateTasksOrder(context, args.updatedTasks),
   },
   Templates_Query: {
     templates: (parent, args, context) =>

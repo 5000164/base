@@ -85,7 +85,7 @@ export const importTemplate = (
     .mutate<Mutation>({
       mutation: gql`
         mutation($templateId: Int!) {
-          plan {
+          tasks {
             importTemplate(id: $templateId)
           }
         }

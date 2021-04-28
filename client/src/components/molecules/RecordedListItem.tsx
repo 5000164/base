@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "grommet";
 import { Status } from "shared/src/types/status";
-import { PlanTask } from "../../types/planTask";
+import { Task } from "../../types/task";
 import {
-  archivePlanTask,
-  completePlanTask,
-  deletePlanTask,
-  updatePlanTask,
-} from "../../repositories/planTasks";
+  archiveTask,
+  completeTask,
+  deleteTask,
+  updateTask,
+} from "../../repositories/tasks";
 import { AppContext } from "../../App";
 import { ReviewPageContext } from "../pages/ReviewPage";
 import { ElapsedTime } from "../atoms/ElapsedTime";
@@ -19,7 +19,7 @@ export const RecordedListItem = ({
   setName,
   setEstimate,
 }: {
-  task: PlanTask;
+  task: Task;
   seconds: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
@@ -42,26 +42,26 @@ export const RecordedListItem = ({
         type="text"
         value={task.name ?? ""}
         onChange={(e) => setName(e.target.value)}
-        onBlur={() => updatePlanTask(client, task).then()}
+        onBlur={() => updateTask(client, task).then()}
       />
       <TextInput
         type="text"
         value={task.estimate ?? ""}
         onChange={(e) => setEstimate(Number(e.target.value))}
-        onBlur={() => updatePlanTask(client, task).then()}
+        onBlur={() => updateTask(client, task).then()}
       />
       <ElapsedTime seconds={seconds} />
       <Button
         label="Complete"
-        onClick={() => completePlanTask(client, task.id).then(() => reload())}
+        onClick={() => completeTask(client, task.id).then(() => reload())}
       />
       <Button
         label="Archive"
-        onClick={() => archivePlanTask(client, task.id).then(() => reload())}
+        onClick={() => archiveTask(client, task.id).then(() => reload())}
       />
       <Button
         label="Delete"
-        onClick={() => deletePlanTask(client, task.id).then(() => reload())}
+        onClick={() => deleteTask(client, task.id).then(() => reload())}
       />
     </StyledRecordedListItem>
   );

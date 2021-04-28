@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { PlanTemplate } from "../templates/PlanTemplate";
+import { TasksTemplate } from "../templates/TasksTemplate";
 
-export const PlanPageContext = React.createContext({
+export const TasksPageContext = React.createContext({
   reloadCount: 0,
   reload: () => {},
   isImportDialogShown: false,
@@ -9,7 +9,7 @@ export const PlanPageContext = React.createContext({
   closeImportDialog: () => {},
 });
 
-const usePlanPageContext = () => {
+const useTasksPageContext = () => {
   const [reloadCount, setReloadCount] = useState(0);
   const reload = useCallback(() => setReloadCount(reloadCount + 1), [
     reloadCount,
@@ -29,10 +29,10 @@ const usePlanPageContext = () => {
   };
 };
 
-export const PlanPage = () => {
+export const TasksPage = () => {
   return (
-    <PlanPageContext.Provider value={usePlanPageContext()}>
-      <PlanTemplate />
-    </PlanPageContext.Provider>
+    <TasksPageContext.Provider value={useTasksPageContext()}>
+      <TasksTemplate />
+    </TasksPageContext.Provider>
   );
 };

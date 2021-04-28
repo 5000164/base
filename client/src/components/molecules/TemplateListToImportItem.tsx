@@ -4,7 +4,7 @@ import { Button } from "grommet";
 import { Template } from "../../types/template";
 import { importTemplate } from "../../repositories/templates";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
+import { TasksPageContext } from "../pages/TasksPage";
 
 export const TemplateListToImportItem = ({
   template,
@@ -12,7 +12,7 @@ export const TemplateListToImportItem = ({
   template: Template;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(PlanPageContext);
+  const { reload } = React.useContext(TasksPageContext);
 
   return (
     <StyledTemplateListItem>

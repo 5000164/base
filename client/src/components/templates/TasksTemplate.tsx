@@ -1,15 +1,15 @@
 import React from "react";
-import { PlanPageContext } from "../pages/PlanPage";
+import { TasksPageContext } from "../pages/TasksPage";
 import { WorkingTaskTrackList } from "../organisms/WorkingTaskTrackList";
-import { PlanList } from "../organisms/PlanList";
+import { TaskList } from "../organisms/TaskList";
 import { TemplateListToImportLayer } from "../organisms/TemplateListToImportLayer";
 
-export const PlanTemplate = () => {
-  const { isImportDialogShown } = React.useContext(PlanPageContext);
+export const TasksTemplate = () => {
+  const { isImportDialogShown } = React.useContext(TasksPageContext);
 
   return (
     <>
-      <PlanList />
+      <TaskList />
       <WorkingTaskTrackList />
       {isImportDialogShown && <TemplateListToImportLayer />}
     </>

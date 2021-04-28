@@ -26,7 +26,7 @@ export const TemplateTaskListItem = ({
   return (
     <Draggable draggableId={index.toString()} index={index}>
       {(provided) => (
-        <StyledPlanListItem
+        <StyledTaskListItem
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -49,13 +49,13 @@ export const TemplateTaskListItem = ({
             label="Delete"
             onClick={() => deleteTask(client, task.id).then(() => reload())}
           />
-        </StyledPlanListItem>
+        </StyledTaskListItem>
       )}
     </Draggable>
   );
 };
 
-const StyledPlanListItem = styled.li`
+const StyledTaskListItem = styled.li`
   display: grid;
   grid-template-columns: 16px 1fr 50px repeat(1, 70px);
   grid-gap: 5px;

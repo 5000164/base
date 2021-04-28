@@ -1,7 +1,7 @@
 import { Status } from "shared/src/types/status";
 import { Sortable } from "shared/src/types/sortable";
 
-export interface PlanTask extends Sortable {
+export interface Task extends Sortable {
   id: number;
   name: string;
   status?: Status;
@@ -11,7 +11,7 @@ export interface PlanTask extends Sortable {
 }
 
 export const setName = (
-  tasks: PlanTask[],
+  tasks: Task[],
   setTasks: Function,
   index: number,
   name: string
@@ -22,7 +22,7 @@ export const setName = (
 };
 
 export const setEstimate = (
-  tasks: PlanTask[],
+  tasks: Task[],
   setTasks: Function,
   index: number,
   estimate: number

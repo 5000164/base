@@ -3,77 +3,73 @@ import styled from "styled-components";
 import { Button } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { sort } from "shared/src/utils/sort";
-import { PlanTask, setEstimate, setName } from "../../types/planTask";
+import { setEstimate, setName, Task } from "../../types/task";
 import {
-  addPlanTask,
-  fetchPlanTasks,
-  updatePlanTasksOrder,
-} from "../../repositories/planTasks";
+  addTask,
+  fetchTasks,
+  updateTasksOrder,
+} from "../../repositories/tasks";
 import { reorder } from "../../utils/sort";
 import { AppContext } from "../../App";
-import { PlanPageContext } from "../pages/PlanPage";
-import { PlanListItem } from "../molecules/PlanListItem";
+import { TasksPageContext } from "../pages/TasksPage";
+import { TaskListItem } from "../molecules/TaskListItem";
 import { CalculatedTimes } from "../atoms/CalculatedTimes";
 
-export const PlanList = () => {
+export const TaskList = () => {
   const { client } = React.useContext(AppContext);
   const { reloadCount, reload, showImportDialog } = React.useContext(
-    PlanPageContext
+    TasksPageContext
   );
 
-  const [planTasks, setPlanTasks] = useState([] as PlanTask[]);
+  const [tasks, setTasks] = useState([] as Task[]);
   useEffect(() => {
-    fetchPlanTasks(client).then((planTasks) =>
-      setPlanTasks(sort<PlanTask>(planTasks))
-    );
+    fetchTasks(client).then((tasks) => setTasks(sort<Task>(tasks)));
   }, [client, reloadCount]);
 
   return (
     <>
       <DragDropContext
         onDragEnd={(result) =>
-          reorder<PlanTask>(result, planTasks, setPlanTasks, (planTasks) =>
-            updatePlanTasksOrder(client, planTasks)
+          reorder<Task>(result, tasks, setTasks, (tasks) =>
+            updateTasksOrder(client, tasks)
           )
         }
       >
-        <Droppable droppableId="plan-list">
+        <Droppable droppableId="task-list">
           {(provided) => (
-            <StyledPlanList
+            <StyledTaskList
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {planTasks.map((task, index) => (
-                <PlanListItem
+              {tasks.map((task, index) => (
+                <TaskListItem
                   key={index}
                   task={task}
                   index={index}
-                  setName={(v: string) =>
-                    setName(planTasks, setPlanTasks, index, v)
-                  }
+                  setName={(v: string) => setName(tasks, setTasks, index, v)}
                   setEstimate={(v: number) =>
-                    setEstimate(planTasks, setPlanTasks, index, v)
+                    setEstimate(tasks, setTasks, index, v)
                   }
                 />
               ))}
               {provided.placeholder}
-            </StyledPlanList>
+            </StyledTaskList>
           )}
         </Droppable>
       </DragDropContext>
       <ButtonWrapper>
         <Button
           label="Add"
-          onClick={() => addPlanTask(client).then(() => reload())}
+          onClick={() => addTask(client).then(() => reload())}
         />
         <Button label="Import" onClick={() => showImportDialog()} />
       </ButtonWrapper>
-      <CalculatedTimes tasks={planTasks} />
+      <CalculatedTimes tasks={tasks} />
     </>
   );
 };
 
-const StyledPlanList = styled.ul`
+const StyledTaskList = styled.ul`
   width: min(1024px, calc(100% - 16px));
   margin: 8px auto 0;
   padding: 0;

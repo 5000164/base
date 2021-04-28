@@ -7,13 +7,10 @@ import React, {
 } from "react";
 import styled from "styled-components";
 import FullCalendar from "@fullcalendar/react";
-import { PlanTask } from "../../types/planTask";
+import { Task } from "../../types/task";
 import { TaskTrack } from "../../types/taskTrack";
 import { EventDetail } from "../../types/eventDetail";
-import {
-  fetchPlanTasks,
-  fetchRecordedTasks,
-} from "../../repositories/planTasks";
+import { fetchRecordedTasks, fetchTasks } from "../../repositories/tasks";
 import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
 import { ReviewPageContext } from "../pages/ReviewPage";
@@ -24,14 +21,14 @@ export const DayView = () => {
   const { client, date } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(ReviewPageContext);
 
-  const [planTasks, setPlanTasks] = useState([] as PlanTask[]);
-  const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
+  const [tasks, setTasks] = useState([] as Task[]);
+  const [recordedTasks, setRecordedTasks] = useState([] as Task[]);
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
-    fetchPlanTasks(client).then((planTasks) =>
+    fetchTasks(client).then((tasks) =>
       fetchRecordedTasks(client, date).then((recordedTasks) =>
         fetchTaskTracks(client, date).then((taskTracks) => {
-          setPlanTasks(planTasks);
+          setTasks(tasks);
           setRecordedTasks(recordedTasks);
           setTaskTracks(taskTracks);
         })
@@ -40,8 +37,8 @@ export const DayView = () => {
   }, [client, date, reloadCount]);
 
   const events = useMemo(
-    () => formatTaskTracksToEvents(taskTracks, planTasks.concat(recordedTasks)),
-    [planTasks, recordedTasks, taskTracks]
+    () => formatTaskTracksToEvents(taskTracks, tasks.concat(recordedTasks)),
+    [tasks, recordedTasks, taskTracks]
   );
 
   const [eventDetail, setEventDetail] = useState({} as EventDetail);
@@ -94,12 +91,9 @@ const CalendarWrapper = styled.div`
   grid-template-columns: 1fr 1fr;
 `;
 
-const formatTaskTracksToEvents = (
-  taskTracks: TaskTrack[],
-  tasks: PlanTask[]
-) => {
+const formatTaskTracksToEvents = (taskTracks: TaskTrack[], tasks: Task[]) => {
   const taskNamesWithId = tasks.reduce(
-    (taskNamesWithId: Map<number, string>, task: PlanTask) => {
+    (taskNamesWithId: Map<number, string>, task: Task) => {
       taskNamesWithId.set(task.id, task.name);
       return taskNamesWithId;
     },
