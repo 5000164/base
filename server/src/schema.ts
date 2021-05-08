@@ -176,8 +176,7 @@ const resolvers: Resolvers = {
       updateTasksOrder(context, args.updatedTasks),
   },
   Templates_Query: {
-    templates: (parent, args, context) =>
-      context.prisma.templates.findMany({ where: { status: Status.Normal } }),
+    templates: (parent, args, context) => context.prisma.templates.findMany(),
     tasks: (parent, args, context) =>
       context.prisma.template_tasks.findMany({
         where: { templateId: args.templateId },
@@ -188,7 +187,6 @@ const resolvers: Resolvers = {
       context.prisma.templates.create({
         data: {
           name: args.name,
-          status: Status.Normal,
         },
       }),
     updateTemplate: (parent, args, context) => {
@@ -200,14 +198,6 @@ const resolvers: Resolvers = {
         data,
       });
     },
-    archiveTemplate: (parent, args, context) =>
-      context.prisma.templates.update({
-        where: { id: args.id },
-        data: {
-          status: Status.Archived,
-          status_changed_at: Math.floor(Date.now() / 1000),
-        },
-      }),
     deleteTemplate: async (parent, args, context) => {
       await context.prisma.template_tasks.deleteMany({
         where: { templateId: args.id },
