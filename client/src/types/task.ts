@@ -6,6 +6,7 @@ export interface Task extends Sortable {
   name: string;
   status?: Status;
   estimate?: number;
+  scheduled_date?: number;
   previous_id?: number;
   next_id?: number;
 }
@@ -29,5 +30,16 @@ export const setEstimate = (
 ) => {
   const newTasks = [...tasks];
   newTasks[index].estimate = estimate;
+  setTasks(newTasks);
+};
+
+export const setScheduledDate = (
+  tasks: Task[],
+  setTasks: Function,
+  index: number,
+  scheduled_date: number
+) => {
+  const newTasks = [...tasks];
+  newTasks[index].scheduled_date = scheduled_date;
   setTasks(newTasks);
 };

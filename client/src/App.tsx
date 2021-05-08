@@ -5,10 +5,11 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
-import { TasksPage } from "./components/pages/TasksPage";
+import { BacklogPage } from "./components/pages/BacklogPage";
 import { ReviewPage } from "./components/pages/ReviewPage";
 import { TemplatesPage } from "./components/pages/TemplatesPage";
 import { TaskTracksPage } from "./components/pages/TaskTracksPage";
+import { TasksPage } from "./components/pages/TasksPage";
 import { Navigation } from "./components/organisms/Navigation";
 
 const client = new DefaultClient({
@@ -78,7 +79,7 @@ export const App = () => {
               >
                 <Switch>
                   <Route exact path="/">
-                    <TasksPage />
+                    <BacklogPage />
                   </Route>
                   <Route path="/review">
                     <ReviewPage />
@@ -88,6 +89,9 @@ export const App = () => {
                   </Route>
                   <Route path="/task-tracks">
                     <TaskTracksPage />
+                  </Route>
+                  <Route path="/tasks">
+                    <TasksPage />
                   </Route>
                 </Switch>
               </Main>

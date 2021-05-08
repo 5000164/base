@@ -8,27 +8,30 @@ import { theme } from "../../theme";
 import { Task } from "../../types/task";
 import {
   archiveTask,
+  changeScheduledDate,
   completeTask,
   deleteTask,
   startTaskTrack,
   updateTask,
 } from "../../repositories/tasks";
 import { AppContext } from "../../App";
-import { TasksPageContext } from "../pages/TasksPage";
 
 export const TaskListItem = ({
   task,
   index,
   setName,
   setEstimate,
+  setScheduledDate,
+  reload,
 }: {
   task: Task;
   index: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
+  setScheduledDate: (scheduled_date: number) => void;
+  reload: () => void;
 }) => {
   const { client } = React.useContext(AppContext);
-  const { reload } = React.useContext(TasksPageContext);
 
   return (
     <Draggable draggableId={index.toString()} index={index}>
@@ -51,6 +54,14 @@ export const TaskListItem = ({
             value={task.estimate ?? ""}
             onChange={(e) => setEstimate(Number(e.target.value))}
             onBlur={() => updateTask(client, task).then()}
+          />
+          <StyledTextInput
+            type="date"
+            value={task.scheduled_date ? d(task.scheduled_date) : ""}
+            onChange={(e) => setScheduledDate(c(e.target.value))}
+            onBlur={() =>
+              changeScheduledDate(client, task).then(() => reload())
+            }
           />
           <div>
             <StyledIcon>
@@ -97,7 +108,7 @@ export const TaskListItem = ({
 const StyledTaskListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 16px 1fr 50px 160px;
+  grid-template-columns: 16px 1fr 40px 176px 160px;
   grid-gap: 5px;
   margin: 5px 0;
 `;
@@ -112,6 +123,12 @@ const StyledDragIndicator = styled(DragIndicator)`
   color: ${theme.global.colors.text};
 `;
 
+const StyledTextInput = styled(TextInput)`
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+`;
+
 const StyledIcon = styled.div`
   display: inline-block;
   width: 32px;
@@ -119,3 +136,20 @@ const StyledIcon = styled.div`
   text-align: center;
   cursor: pointer;
 `;
+
+const d = (dateNumber: number) => {
+  const date = new Date(dateNumber * 1000);
+
+  return [
+    date.getFullYear().toString().padStart(4, "0"),
+    "-",
+    (date.getMonth() + 1).toString().padStart(2, "0"),
+    "-",
+    date.getDate().toString().padStart(2, "0"),
+  ].join("");
+};
+
+const c = (dateString: string) => {
+  const date = new Date(new Date(Date.parse(dateString)).setHours(0, 0, 0, 0));
+  return Math.floor(date.getTime() / 1000);
+};

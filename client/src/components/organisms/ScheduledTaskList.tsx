@@ -2,31 +2,36 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Button, Layer } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { sort } from "shared/src/utils/sort";
 import { setEstimate, setName, setScheduledDate, Task } from "../../types/task";
 import {
-  addTask,
-  fetchTasks,
+  addTaskWithScheduledDate,
+  fetchScheduledTasks,
   updateTasksOrder,
 } from "../../repositories/tasks";
-import { importTemplate } from "../../repositories/templates";
+import { importTemplateWithScheduledDate } from "../../repositories/templates";
 import { reorder } from "../../utils/sort";
 import { AppContext } from "../../App";
-import { TasksPageContext } from "../pages/TasksPage";
+import { BacklogPageContext } from "../pages/BacklogPage";
 import { TemplateListToImport } from "./TemplateListToImport";
 import { TaskListItem } from "../molecules/TaskListItem";
 import { CalculatedTimes } from "../atoms/CalculatedTimes";
 
-export const TaskList = () => {
-  const { client } = React.useContext(AppContext);
-  const { reloadCount, reload } = React.useContext(TasksPageContext);
+export const ScheduledTaskList = () => {
+  const { client, date } = React.useContext(AppContext);
+  const { reloadCount, reload } = React.useContext(BacklogPageContext);
 
   const [tasks, setTasks] = useState([] as Task[]);
   useEffect(() => {
-    fetchTasks(client).then((tasks) => setTasks(tasks));
-  }, [client, reloadCount]);
+    fetchScheduledTasks(client, date).then((tasks) =>
+      setTasks(sort<Task>(tasks))
+    );
+  }, [client, date, reloadCount]);
 
   const importFunction = (templateId: number) =>
-    importTemplate(client, templateId).then(() => reload());
+    importTemplateWithScheduledDate(client, templateId, c(date)).then(() =>
+      reload()
+    );
   const [isImportDialogShown, setIsImportDialogShown] = useState(false);
   const showImportDialog = () => setIsImportDialogShown(true);
   const closeImportDialog = () => setIsImportDialogShown(false);
@@ -69,7 +74,9 @@ export const TaskList = () => {
       <ButtonWrapper>
         <Button
           label="Add"
-          onClick={() => addTask(client).then(() => reload())}
+          onClick={() =>
+            addTaskWithScheduledDate(client, c(date)).then(() => reload())
+          }
         />
         <Button label="Import" onClick={() => showImportDialog()} />
       </ButtonWrapper>
@@ -102,6 +109,11 @@ const ButtonWrapper = styled.div`
   margin: 8px auto 0;
   padding: 0;
 `;
+
+const c = (dateString: string) => {
+  const date = new Date(new Date(Date.parse(dateString)).setHours(0, 0, 0, 0));
+  return Math.floor(date.getTime() / 1000);
+};
 
 const StyledLayer = styled(Layer)`
   width: min(1024px, 100%);

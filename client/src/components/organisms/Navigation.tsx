@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { ClockFill, ListTask } from "styled-icons/bootstrap";
+import { CalendarTodo } from "styled-icons/remix-line";
 import { Today } from "styled-icons/material";
 import { Template } from "styled-icons/heroicons-solid";
+import { ClockFill, ListTask } from "styled-icons/bootstrap";
 import { AppDate } from "../molecules/AppDate";
 import { AnchorLink } from "../atoms/AnchorLink";
 
@@ -14,13 +15,13 @@ export const Navigation = () => {
       </StyledAppDate>
       <NavigationItem to="/">
         <StyledIcon>
-          <ListTask size="30" />
+          <CalendarTodo size="30" />
         </StyledIcon>
         <StyledTitle>Backlog</StyledTitle>
       </NavigationItem>
       <NavigationItem to="/review">
         <StyledIcon>
-          <Today size="32" />
+          <Today size="30" />
         </StyledIcon>
         <StyledTitle>Review</StyledTitle>
       </NavigationItem>
@@ -32,9 +33,16 @@ export const Navigation = () => {
       </NavigationItem>
       <NavigationItem to="/task-tracks">
         <StyledIcon>
-          <ClockFill size="26" />
+          <ClockFill size="24" />
         </StyledIcon>
         <StyledTitle>Tracks</StyledTitle>
+      </NavigationItem>
+      <hr />
+      <NavigationItem to="/tasks">
+        <StyledIcon>
+          <ListTask size="30" />
+        </StyledIcon>
+        <StyledTitle>All Tasks</StyledTitle>
       </NavigationItem>
     </StyledNavigation>
   );

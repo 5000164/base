@@ -4,12 +4,12 @@ import { theme } from "../../theme";
 import { TaskTrack } from "../../types/taskTrack";
 import { fetchWorkingTaskTracks } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
-import { TasksPageContext } from "../pages/TasksPage";
+import { BacklogPageContext } from "../pages/BacklogPage";
 import { WorkingTaskTrackListItem } from "../molecules/WorkingTaskTrackListItem";
 
 export const WorkingTaskTrackList = () => {
   const { client } = React.useContext(AppContext);
-  const { reloadCount } = React.useContext(TasksPageContext);
+  const { reloadCount } = React.useContext(BacklogPageContext);
 
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {

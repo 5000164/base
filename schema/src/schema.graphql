@@ -12,16 +12,20 @@ type Mutation {
 
 type Tasks_Query {
   all: [Tasks_Task!]!
+  scheduled(date: String!): [Tasks_Task!]!
   recordedTasks(date: String!): [Tasks_Task!]!
 }
 
 type Tasks_Mutation {
   addTask: Boolean
+  add_task_with_scheduled_date(scheduled_date: Int!): Boolean
   updateTask(id: Int!, name: String, estimate: Int): Boolean
+  change_scheduled_date(id: Int!, scheduled_date: Int): Boolean
   completeTask(id: Int!): Boolean
   archiveTask(id: Int!): Boolean
   deleteTask(id: Int!): Boolean
   importTemplate(id: Int!): Boolean
+  import_template_with_scheduled_date(id: Int!, scheduled_date: Int!): Boolean
   updateTasksOrder(updatedTasks: [Tasks_Updated_Task!]!): Boolean
 }
 
@@ -30,6 +34,7 @@ type Tasks_Task {
   name: String!
   status: Int!
   estimate: Int
+  scheduled_date: Int
   status_changed_at: Int
   previous_id: Int
   next_id: Int
