@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight } from "styled-icons/evaicons-solid";
 import { AppContext } from "../../App";
 import { Date as DateAtom } from "../atoms/Date";
 
-export const AppDate = () => {
+export const DateNavigator = () => {
   const { date, setDate } = React.useContext(AppContext);
 
   return (

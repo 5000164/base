@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { TextInput } from "grommet";
 import { AppContext } from "../../App";
 
-export const Date = () => {
+export const AppDate = () => {
   const { date, setDate } = React.useContext(AppContext);
 
   return (
