@@ -8,7 +8,7 @@ export const AppDate = () => {
   const { date, setDate } = React.useContext(AppContext);
 
   return (
-    <StyledAppDate>
+    <>
       <StyledIcon>
         <ArrowLeft size="26" onClick={() => setDate(moveDate(date, -1))} />
       </StyledIcon>
@@ -16,19 +16,13 @@ export const AppDate = () => {
         <ArrowRight size="26" onClick={() => setDate(moveDate(date, 1))} />
       </StyledIcon>
       <DateAtom />
-    </StyledAppDate>
+    </>
   );
 };
 
 const StyledIcon = styled.div`
   display: inline-block;
   cursor: pointer;
-`;
-
-const StyledAppDate = styled.div`
-  width: min(1024px, 100%);
-  margin: 8px auto;
-  text-align: right;
 `;
 
 const moveDate = (dateString: string, moveDays: number): string => {

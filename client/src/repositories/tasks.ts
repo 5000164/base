@@ -1,20 +1,19 @@
 import DefaultClient, { gql } from "apollo-boost";
 import { Mutation, Query } from "schema/src/generated/client/graphql";
-import { PlanTask } from "../types/planTask";
+import { Task } from "../types/task";
 
-export const fetchPlanTasks = (
-  client: DefaultClient<any>
-): Promise<PlanTask[]> =>
+export const fetchTasks = (client: DefaultClient<any>): Promise<Task[]> =>
   client
     .query<Query>({
       fetchPolicy: "no-cache",
       query: gql`
         {
-          plan {
-            tasks {
+          tasks {
+            all {
               id
               name
               estimate
+              scheduled_date
               previous_id
               next_id
             }
@@ -22,14 +21,41 @@ export const fetchPlanTasks = (
         }
       `,
     })
-    .then((result) => result.data.plan.tasks);
+    .then((result) => result.data.tasks.all);
 
-export const addPlanTask = (client: DefaultClient<any>): Promise<boolean> =>
+export const fetchScheduledTasks = (
+  client: DefaultClient<any>,
+  date: string
+): Promise<Task[]> =>
+  client
+    .query<Query>({
+      fetchPolicy: "no-cache",
+      query: gql`
+        query($date: String!) {
+          tasks {
+            scheduled(date: $date) {
+              id
+              name
+              estimate
+              scheduled_date
+              previous_id
+              next_id
+            }
+          }
+        }
+      `,
+      variables: {
+        date,
+      },
+    })
+    .then((result) => result.data.tasks.scheduled);
+
+export const addTask = (client: DefaultClient<any>): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
         mutation {
-          plan {
+          tasks {
             addTask
           }
         }
@@ -37,15 +63,34 @@ export const addPlanTask = (client: DefaultClient<any>): Promise<boolean> =>
     })
     .then(() => true);
 
-export const updatePlanTask = (
+export const addTaskWithScheduledDate = (
   client: DefaultClient<any>,
-  task: PlanTask
+  scheduledDate: number
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation($scheduledDate: Int!) {
+          tasks {
+            add_task_with_scheduled_date(scheduled_date: $scheduledDate)
+          }
+        }
+      `,
+      variables: {
+        scheduledDate,
+      },
+    })
+    .then(() => true);
+
+export const updateTask = (
+  client: DefaultClient<any>,
+  task: Task
 ): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
         mutation($id: Int!, $name: String, $estimate: Int) {
-          plan {
+          tasks {
             updateTask(id: $id, name: $name, estimate: $estimate)
           }
         }
@@ -54,7 +99,24 @@ export const updatePlanTask = (
     })
     .then(() => true);
 
-export const completePlanTask = (
+export const changeScheduledDate = (
+  client: DefaultClient<any>,
+  task: Task
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation($id: Int!, $scheduled_date: Int) {
+          tasks {
+            change_scheduled_date(id: $id, scheduled_date: $scheduled_date)
+          }
+        }
+      `,
+      variables: task,
+    })
+    .then(() => true);
+
+export const completeTask = (
   client: DefaultClient<any>,
   id: number
 ): Promise<boolean> =>
@@ -62,7 +124,7 @@ export const completePlanTask = (
     .mutate<Mutation>({
       mutation: gql`
         mutation($id: Int!) {
-          plan {
+          tasks {
             completeTask(id: $id)
           }
         }
@@ -84,7 +146,7 @@ export const completePlanTask = (
         .then(() => true)
     );
 
-export const archivePlanTask = (
+export const archiveTask = (
   client: DefaultClient<any>,
   id: number
 ): Promise<boolean> =>
@@ -92,7 +154,7 @@ export const archivePlanTask = (
     .mutate<Mutation>({
       mutation: gql`
         mutation($id: Int!) {
-          plan {
+          tasks {
             archiveTask(id: $id)
           }
         }
@@ -101,7 +163,7 @@ export const archivePlanTask = (
     })
     .then(() => true);
 
-export const deletePlanTask = (
+export const deleteTask = (
   client: DefaultClient<any>,
   id: number
 ): Promise<boolean> =>
@@ -109,7 +171,7 @@ export const deletePlanTask = (
     .mutate<Mutation>({
       mutation: gql`
         mutation($id: Int!) {
-          plan {
+          tasks {
             deleteTask(id: $id)
           }
         }
@@ -143,9 +205,9 @@ export const startTaskTrack = (
     })
     .then(() => true);
 
-export const updatePlanTasksOrder = (
+export const updateTasksOrder = (
   client: DefaultClient<any>,
-  updatedPlanTasks: {
+  updatedTasks: {
     id: number;
     previous_id?: number | null;
     next_id?: number | null;
@@ -154,14 +216,14 @@ export const updatePlanTasksOrder = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($updatedPlanTasks: [Plan_Updated_Plan_Task!]!) {
-          plan {
-            updatePlanTasksOrder(updatedPlanTasks: $updatedPlanTasks)
+        mutation($updatedTasks: [Tasks_Updated_Task!]!) {
+          tasks {
+            updateTasksOrder(updatedTasks: $updatedTasks)
           }
         }
       `,
       variables: {
-        updatedPlanTasks,
+        updatedTasks,
       },
     })
     .then(() => true);
@@ -169,13 +231,13 @@ export const updatePlanTasksOrder = (
 export const fetchRecordedTasks = (
   client: DefaultClient<any>,
   date: string
-): Promise<PlanTask[]> =>
+): Promise<Task[]> =>
   client
     .query<Query>({
       fetchPolicy: "no-cache",
       query: gql`
         query($date: String!) {
-          plan {
+          tasks {
             recordedTasks(date: $date) {
               id
               name
@@ -189,4 +251,4 @@ export const fetchRecordedTasks = (
         date,
       },
     })
-    .then((result) => result.data.plan.recordedTasks);
+    .then((result) => result.data.tasks.recordedTasks);

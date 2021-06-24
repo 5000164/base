@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { PlanTask, setEstimate, setName } from "../../types/planTask";
-import { fetchRecordedTasks } from "../../repositories/planTasks";
+import { setEstimate, setName, Task } from "../../types/task";
+import { fetchRecordedTasks } from "../../repositories/tasks";
 import { AppContext } from "../../App";
 import { RecordedListItem } from "../molecules/RecordedListItem";
 import { CalculatedRecordedTimes } from "../atoms/CalculatedRecordedTimes";
@@ -13,7 +13,7 @@ export const RecordedList = () => {
   const { client, date } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(ReviewPageContext);
 
-  const [recordedTasks, setRecordedTasks] = useState([] as PlanTask[]);
+  const [recordedTasks, setRecordedTasks] = useState([] as Task[]);
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
     fetchRecordedTasks(client, date).then((recordedTasks) =>
@@ -54,7 +54,7 @@ const StyledRecordedList = styled.ul`
   padding: 0;
 `;
 
-const tasksWithTracks = (tasks: PlanTask[], taskTracks: TaskTrack[]) => {
+const tasksWithTracks = (tasks: Task[], taskTracks: TaskTrack[]) => {
   // tasks の要素ごとに taskTracks を全部ループして合計時間を計算していたらループ数が多くなるので、
   // まずは taskTracks だけで合計値を計算して task id で取り出せるようにする
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Status } from "shared/src/types/status";
-import { PlanTask } from "../../types/planTask";
+import { Task } from "../../types/task";
 
-export const CalculatedRecordedTimes = ({ tasks }: { tasks: PlanTask[] }) => {
+export const CalculatedRecordedTimes = ({ tasks }: { tasks: Task[] }) => {
   const [totalCompletedEstimateTime, setTotalCompletedEstimateTime] = useState(
     0
   );

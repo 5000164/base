@@ -6,12 +6,16 @@ import { Resolvers } from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
 import {
   addTask,
+  addTaskWithScheduledDate,
+  changeScheduledDate,
   changeTaskStatus,
   deleteTask,
   importTemplate,
-  updatePlanTasksOrder,
+  importTemplateWithScheduledDate,
+  scheduled,
   updateTask,
-} from "./plan";
+  updateTasksOrder,
+} from "./tasks";
 import {
   addTemplateTask,
   deleteTemplateTask,
@@ -29,7 +33,11 @@ const schema = loadSchemaSync(
 
 const resolvers: Resolvers = {
   Query: {
-    plan: () => ({ tasks: undefined, recordedTasks: undefined }),
+    tasks: () => ({
+      all: undefined,
+      scheduled: undefined,
+      recordedTasks: undefined,
+    }),
     templates: () => ({ templates: undefined, tasks: undefined }),
     task_tracks: () => ({
       taskTracks: undefined,
@@ -37,14 +45,15 @@ const resolvers: Resolvers = {
     }),
   },
   Mutation: {
-    plan: () => ({
+    tasks: () => ({
       addTask: undefined,
       updateTask: undefined,
+      change_scheduled_date: undefined,
       completeTask: undefined,
       archiveTask: undefined,
       deleteTask: undefined,
       importTemplate: undefined,
-      updatePlanTasksOrder: undefined,
+      updateTasksOrder: undefined,
     }),
     templates: () => ({
       addTemplate: undefined,
@@ -61,9 +70,10 @@ const resolvers: Resolvers = {
       update_task_track: undefined,
     }),
   },
-  Plan_Query: {
-    tasks: (parent, args, context) =>
+  Tasks_Query: {
+    all: (parent, args, context) =>
       context.prisma.tasks.findMany({ where: { status: Status.Normal } }),
+    scheduled: (parent, args, context) => scheduled(context, args.date),
     recordedTasks: (parent, args, context) => {
       const date = new Date(
         new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
@@ -146,19 +156,24 @@ const resolvers: Resolvers = {
       });
     },
   },
-  Plan_Mutation: {
+  Tasks_Mutation: {
     addTask: (parent, args, context) => addTask(context),
+    add_task_with_scheduled_date: (parent, args, context) =>
+      addTaskWithScheduledDate(context, args.scheduled_date),
     updateTask: (parent, args, context) =>
       updateTask(context, args.id, args.name, args.estimate),
+    change_scheduled_date: (parent, args, context) =>
+      changeScheduledDate(context, args.id, args.scheduled_date),
     completeTask: (parent, args, context) =>
       changeTaskStatus(context, args.id, Status.Completed),
     archiveTask: (parent, args, context) =>
       changeTaskStatus(context, args.id, Status.Archived),
     deleteTask: (parent, args, context) => deleteTask(context, args.id),
-    importTemplate: async (parent, args, context) =>
-      importTemplate(context, args.id),
-    updatePlanTasksOrder: (parent, args, context) =>
-      updatePlanTasksOrder(context, args.updatedPlanTasks),
+    importTemplate: (parent, args, context) => importTemplate(context, args.id),
+    import_template_with_scheduled_date: (parent, args, context) =>
+      importTemplateWithScheduledDate(context, args.id, args.scheduled_date),
+    updateTasksOrder: (parent, args, context) =>
+      updateTasksOrder(context, args.updatedTasks),
   },
   Templates_Query: {
     templates: (parent, args, context) =>

@@ -3,17 +3,14 @@ import { MemoryRouter, Route, Switch } from "react-router-dom";
 import DefaultClient from "apollo-boost";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
-import { ClockFill, ListTask } from "styled-icons/bootstrap";
-import { Today } from "styled-icons/material";
-import { Template } from "styled-icons/heroicons-solid";
 import { Box, Grid, Grommet } from "grommet";
 import { theme } from "./theme";
-import { PlanPage } from "./components/pages/PlanPage";
+import { BacklogPage } from "./components/pages/BacklogPage";
 import { ReviewPage } from "./components/pages/ReviewPage";
 import { TemplatesPage } from "./components/pages/TemplatesPage";
 import { TaskTracksPage } from "./components/pages/TaskTracksPage";
-import { AnchorLink } from "./components/atoms/AnchorLink";
-import { AppDate } from "./components/molecules/AppDate";
+import { TasksPage } from "./components/pages/TasksPage";
+import { Navigation } from "./components/organisms/Navigation";
 
 const client = new DefaultClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
@@ -51,7 +48,7 @@ export const App = () => {
   return (
     <AppContext.Provider value={useAppContext()}>
       <MemoryRouter>
-        <Grommet full theme={theme} themeMode="dark">
+        <StyledGrommet full theme={theme} themeMode="dark">
           <HelmetProvider>
             <GlobalStyle />
             <Helmet>
@@ -63,37 +60,26 @@ export const App = () => {
               />
             </Helmet>
             <Grid
-              rows={["xxsmall", "flex"]}
-              columns={["xxsmall", "flex"]}
+              rows={["flex"]}
+              columns={["280px", "flex"]}
               fill={true}
               gap="small"
               areas={[
-                { name: "header", start: [0, 0], end: [1, 0] },
-                { name: "nav", start: [0, 1], end: [0, 1] },
-                { name: "main", start: [1, 1], end: [1, 1] },
+                { name: "nav", start: [0, 0], end: [0, 0] },
+                { name: "main", start: [1, 0], end: [1, 0] },
               ]}
             >
-              <Box gridArea="header">
-                <AppDate />
-              </Box>
               <Box gridArea="nav" overflow="hidden">
-                <StyledAnchorLink to="/">
-                  <ListTask size="30" />
-                </StyledAnchorLink>
-                <StyledAnchorLink to="/review">
-                  <Today size="32" />
-                </StyledAnchorLink>
-                <StyledAnchorLink to="/templates">
-                  <Template size="32" />
-                </StyledAnchorLink>
-                <StyledAnchorLink to="/task-tracks">
-                  <ClockFill size="26" />
-                </StyledAnchorLink>
+                <Navigation />
               </Box>
-              <Box gridArea="main" overflow="scroll" pad={{ bottom: "160px" }}>
+              <Main
+                gridArea="main"
+                overflow="scroll"
+                pad={{ top: "16px", bottom: "160px" }}
+              >
                 <Switch>
                   <Route exact path="/">
-                    <PlanPage />
+                    <BacklogPage />
                   </Route>
                   <Route path="/review">
                     <ReviewPage />
@@ -104,11 +90,14 @@ export const App = () => {
                   <Route path="/task-tracks">
                     <TaskTracksPage />
                   </Route>
+                  <Route path="/tasks">
+                    <TasksPage />
+                  </Route>
                 </Switch>
-              </Box>
+              </Main>
             </Grid>
           </HelmetProvider>
-        </Grommet>
+        </StyledGrommet>
       </MemoryRouter>
     </AppContext.Provider>
   );
@@ -126,7 +115,6 @@ const GlobalStyle = createGlobalStyle`
     height: 100%;
     margin: 0;
     font-family: "Hiragino Sans", sans-serif;
-    font-weight: 200;
     font-size: 10px;
     font-kerning: normal; // フォントのカーニングを常に有効にする
     font-feature-settings: "palt"; // 自動カーニングさせる
@@ -134,7 +122,6 @@ const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased; // フォントにアンチエイリアスをかける (少し細く見える)
     -moz-osx-font-smoothing: grayscale;
     color: ${theme.global.colors.text};
-    background: ${theme.global.colors.background};
   }
 
   body {
@@ -158,9 +145,10 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const StyledAnchorLink = styled(AnchorLink)`
-  width: 32px;
-  margin: 8px 0 0 8px;
-  padding: 0;
-  text-align: center;
+const StyledGrommet = styled(Grommet)`
+  background: hsla(0, 0%, 0%, 0);
+`;
+
+const Main = styled(Box)`
+  background: ${theme.global.colors.background};
 `;

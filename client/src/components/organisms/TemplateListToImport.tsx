@@ -5,7 +5,11 @@ import { fetchTemplates } from "../../repositories/templates";
 import { AppContext } from "../../App";
 import { TemplateListToImportItem } from "../molecules/TemplateListToImportItem";
 
-export const TemplateListToImport = () => {
+export const TemplateListToImport = ({
+  importFunction,
+}: {
+  importFunction: (templateId: number) => void;
+}) => {
   const { client } = React.useContext(AppContext);
 
   const [templates, setTemplates] = useState([] as Template[]);
@@ -17,7 +21,11 @@ export const TemplateListToImport = () => {
     <>
       <StyledTemplateList>
         {templates.map((template, index) => (
-          <TemplateListToImportItem key={index} template={template} />
+          <TemplateListToImportItem
+            key={index}
+            template={template}
+            importFunction={importFunction}
+          />
         ))}
       </StyledTemplateList>
     </>

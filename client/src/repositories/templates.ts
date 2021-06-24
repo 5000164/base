@@ -85,12 +85,33 @@ export const importTemplate = (
     .mutate<Mutation>({
       mutation: gql`
         mutation($templateId: Int!) {
-          plan {
+          tasks {
             importTemplate(id: $templateId)
           }
         }
       `,
       variables: { templateId },
+    })
+    .then(() => true);
+
+export const importTemplateWithScheduledDate = (
+  client: DefaultClient<any>,
+  templateId: number,
+  scheduledDate: number
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation($templateId: Int!, $scheduledDate: Int!) {
+          tasks {
+            import_template_with_scheduled_date(
+              id: $templateId
+              scheduled_date: $scheduledDate
+            )
+          }
+        }
+      `,
+      variables: { templateId, scheduledDate },
     })
     .then(() => true);
 
