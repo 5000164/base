@@ -4,7 +4,7 @@ import { TemplatesTemplate } from "../templates/TemplatesTemplate";
 export const TemplatesPageContext = React.createContext({
   reloadCount: 0,
   reload: () => {},
-  selectedTemplate: { id: undefined, name: undefined },
+  selectedTemplate: { id: 0, name: "" },
   setSelectedTemplate: () => {},
   isEditDialogShown: false,
   showEditDialog: () => {},
@@ -13,8 +13,8 @@ export const TemplatesPageContext = React.createContext({
   reloadCount: number;
   reload: () => void;
   selectedTemplate: {
-    id?: number;
-    name?: string;
+    id: number;
+    name: string;
   };
   setSelectedTemplate: (id: number, name: string) => void;
   isEditDialogShown: boolean;
@@ -25,8 +25,8 @@ export const TemplatesPageContext = React.createContext({
 const useTemplatesPageContext = () => {
   const [reloadCount, setReloadCount] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState({
-    id: undefined,
-    name: undefined,
+    id: 0,
+    name: "",
   });
   const [isEditDialogShown, setIsEditDialogShown] = useState(false);
   return {
