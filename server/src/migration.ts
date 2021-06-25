@@ -7,6 +7,7 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
     dialect: "sqlite",
     storage: dbPath,
   });
+  await sequelize.query(`PRAGMA foreign_keys = OFF;`);
 
   const umzug = new Umzug({
     migrations: { glob: path.join(__dirname, "migrations/*.js") },
@@ -14,6 +15,5 @@ export const migrate = async ({ dbPath }: { dbPath: string }) => {
     storage: new SequelizeStorage({ sequelize }),
     logger: console,
   });
-
   await umzug.up();
 };
