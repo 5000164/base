@@ -7,8 +7,9 @@
     "prebuild": "rm -rf ../dist/server && mkdir -p ../dist/server",
     "build": "tsc",
     "postbuild": "cp src/generated/schema/schema.graphql ../dist/server/generated/schema/schema.graphql && cp -R src/migrations ../dist/server/migrations",
-    "introspect": "npx prisma introspect",
-    "generate": "npx prisma generate"
+    "prisma:format": "npx prisma format",
+    "prisma:introspect": "npx prisma introspect",
+    "prisma:generate": "npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^2.20.1",
