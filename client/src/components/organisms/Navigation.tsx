@@ -4,15 +4,15 @@ import { CalendarTodo } from "styled-icons/remix-line";
 import { Today } from "styled-icons/material";
 import { Template } from "styled-icons/heroicons-solid";
 import { ClockFill, ListTask } from "styled-icons/bootstrap";
-import { AppDate } from "../molecules/AppDate";
+import { DateNavigator } from "../molecules/DateNavigator";
 import { AnchorLink } from "../atoms/AnchorLink";
 
 export const Navigation = () => {
   return (
     <StyledNavigation>
-      <StyledAppDate>
-        <AppDate />
-      </StyledAppDate>
+      <StyledDateNavigator>
+        <DateNavigator />
+      </StyledDateNavigator>
       <NavigationItem to="/">
         <StyledIcon>
           <CalendarTodo size="30" />
@@ -52,7 +52,7 @@ const StyledNavigation = styled.div`
   background: hsla(0, 0%, 0%, 0);
 `;
 
-const StyledAppDate = styled.div`
+const StyledDateNavigator = styled.div`
   width: 100%;
   height: 40px;
   margin-top: 40px;

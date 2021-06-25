@@ -1,4 +1,4 @@
-export interface TaskTrackTask {
-  id: number;
+export type TaskTrackTask = {
+  taskId: number;
   name: string;
-}
+};

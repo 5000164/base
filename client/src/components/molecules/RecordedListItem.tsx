@@ -53,15 +53,15 @@ export const RecordedListItem = ({
       <ElapsedTime seconds={seconds} />
       <Button
         label="Complete"
-        onClick={() => completeTask(client, task.id).then(() => reload())}
+        onClick={() => completeTask(client, task.taskId).then(() => reload())}
       />
       <Button
         label="Archive"
-        onClick={() => archiveTask(client, task.id).then(() => reload())}
+        onClick={() => archiveTask(client, task.taskId).then(() => reload())}
       />
       <Button
         label="Delete"
-        onClick={() => deleteTask(client, task.id).then(() => reload())}
+        onClick={() => deleteTask(client, task.taskId).then(() => reload())}
       />
     </StyledRecordedListItem>
   );

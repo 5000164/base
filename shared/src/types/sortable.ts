@@ -1,5 +1,5 @@
-export interface Sortable {
+export type Sortable = {
   id: number;
-  previous_id?: number | null;
-  next_id?: number | null;
-}
+  previousId?: number | null;
+  nextId?: number | null;
+};

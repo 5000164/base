@@ -2,8 +2,16 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { TemplatesUpdatedTemplateTask } from "schema/src/generated/client/graphql";
 import { sort } from "shared/src/utils/sort";
-import { setEstimate, setName, TemplateTask } from "../../types/templateTask";
+import {
+  setEstimate,
+  setName,
+  TemplateTask,
+  toSortable,
+  toTemplatesUpdatedTemplateTask,
+  toTemplateTasksFromSortable,
+} from "../../types/templateTask";
 import {
   addTask,
   fetchTasks,
@@ -16,14 +24,13 @@ import { TemplateTaskListItem } from "../molecules/TemplateTaskListItem";
 
 export const TemplateTaskList = () => {
   const { client } = React.useContext(AppContext);
-  const { reloadCount, reload, selectedTemplate } = React.useContext(
-    TemplatesPageContext
-  );
+  const { reloadCount, reload, selectedTemplate } =
+    React.useContext(TemplatesPageContext);
 
   const [tasks, setTasks] = useState([] as TemplateTask[]);
   useEffect(() => {
-    fetchTasks(client, selectedTemplate.id!).then((tasks) =>
-      setTasks(sort<TemplateTask>(tasks))
+    fetchTasks(client, selectedTemplate.templateId).then((tasks) =>
+      setTasks(toTemplateTasksFromSortable(tasks, sort(tasks.map(toSortable))))
     );
   }, [client, reloadCount, selectedTemplate]);
 
@@ -31,10 +38,15 @@ export const TemplateTaskList = () => {
     <>
       <TemplateName>{selectedTemplate.name}</TemplateName>
       <DragDropContext
-        onDragEnd={(result) =>
-          reorder<TemplateTask>(result, tasks, setTasks, (tasks) =>
-            updateTemplateTasksOrder(client, tasks)
-          )
+        onDragEnd={
+          (result) =>
+            reorder<TemplateTask, TemplatesUpdatedTemplateTask>(
+              result,
+              tasks,
+              toSortable,
+              toTemplatesUpdatedTemplateTask,
+              (tasks) => updateTemplateTasksOrder(client, tasks)
+            ).then(() => reload()) // ひとまず毎回 reload して表示を合わせる
         }
       >
         <Droppable droppableId="template-list">
@@ -43,7 +55,7 @@ export const TemplateTaskList = () => {
               {tasks.map((task, index) => (
                 <TemplateTaskListItem
                   key={index}
-                  task={task}
+                  templateTask={task}
                   index={index}
                   setName={(v: string) => setName(tasks, setTasks, index, v)}
                   setEstimate={(v: number) =>
@@ -60,7 +72,7 @@ export const TemplateTaskList = () => {
         <Button
           label="Add"
           onClick={() =>
-            addTask(client, selectedTemplate.id!).then(() => reload())
+            addTask(client, selectedTemplate.templateId!).then(() => reload())
           }
         />
       </AddButtonWrapper>

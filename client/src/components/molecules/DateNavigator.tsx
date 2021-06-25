@@ -1,21 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 import { ArrowLeft, ArrowRight } from "styled-icons/evaicons-solid";
+import { moveDay } from "../../utils/date";
 import { AppContext } from "../../App";
-import { Date as DateAtom } from "../atoms/Date";
+import { AppDate } from "../atoms/AppDate";
 
 export const DateNavigator = () => {
-  const { date, setDate } = React.useContext(AppContext);
+  const { time, setTime } = React.useContext(AppContext);
 
   return (
     <>
       <StyledIcon>
-        <ArrowLeft size="26" onClick={() => setDate(moveDate(date, -1))} />
+        <ArrowLeft size="26" onClick={() => setTime(moveDay(time, -1))} />
       </StyledIcon>
       <StyledIcon>
-        <ArrowRight size="26" onClick={() => setDate(moveDate(date, 1))} />
+        <ArrowRight size="26" onClick={() => setTime(moveDay(time, 1))} />
       </StyledIcon>
-      <DateAtom />
+      <AppDate />
     </>
   );
 };
@@ -24,16 +25,3 @@ const StyledIcon = styled.div`
   display: inline-block;
   cursor: pointer;
 `;
-
-const moveDate = (dateString: string, moveDays: number): string => {
-  const date = new Date(Date.parse(dateString));
-  const movedDate = new Date(new Date(date).setDate(date.getDate() + moveDays));
-
-  return [
-    movedDate.getFullYear().toString().padStart(4, "0"),
-    "-",
-    (movedDate.getMonth() + 1).toString().padStart(2, "0"),
-    "-",
-    movedDate.getDate().toString().padStart(2, "0"),
-  ].join("");
-};

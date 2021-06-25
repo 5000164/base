@@ -3,26 +3,41 @@ import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
 import { Resolvers } from "./generated/schema/graphql";
-import { Status } from "./generated/shared/types/status";
 import {
-  addTask,
-  addTaskWithScheduledDate,
-  changeScheduledDate,
-  changeTaskStatus,
-  deleteTask,
-  importTemplate,
-  importTemplateWithScheduledDate,
-  scheduled,
-  updateTask,
-  updateTasksOrder,
+  add as tasksAdd,
+  addWithScheduledDate as tasksAddWithScheduledDate,
+  all as tasksAll,
+  archive as tasksArchive,
+  changeScheduledDate as tasksChangeScheduledDate,
+  complete as tasksComplete,
+  deleteTask as tasksDelete,
+  importTemplate as tasksImport,
+  importWithScheduledDate as tasksImportWithScheduledDate,
+  recorded as tasksRecorded,
+  scheduled as tasksScheduled,
+  update as tasksUpdate,
+  updateTasksOrder as tasksUpdateTasksOrder,
 } from "./tasks";
 import {
-  addTemplateTask,
-  deleteTemplateTask,
-  updateTemplateTask,
-  updateTemplateTasksOrder,
+  add as templatesAdd,
+  addTask as templatesAddTask,
+  all as templatesAll,
+  deleteTask as templatesDeleteTask,
+  deleteTemplate as templatesDelete,
+  tasks as templatesTasks,
+  update as templatesUpdate,
+  updateTask as templatesUpdateTask,
+  updateTemplateTasksOrder as templatesUpdateTemplateTasksOrder,
 } from "./templates";
-import { deleteTaskTrack, taskTracks, workingTaskTracks } from "./taskTracks";
+import {
+  deleteTaskTrack as taskTracksDelete,
+  recorded as taskTracksRecorded,
+  start as taskTracksStart,
+  stop as taskTracksStop,
+  stopByTaskId as taskTracksStopByTaskId,
+  update as taskTracksUpdate,
+  working as taskTracksWorking,
+} from "./taskTracks";
 
 const schema = loadSchemaSync(
   join(__dirname, "./generated/schema/schema.graphql"),
@@ -36,257 +51,110 @@ const resolvers: Resolvers = {
     tasks: () => ({
       all: undefined,
       scheduled: undefined,
-      recordedTasks: undefined,
+      recorded: undefined,
     }),
-    templates: () => ({ templates: undefined, tasks: undefined }),
-    task_tracks: () => ({
-      taskTracks: undefined,
-      workingTaskTracks: undefined,
+    templates: () => ({ all: undefined, tasks: undefined }),
+    taskTracks: () => ({
+      recorded: undefined,
+      working: undefined,
     }),
   },
   Mutation: {
     tasks: () => ({
-      addTask: undefined,
-      updateTask: undefined,
-      change_scheduled_date: undefined,
-      completeTask: undefined,
-      archiveTask: undefined,
-      deleteTask: undefined,
-      importTemplate: undefined,
+      add: undefined,
+      addWithScheduledDate: undefined,
+      update: undefined,
+      changeScheduledDate: undefined,
+      complete: undefined,
+      archive: undefined,
+      delete: undefined,
+      import: undefined,
+      importWithScheduledDate: undefined,
       updateTasksOrder: undefined,
     }),
     templates: () => ({
-      addTemplate: undefined,
-      updateTemplate: undefined,
-      archiveTemplate: undefined,
-      deleteTemplate: undefined,
+      add: undefined,
+      update: undefined,
+      delete: undefined,
       addTask: undefined,
       updateTask: undefined,
       deleteTask: undefined,
+      updateTemplateTasksOrder: undefined,
     }),
-    task_tracks: () => ({
-      start_task_track: undefined,
-      stop_task_track: undefined,
-      update_task_track: undefined,
+    taskTracks: () => ({
+      start: undefined,
+      stop: undefined,
+      stopByTaskId: undefined,
+      update: undefined,
+      delete: undefined,
     }),
   },
-  Tasks_Query: {
-    all: (parent, args, context) =>
-      context.prisma.tasks.findMany({ where: { status: Status.Normal } }),
-    scheduled: (parent, args, context) => scheduled(context, args.date),
-    recordedTasks: (parent, args, context) => {
-      const date = new Date(
-        new Date(Date.parse(args.date)).setHours(0, 0, 0, 0)
-      );
-      const nextDate = new Date(
-        new Date(new Date(date).setDate(date.getDate() + 1)).setHours(
-          0,
-          0,
-          0,
-          0
-        )
-      );
-      const conditions = {
-        OR: [
-          {
-            AND: [
-              {
-                start_at: {
-                  gte: Math.floor(date.getTime() / 1000),
-                },
-              },
-              {
-                start_at: {
-                  lt: Math.floor(nextDate.getTime() / 1000),
-                },
-              },
-            ],
-          },
-          {
-            AND: [
-              {
-                stop_at: {
-                  gte: Math.floor(date.getTime() / 1000),
-                },
-              },
-              {
-                stop_at: {
-                  lt: Math.floor(nextDate.getTime() / 1000),
-                },
-              },
-            ],
-          },
-        ],
-      };
-      return context.prisma.tasks.findMany({
-        where: {
-          AND: {
-            status: { in: [Status.Completed, Status.Archived] },
-            OR: [
-              {
-                AND: [
-                  {
-                    status_changed_at: {
-                      gte: Math.floor(date.getTime() / 1000),
-                    },
-                  },
-                  {
-                    status_changed_at: {
-                      lt: Math.floor(nextDate.getTime() / 1000),
-                    },
-                  },
-                ],
-              },
-              {
-                task_tracks: {
-                  some: conditions,
-                },
-              },
-            ],
-          },
-        },
-        include: {
-          task_tracks: {
-            where: conditions,
-          },
-        },
-        orderBy: {
-          status_changed_at: "desc",
-        },
-      });
-    },
+  QueryTasks: {
+    all: (parent, args, context) => tasksAll(context),
+    scheduled: (parent, args, context) =>
+      tasksScheduled(context, args.scheduledDate),
+    recorded: (parent, args, context) =>
+      tasksRecorded(context, args.recordedDate),
   },
-  Tasks_Mutation: {
-    addTask: (parent, args, context) => addTask(context),
-    add_task_with_scheduled_date: (parent, args, context) =>
-      addTaskWithScheduledDate(context, args.scheduled_date),
-    updateTask: (parent, args, context) =>
-      updateTask(context, args.id, args.name, args.estimate),
-    change_scheduled_date: (parent, args, context) =>
-      changeScheduledDate(context, args.id, args.scheduled_date),
-    completeTask: (parent, args, context) =>
-      changeTaskStatus(context, args.id, Status.Completed),
-    archiveTask: (parent, args, context) =>
-      changeTaskStatus(context, args.id, Status.Archived),
-    deleteTask: (parent, args, context) => deleteTask(context, args.id),
-    importTemplate: (parent, args, context) => importTemplate(context, args.id),
-    import_template_with_scheduled_date: (parent, args, context) =>
-      importTemplateWithScheduledDate(context, args.id, args.scheduled_date),
+  MutationTasks: {
+    add: (parent, args, context) => tasksAdd(context),
+    addWithScheduledDate: (parent, args, context) =>
+      tasksAddWithScheduledDate(context, args.scheduledDate),
+    update: (parent, args, context) =>
+      tasksUpdate(context, args.taskId, args.name, args.estimate),
+    changeScheduledDate: (parent, args, context) =>
+      tasksChangeScheduledDate(context, args.taskId, args.scheduledDate),
+    complete: (parent, args, context) => tasksComplete(context, args.taskId),
+    archive: (parent, args, context) => tasksArchive(context, args.taskId),
+    delete: (parent, args, context) => tasksDelete(context, args.taskId),
+    import: (parent, args, context) => tasksImport(context, args.templateId),
+    importWithScheduledDate: (parent, args, context) =>
+      tasksImportWithScheduledDate(
+        context,
+        args.templateId,
+        args.scheduledDate
+      ),
     updateTasksOrder: (parent, args, context) =>
-      updateTasksOrder(context, args.updatedTasks),
+      tasksUpdateTasksOrder(context, args.updatedTasks),
   },
-  Templates_Query: {
-    templates: (parent, args, context) => context.prisma.templates.findMany(),
-    tasks: (parent, args, context) =>
-      context.prisma.template_tasks.findMany({
-        where: { templateId: args.templateId },
-      }),
+  QueryTemplates: {
+    all: (parent, args, context) => templatesAll(context),
+    tasks: (parent, args, context) => templatesTasks(context, args.templateId),
   },
-  Templates_Mutation: {
-    addTemplate: (parent, args, context) =>
-      context.prisma.templates.create({
-        data: {
-          name: args.name,
-        },
-      }),
-    updateTemplate: (parent, args, context) => {
-      const data = {
-        ...(args.name ? { name: args.name } : {}),
-      };
-      return context.prisma.templates.update({
-        where: { id: args.id },
-        data,
-      });
-    },
-    deleteTemplate: async (parent, args, context) => {
-      await context.prisma.template_tasks.deleteMany({
-        where: { templateId: args.id },
-      });
-      return context.prisma.templates.delete({
-        where: { id: args.id },
-      });
-    },
+  MutationTemplates: {
+    add: (parent, args, context) => templatesAdd(context),
+    update: (parent, args, context) =>
+      templatesUpdate(context, args.templateId, args.name),
+    delete: async (parent, args, context) =>
+      templatesDelete(context, args.templateId),
     addTask: (parent, args, context) =>
-      addTemplateTask(context, args.templateId),
+      templatesAddTask(context, args.templateId),
     updateTask: (parent, args, context) =>
-      updateTemplateTask(context, args.id, args.name, args.estimate),
-    deleteTask: (parent, args, context) => deleteTemplateTask(context, args.id),
+      templatesUpdateTask(
+        context,
+        args.templateTaskId,
+        args.name,
+        args.estimate
+      ),
+    deleteTask: (parent, args, context) =>
+      templatesDeleteTask(context, args.templateTaskId),
     updateTemplateTasksOrder: (parent, args, context) =>
-      updateTemplateTasksOrder(context, args.updatedTemplateTasks),
+      templatesUpdateTemplateTasksOrder(context, args.updatedTemplateTasks),
   },
-  Task_Tracks_Query: {
-    taskTracks: (parent, args, context) => taskTracks(context, args.date),
-    workingTaskTracks: (parent, args, context) => workingTaskTracks(context),
+  QueryTaskTracks: {
+    recorded: (parent, args, context) =>
+      taskTracksRecorded(context, args.recordedDate),
+    working: (parent, args, context) => taskTracksWorking(context),
   },
-  Task_Tracks_Mutation: {
-    start_task_track: (parent, args, context) =>
-      context.prisma.task_tracks.create({
-        data: {
-          start_at: Math.floor(Date.now() / 1000),
-          task: {
-            connect: {
-              id: args.task_id,
-            },
-          },
-        },
-        include: {
-          task: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      }),
-    stop_task_track: (parent, args, context) =>
-      context.prisma.task_tracks.update({
-        where: {
-          task_track_id: args.task_track_id,
-        },
-        data: {
-          stop_at: Math.floor(Date.now() / 1000),
-        },
-        include: {
-          task: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      }),
-    stop_task_track_by_task_id: async (parent, args, context) => {
-      await context.prisma.task_tracks.updateMany({
-        where: {
-          task_id: args.task_id,
-          stop_at: null,
-        },
-        data: {
-          stop_at: Math.floor(Date.now() / 1000),
-        },
-      });
-      return true;
-    },
-    update_task_track: (parent, args, context) => {
-      const data = {
-        ...(args.start_at ? { start_at: args.start_at } : {}),
-        ...(args.stop_at ? { stop_at: args.stop_at } : {}),
-      };
-      return context.prisma.task_tracks.update({
-        where: { task_track_id: args.task_track_id },
-        data,
-        include: {
-          task: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      });
-    },
-    delete_task_track: (parent, args, context) =>
-      deleteTaskTrack(context, args.task_track_id),
+  MutationTaskTracks: {
+    start: (parent, args, context) => taskTracksStart(context, args.taskId),
+    stop: (parent, args, context) => taskTracksStop(context, args.taskTrackId),
+    stopByTaskId: async (parent, args, context) =>
+      taskTracksStopByTaskId(context, args.taskId),
+    update: (parent, args, context) =>
+      taskTracksUpdate(context, args.taskTrackId, args.startAt, args.stopAt),
+    delete: (parent, args, context) =>
+      taskTracksDelete(context, args.taskTrackId),
   },
 };
 

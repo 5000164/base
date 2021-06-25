@@ -1,113 +1,114 @@
 type Query {
-  tasks: Tasks_Query!
-  templates: Templates_Query!
-  task_tracks: Task_Tracks_Query!
+  tasks: QueryTasks!
+  templates: QueryTemplates!
+  taskTracks: QueryTaskTracks!
 }
 
 type Mutation {
-  tasks: Tasks_Mutation!
-  templates: Templates_Mutation!
-  task_tracks: Task_Tracks_Mutation!
+  tasks: MutationTasks!
+  templates: MutationTemplates!
+  taskTracks: MutationTaskTracks!
 }
 
-type Tasks_Query {
-  all: [Tasks_Task!]!
-  scheduled(date: String!): [Tasks_Task!]!
-  recordedTasks(date: String!): [Tasks_Task!]!
+# Tasks
+
+type QueryTasks {
+  all: [TasksTask!]!
+  scheduled(scheduledDate: Float!): [TasksTask!]!
+  recorded(recordedDate: Float!): [TasksTask!]!
 }
 
-type Tasks_Mutation {
-  addTask: Boolean
-  add_task_with_scheduled_date(scheduled_date: Int!): Boolean
-  updateTask(id: Int!, name: String, estimate: Int): Boolean
-  change_scheduled_date(id: Int!, scheduled_date: Int): Boolean
-  completeTask(id: Int!): Boolean
-  archiveTask(id: Int!): Boolean
-  deleteTask(id: Int!): Boolean
-  importTemplate(id: Int!): Boolean
-  import_template_with_scheduled_date(id: Int!, scheduled_date: Int!): Boolean
-  updateTasksOrder(updatedTasks: [Tasks_Updated_Task!]!): Boolean
+type MutationTasks {
+  add: Boolean
+  addWithScheduledDate(scheduledDate: Float!): Boolean
+  update(taskId: Int!, name: String, estimate: Int): Boolean
+  changeScheduledDate(taskId: Int!, scheduledDate: Float): Boolean
+  complete(taskId: Int!): Boolean
+  archive(taskId: Int!): Boolean
+  delete(taskId: Int!): Boolean
+  import(templateId: Int!): Boolean
+  importWithScheduledDate(templateId: Int!, scheduledDate: Float!): Boolean
+  updateTasksOrder(updatedTasks: [TasksUpdatedTask!]!): Boolean
 }
 
-type Tasks_Task {
-  id: Int!
+type TasksTask {
+  taskId: Int!
   name: String!
   status: Int!
   estimate: Int
-  scheduled_date: Int
-  status_changed_at: Int
-  previous_id: Int
-  next_id: Int
+  scheduledDate: Float
+  statusChangedAt: Float
+  previousId: Int
+  nextId: Int
 }
 
-input Tasks_Updated_Task {
-  id: Int!
-  previous_id: Int
-  next_id: Int
+input TasksUpdatedTask {
+  taskId: Int!
+  previousId: Int
+  nextId: Int
 }
 
-type Templates_Query {
-  templates: [Templates_Template!]!
-  tasks(templateId: Int!): [Templates_Task!]!
+# TaskTracks
+
+type QueryTaskTracks {
+  recorded(recordedDate: Float!): [TaskTracksTaskTrack!]!
+  working: [TaskTracksTaskTrack!]!
 }
 
-type Templates_Mutation {
-  addTemplate(name: String!): Templates_Template!
-  updateTemplate(id: Int!, name: String): Templates_Template!
-  archiveTemplate(id: Int!): Templates_Template!
-  deleteTemplate(id: Int!): Templates_Template!
+type MutationTaskTracks {
+  start(taskId: Int!): Boolean
+  stop(taskTrackId: Int!): Boolean
+  stopByTaskId(taskId: Int!): Boolean
+  update(taskTrackId: Int!, startAt: Float, stopAt: Float): Boolean
+  delete(taskTrackId: Int!): Boolean
+}
+
+type TaskTracksTaskTrack {
+  taskTrackId: Int!
+  task: TaskTracksTask!
+  startAt: Float!
+  stopAt: Float
+}
+
+type TaskTracksTask {
+  taskId: Int!
+  name: String!
+}
+
+# Templates
+
+type QueryTemplates {
+  all: [TemplatesTemplate!]!
+  tasks(templateId: Int!): [TemplatesTemplateTask!]!
+}
+
+type MutationTemplates {
+  add: Boolean
+  update(templateId: Int!, name: String): Boolean
+  delete(templateId: Int!): Boolean
   addTask(templateId: Int!): Boolean
-  updateTask(id: Int!, name: String, estimate: Int): Boolean
-  deleteTask(id: Int!): Boolean
+  updateTask(templateTaskId: Int!, name: String, estimate: Int): Boolean
+  deleteTask(templateTaskId: Int!): Boolean
   updateTemplateTasksOrder(
-    updatedTemplateTasks: [Templates_Updated_Template_Task!]!
+    updatedTemplateTasks: [TemplatesUpdatedTemplateTask!]!
   ): Boolean
 }
 
-type Templates_Template {
-  id: Int!
+type TemplatesTemplate {
+  templateId: Int!
   name: String!
 }
 
-type Templates_Task {
-  id: Int!
+type TemplatesTemplateTask {
+  templateTaskId: Int!
   name: String!
   estimate: Int
-  previous_id: Int
-  next_id: Int
+  previousId: Int
+  nextId: Int
 }
 
-input Templates_Updated_Template_Task {
-  id: Int!
-  previous_id: Int
-  next_id: Int
-}
-
-type Task_Tracks_Query {
-  taskTracks(date: String!): [Task_Tracks_Task_Track!]!
-  workingTaskTracks: [Task_Tracks_Task_Track!]!
-}
-
-type Task_Tracks_Mutation {
-  start_task_track(task_id: Int!): Task_Tracks_Task_Track!
-  stop_task_track(task_track_id: Int!): Task_Tracks_Task_Track!
-  stop_task_track_by_task_id(task_id: Int!): Boolean
-  update_task_track(
-    task_track_id: Int!
-    start_at: Int
-    stop_at: Int
-  ): Task_Tracks_Task_Track
-  delete_task_track(task_track_id: Int!): Boolean
-}
-
-type Task_Tracks_Task_Track {
-  task_track_id: Int!
-  task: Task_Tracks_Task!
-  start_at: Int!
-  stop_at: Int
-}
-
-type Task_Tracks_Task {
-  id: Int!
-  name: String!
+input TemplatesUpdatedTemplateTask {
+  templateTaskId: Int!
+  previousId: Int
+  nextId: Int
 }

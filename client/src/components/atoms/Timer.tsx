@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 export const Timer = ({ startAt }: { startAt: number }) => {
-  const startAtDate = new Date(startAt * 1000);
+  const startAtDate = new Date(startAt);
   const [now, setNow] = React.useState(new Date());
   React.useEffect(() => {
     const intervalId = setInterval(() => setNow(new Date()), 60000);

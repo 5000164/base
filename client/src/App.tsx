@@ -16,37 +16,28 @@ const client = new DefaultClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
 });
 
-const jstDate = new Date(new Date().toLocaleString());
-const initialDate = [
-  jstDate.getFullYear().toString().padStart(4, "0"),
-  "-",
-  (jstDate.getMonth() + 1).toString().padStart(2, "0"),
-  "-",
-  jstDate.getDate().toString().padStart(2, "0"),
-].join("");
-
 export const AppContext = React.createContext({
   client,
-  date: initialDate,
-  setDate: () => {},
+  time: 0,
+  setTime: () => {},
 } as {
   client: DefaultClient<any>;
-  date: string;
-  setDate: (date: string) => void;
+  time: number;
+  setTime: (time: number) => void;
 });
 
-const useAppContext = () => {
-  const [date, setDate] = useState(initialDate);
+const useAppContext = (client: DefaultClient<any>) => {
+  const [time, setTime] = useState(new Date().setHours(0, 0, 0, 0));
   return {
     client,
-    date,
-    setDate: useCallback((date) => setDate(date), []),
+    time,
+    setTime: useCallback((time) => setTime(time), []),
   };
 };
 
 export const App = () => {
   return (
-    <AppContext.Provider value={useAppContext()}>
+    <AppContext.Provider value={useAppContext(client)}>
       <MemoryRouter>
         <StyledGrommet full theme={theme} themeMode="dark">
           <HelmetProvider>

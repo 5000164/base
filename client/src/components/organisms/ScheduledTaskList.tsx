@@ -2,36 +2,48 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Button, Layer } from "grommet";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { TasksUpdatedTask } from "schema/src/generated/client/graphql";
 import { sort } from "shared/src/utils/sort";
-import { setEstimate, setName, setScheduledDate, Task } from "../../types/task";
+import {
+  setEstimate,
+  setName,
+  setScheduledDate,
+  Task,
+  toSortable,
+  toTasksFromSortable,
+  toTasksUpdatedTask,
+} from "../../types/task";
 import {
   addTaskWithScheduledDate,
   fetchScheduledTasks,
+  importTemplateWithScheduledDate,
   updateTasksOrder,
 } from "../../repositories/tasks";
-import { importTemplateWithScheduledDate } from "../../repositories/templates";
+import { toUTCUnixTime } from "../../utils/date";
 import { reorder } from "../../utils/sort";
 import { AppContext } from "../../App";
 import { BacklogPageContext } from "../pages/BacklogPage";
 import { TemplateListToImport } from "./TemplateListToImport";
-import { TaskListItem } from "../molecules/TaskListItem";
+import { ScheduledTaskListItem } from "../molecules/ScheduledTaskListItem";
 import { CalculatedTimes } from "../atoms/CalculatedTimes";
 
 export const ScheduledTaskList = () => {
-  const { client, date } = React.useContext(AppContext);
+  const { client, time } = React.useContext(AppContext);
   const { reloadCount, reload } = React.useContext(BacklogPageContext);
 
   const [tasks, setTasks] = useState([] as Task[]);
   useEffect(() => {
-    fetchScheduledTasks(client, date).then((tasks) =>
-      setTasks(sort<Task>(tasks))
+    fetchScheduledTasks(client, toUTCUnixTime(time)).then((tasks) =>
+      setTasks(toTasksFromSortable(tasks, sort(tasks.map(toSortable))))
     );
-  }, [client, date, reloadCount]);
+  }, [client, time, reloadCount]);
 
   const importFunction = (templateId: number) =>
-    importTemplateWithScheduledDate(client, templateId, c(date)).then(() =>
-      reload()
-    );
+    importTemplateWithScheduledDate(
+      client,
+      templateId,
+      toUTCUnixTime(time)
+    ).then(() => reload());
   const [isImportDialogShown, setIsImportDialogShown] = useState(false);
   const showImportDialog = () => setIsImportDialogShown(true);
   const closeImportDialog = () => setIsImportDialogShown(false);
@@ -39,10 +51,15 @@ export const ScheduledTaskList = () => {
   return (
     <>
       <DragDropContext
-        onDragEnd={(result) =>
-          reorder<Task>(result, tasks, setTasks, (tasks) =>
-            updateTasksOrder(client, tasks)
-          )
+        onDragEnd={
+          (result) =>
+            reorder<Task, TasksUpdatedTask>(
+              result,
+              tasks,
+              toSortable,
+              toTasksUpdatedTask,
+              (tasks) => updateTasksOrder(client, tasks)
+            ).then(() => reload()) // ひとまず毎回 reload して表示を合わせる
         }
       >
         <Droppable droppableId="task-list">
@@ -52,7 +69,7 @@ export const ScheduledTaskList = () => {
               {...provided.droppableProps}
             >
               {tasks.map((task, index) => (
-                <TaskListItem
+                <ScheduledTaskListItem
                   key={index}
                   task={task}
                   index={index}
@@ -75,7 +92,9 @@ export const ScheduledTaskList = () => {
         <Button
           label="Add"
           onClick={() =>
-            addTaskWithScheduledDate(client, c(date)).then(() => reload())
+            addTaskWithScheduledDate(client, toUTCUnixTime(time)).then(() =>
+              reload()
+            )
           }
         />
         <Button label="Import" onClick={() => showImportDialog()} />
@@ -109,11 +128,6 @@ const ButtonWrapper = styled.div`
   margin: 8px auto 0;
   padding: 0;
 `;
-
-const c = (dateString: string) => {
-  const date = new Date(new Date(Date.parse(dateString)).setHours(0, 0, 0, 0));
-  return Math.floor(date.getTime() / 1000);
-};
 
 const StyledLayer = styled(Layer)`
   width: min(1024px, 100%);

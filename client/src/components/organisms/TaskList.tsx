@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Button, Layer } from "grommet";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { setEstimate, setName, setScheduledDate, Task } from "../../types/task";
-import {
-  addTask,
-  fetchTasks,
-  updateTasksOrder,
-} from "../../repositories/tasks";
-import { importTemplate } from "../../repositories/templates";
-import { reorder } from "../../utils/sort";
+import { addTask, fetchTasks, importTemplate } from "../../repositories/tasks";
 import { AppContext } from "../../App";
 import { TasksPageContext } from "../pages/TasksPage";
 import { TemplateListToImport } from "./TemplateListToImport";
 import { TaskListItem } from "../molecules/TaskListItem";
-import { CalculatedTimes } from "../atoms/CalculatedTimes";
 
 export const TaskList = () => {
   const { client } = React.useContext(AppContext);
@@ -33,39 +25,20 @@ export const TaskList = () => {
 
   return (
     <>
-      <DragDropContext
-        onDragEnd={(result) =>
-          reorder<Task>(result, tasks, setTasks, (tasks) =>
-            updateTasksOrder(client, tasks)
-          )
-        }
-      >
-        <Droppable droppableId="task-list">
-          {(provided) => (
-            <StyledTaskList
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {tasks.map((task, index) => (
-                <TaskListItem
-                  key={index}
-                  task={task}
-                  index={index}
-                  setName={(v: string) => setName(tasks, setTasks, index, v)}
-                  setEstimate={(v: number) =>
-                    setEstimate(tasks, setTasks, index, v)
-                  }
-                  setScheduledDate={(v: number) =>
-                    setScheduledDate(tasks, setTasks, index, v)
-                  }
-                  reload={reload}
-                />
-              ))}
-              {provided.placeholder}
-            </StyledTaskList>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <StyledTaskList>
+        {tasks.map((task, index) => (
+          <TaskListItem
+            key={index}
+            task={task}
+            setName={(v: string) => setName(tasks, setTasks, index, v)}
+            setEstimate={(v: number) => setEstimate(tasks, setTasks, index, v)}
+            setScheduledDate={(v: number) =>
+              setScheduledDate(tasks, setTasks, index, v)
+            }
+            reload={reload}
+          />
+        ))}
+      </StyledTaskList>
       <ButtonWrapper>
         <Button
           label="Add"
@@ -73,7 +46,6 @@ export const TaskList = () => {
         />
         <Button label="Import" onClick={() => showImportDialog()} />
       </ButtonWrapper>
-      <CalculatedTimes tasks={tasks} />
       {isImportDialogShown && (
         <StyledLayer
           full={"vertical"}

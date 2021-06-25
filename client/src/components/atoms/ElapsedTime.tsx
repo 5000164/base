@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 export const ElapsedTime = ({ seconds }: { seconds: number }) => {
-  const elapsedTime = Math.floor(seconds / 60).toString();
+  const elapsedTime = Math.floor(seconds / 60000).toString();
 
   return (
     <>

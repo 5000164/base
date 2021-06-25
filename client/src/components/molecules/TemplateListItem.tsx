@@ -29,7 +29,9 @@ export const TemplateListItem = ({
       <Button label="Edit" onClick={() => editTasks()} />
       <Button
         label="Delete"
-        onClick={() => deleteTemplate(client, template.id).then(() => reload())}
+        onClick={() =>
+          deleteTemplate(client, template.templateId).then(() => reload())
+        }
       />
     </StyledTemplateListItem>
   );

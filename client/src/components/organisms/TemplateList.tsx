@@ -30,7 +30,7 @@ export const TemplateList = () => {
             template={template}
             setName={(v: string) => setName(templates, setTemplates, index, v)}
             editTasks={() => {
-              setSelectedTemplate(template.id, template.name);
+              setSelectedTemplate(template.templateId, template.name);
               showEditDialog();
             }}
           />

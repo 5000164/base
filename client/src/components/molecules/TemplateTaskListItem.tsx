@@ -10,12 +10,12 @@ import { AppContext } from "../../App";
 import { TemplatesPageContext } from "../pages/TemplatesPage";
 
 export const TemplateTaskListItem = ({
-  task,
+  templateTask,
   index,
   setName,
   setEstimate,
 }: {
-  task: TemplateTask;
+  templateTask: TemplateTask;
   index: number;
   setName: (name: string) => void;
   setEstimate: (estimate: number) => void;
@@ -35,19 +35,23 @@ export const TemplateTaskListItem = ({
           </Handle>
           <TextInput
             type="text"
-            value={task.name ?? ""}
+            value={templateTask.name ?? ""}
             onChange={(e) => setName(e.target.value)}
-            onBlur={() => updateTask(client, task).then()}
+            onBlur={() => updateTask(client, templateTask).then()}
           />
           <TextInput
             type="text"
-            value={task.estimate ?? ""}
+            value={templateTask.estimate ?? ""}
             onChange={(e) => setEstimate(Number(e.target.value))}
-            onBlur={() => updateTask(client, task).then()}
+            onBlur={() => updateTask(client, templateTask).then()}
           />
           <Button
             label="Delete"
-            onClick={() => deleteTask(client, task.id).then(() => reload())}
+            onClick={() =>
+              deleteTask(client, templateTask.templateTaskId).then(() =>
+                reload()
+              )
+            }
           />
         </StyledTaskListItem>
       )}
