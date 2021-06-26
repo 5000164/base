@@ -1,6 +1,9 @@
 import DefaultClient, { gql } from "apollo-boost";
-import { Mutation, Query } from "schema/src/generated/client/graphql";
-import { Sortable } from "shared/src/types/sortable";
+import {
+  Mutation,
+  Query,
+  TemplatesUpdatedTemplateTask,
+} from "schema/src/generated/client/graphql";
 import { Template } from "../types/template";
 import { TemplateTask } from "../types/templateTask";
 
@@ -13,15 +16,39 @@ export const fetchTemplates = (
       query: gql`
         query {
           templates {
-            templates {
-              id
+            all {
+              templateId
               name
             }
           }
         }
       `,
     })
-    .then((result) => result.data.templates.templates);
+    .then((result) => result.data.templates.all);
+
+export const fetchTasks = (
+  client: DefaultClient<any>,
+  templateId: number
+): Promise<TemplateTask[]> =>
+  client
+    .query<Query>({
+      fetchPolicy: "no-cache",
+      query: gql`
+        query ($templateId: Int!) {
+          templates {
+            tasks(templateId: $templateId) {
+              templateTaskId
+              name
+              estimate
+              previousId
+              nextId
+            }
+          }
+        }
+      `,
+      variables: { templateId },
+    })
+    .then((result) => result.data.templates.tasks as TemplateTask[]);
 
 export const addTemplate = (client: DefaultClient<any>): Promise<boolean> =>
   client
@@ -29,10 +56,7 @@ export const addTemplate = (client: DefaultClient<any>): Promise<boolean> =>
       mutation: gql`
         mutation {
           templates {
-            addTemplate(name: "") {
-              id
-              name
-            }
+            add
           }
         }
       `,
@@ -46,11 +70,9 @@ export const updateTemplate = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($id: Int!, $name: String) {
+        mutation ($templateId: Int!, $name: String) {
           templates {
-            updateTemplate(id: $id, name: $name) {
-              id
-            }
+            update(templateId: $templateId, name: $name)
           }
         }
       `,
@@ -60,103 +82,18 @@ export const updateTemplate = (
 
 export const deleteTemplate = (
   client: DefaultClient<any>,
-  id: number
-): Promise<boolean> =>
-  client
-    .mutate<Mutation>({
-      mutation: gql`
-        mutation($id: Int!) {
-          templates {
-            deleteTemplate(id: $id) {
-              id
-            }
-          }
-        }
-      `,
-      variables: { id },
-    })
-    .then(() => true);
-
-export const importTemplate = (
-  client: DefaultClient<any>,
   templateId: number
 ): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($templateId: Int!) {
-          tasks {
-            importTemplate(id: $templateId)
+        mutation ($templateId: Int!) {
+          templates {
+            delete(templateId: $templateId)
           }
         }
       `,
       variables: { templateId },
-    })
-    .then(() => true);
-
-export const importTemplateWithScheduledDate = (
-  client: DefaultClient<any>,
-  templateId: number,
-  scheduledDate: number
-): Promise<boolean> =>
-  client
-    .mutate<Mutation>({
-      mutation: gql`
-        mutation($templateId: Int!, $scheduledDate: Int!) {
-          tasks {
-            import_template_with_scheduled_date(
-              id: $templateId
-              scheduled_date: $scheduledDate
-            )
-          }
-        }
-      `,
-      variables: { templateId, scheduledDate },
-    })
-    .then(() => true);
-
-export const fetchTasks = (
-  client: DefaultClient<any>,
-  templateId: number
-): Promise<TemplateTask[]> =>
-  client
-    .query<Query>({
-      fetchPolicy: "no-cache",
-      query: gql`
-        query($id: Int!) {
-          templates {
-            tasks(templateId: $id) {
-              id
-              name
-              estimate
-              previous_id
-              next_id
-            }
-          }
-        }
-      `,
-      variables: { id: templateId },
-    })
-    .then((result) => result.data.templates.tasks);
-
-export const updateTemplateTasksOrder = (
-  client: DefaultClient<any>,
-  updatedTemplateTasks: Sortable[]
-): Promise<boolean> =>
-  client
-    .mutate<Mutation>({
-      mutation: gql`
-        mutation($updatedTemplateTasks: [Templates_Updated_Template_Task!]!) {
-          templates {
-            updateTemplateTasksOrder(
-              updatedTemplateTasks: $updatedTemplateTasks
-            )
-          }
-        }
-      `,
-      variables: {
-        updatedTemplateTasks,
-      },
     })
     .then(() => true);
 
@@ -167,13 +104,13 @@ export const addTask = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($templateId: Int!) {
+        mutation ($templateId: Int!) {
           templates {
             addTask(templateId: $templateId)
           }
         }
       `,
-      variables: { templateId: templateId },
+      variables: { templateId },
     })
     .then(() => true);
 
@@ -184,9 +121,13 @@ export const updateTask = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($id: Int!, $name: String, $estimate: Int) {
+        mutation ($templateTaskId: Int!, $name: String, $estimate: Int) {
           templates {
-            updateTask(id: $id, name: $name, estimate: $estimate)
+            updateTask(
+              templateTaskId: $templateTaskId
+              name: $name
+              estimate: $estimate
+            )
           }
         }
       `,
@@ -196,17 +137,38 @@ export const updateTask = (
 
 export const deleteTask = (
   client: DefaultClient<any>,
-  taskId: number
+  templateTaskId: number
 ): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($id: Int!) {
+        mutation ($templateTaskId: Int!) {
           templates {
-            deleteTask(id: $id)
+            deleteTask(templateTaskId: $templateTaskId)
           }
         }
       `,
-      variables: { id: taskId },
+      variables: { templateTaskId },
+    })
+    .then(() => true);
+
+export const updateTemplateTasksOrder = (
+  client: DefaultClient<any>,
+  updatedTemplateTasks: TemplatesUpdatedTemplateTask[]
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation ($updatedTemplateTasks: [TemplatesUpdatedTemplateTask!]!) {
+          templates {
+            updateTemplateTasksOrder(
+              updatedTemplateTasks: $updatedTemplateTasks
+            )
+          }
+        }
+      `,
+      variables: {
+        updatedTemplateTasks,
+      },
     })
     .then(() => true);

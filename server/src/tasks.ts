@@ -1,20 +1,96 @@
-import { Tasks_Updated_Task } from "./generated/schema/graphql";
+import {
+  TasksUpdatedTask,
+  TemplatesTemplateTask,
+} from "./generated/schema/graphql";
 import { Status } from "./generated/shared/types/status";
+import { Sortable } from "./generated/shared/types/sortable";
 import { sort } from "./generated/shared/utils/sort";
-import { TemplateTask } from "./types/templateTask";
 
-export const scheduled = (context: any, dateString: string) => {
-  const date = new Date(new Date(Date.parse(dateString)).setHours(0, 0, 0, 0));
-  return context.prisma.tasks.findMany({
+export const all = (context: any) =>
+  context.prisma.task.findMany({ where: { status: Status.Normal } });
+
+export const scheduled = (context: any, scheduledDate: number) =>
+  context.prisma.task.findMany({
     where: {
       status: Status.Normal,
-      scheduled_date: Math.floor(date.getTime() / 1000),
+      scheduledDate,
+    },
+  });
+
+export const recorded = (context: any, recordedDate: number) => {
+  const nextDate = recordedDate + 86400000;
+  const conditions = {
+    OR: [
+      {
+        AND: [
+          {
+            startAt: {
+              gte: recordedDate,
+            },
+          },
+          {
+            startAt: {
+              lt: nextDate,
+            },
+          },
+        ],
+      },
+      {
+        AND: [
+          {
+            stopAt: {
+              gte: recordedDate,
+            },
+          },
+          {
+            stopAt: {
+              lt: nextDate,
+            },
+          },
+        ],
+      },
+    ],
+  };
+  return context.prisma.task.findMany({
+    where: {
+      AND: {
+        status: { in: [Status.Completed, Status.Archived] },
+        OR: [
+          {
+            AND: [
+              {
+                statusChangedAt: {
+                  gte: recordedDate,
+                },
+              },
+              {
+                statusChangedAt: {
+                  lt: nextDate,
+                },
+              },
+            ],
+          },
+          {
+            taskTracks: {
+              some: conditions,
+            },
+          },
+        ],
+      },
+    },
+    include: {
+      taskTracks: {
+        where: conditions,
+      },
+    },
+    orderBy: {
+      statusChangedAt: "desc",
     },
   });
 };
 
-export const addTask = async (context: any): Promise<boolean> => {
-  await context.prisma.tasks.create({
+export const add = async (context: any): Promise<boolean> => {
+  await context.prisma.task.create({
     data: {
       name: "",
       status: Status.Normal,
@@ -23,39 +99,39 @@ export const addTask = async (context: any): Promise<boolean> => {
   return true;
 };
 
-export const addTaskWithScheduledDate = async (
+export const addWithScheduledDate = async (
   context: any,
   scheduledDate: number
 ): Promise<boolean> => {
-  const task = await context.prisma.tasks.findFirst({
+  const task = await context.prisma.task.findFirst({
     where: {
       status: Status.Normal,
-      scheduled_date: scheduledDate,
-      next_id: null,
+      scheduledDate: scheduledDate,
+      nextId: null,
     },
   });
-  const createdTask = await context.prisma.tasks.create({
+  const createdTask = await context.prisma.task.create({
     data: {
       name: "",
       status: Status.Normal,
-      scheduled_date: scheduledDate,
+      scheduledDate,
       ...(task
         ? {
-            tasks_tasksTotasks_previous_id: {
-              connect: { id: task.id },
+            previousTask: {
+              connect: { taskId: task.taskId },
             },
           }
         : {}),
     },
   });
   if (task) {
-    await context.prisma.tasks.update({
+    await context.prisma.task.update({
       where: {
-        id: task.id,
+        taskId: task.taskId,
       },
       data: {
-        tasks_tasksTotasks_next_id: {
-          connect: { id: createdTask.id },
+        nextTask: {
+          connect: { taskId: createdTask.taskId },
         },
       },
     });
@@ -63,14 +139,14 @@ export const addTaskWithScheduledDate = async (
   return true;
 };
 
-export const updateTask = async (
+export const update = async (
   context: any,
-  id: number,
+  taskId: number,
   name?: string,
   estimate?: number
 ): Promise<boolean> => {
-  await context.prisma.tasks.update({
-    where: { id: id },
+  await context.prisma.task.update({
+    where: { taskId },
     data: {
       ...(name ? { name } : {}),
       ...(estimate ? { estimate } : {}),
@@ -81,70 +157,70 @@ export const updateTask = async (
 
 export const changeScheduledDate = async (
   context: any,
-  id: number,
+  taskId: number,
   scheduledDate?: number
 ): Promise<boolean> => {
-  const task = await context.prisma.tasks.findUnique({
-    where: { id },
+  const task = await context.prisma.task.findUnique({
+    where: { taskId },
   });
   const lastTask = scheduledDate
-    ? await context.prisma.tasks.findFirst({
+    ? await context.prisma.task.findFirst({
         where: {
           status: Status.Normal,
-          scheduled_date: scheduledDate,
-          next_id: null,
+          scheduledDate,
+          nextId: null,
         },
       })
     : undefined;
   await context.prisma.$transaction([
-    context.prisma.tasks.update({
-      where: { id: task.id },
+    context.prisma.task.update({
+      where: { taskId: task.taskId },
       data: {
-        scheduled_date: scheduledDate,
+        scheduledDate,
         ...(lastTask
           ? {
-              tasks_tasksTotasks_previous_id: {
-                connect: { id: lastTask.id },
+              previousTask: {
+                connect: { taskId: lastTask.taskId },
               },
             }
-          : task.previous_id
+          : task.previousId
           ? {
-              tasks_tasksTotasks_previous_id: {
+              previousTask: {
                 disconnect: true,
               },
             }
           : {}),
-        ...(task.next_id
+        ...(task.nextId
           ? {
-              tasks_tasksTotasks_next_id: {
+              nextTask: {
                 disconnect: true,
               },
             }
           : {}),
       },
     }),
-    ...(task.previous_id
+    ...(task.previousId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.previous_id },
+          context.prisma.task.update({
+            where: { taskId: task.previousId },
             data: {
-              tasks_tasksTotasks_next_id: {
-                ...(task.next_id
-                  ? { connect: { id: task.next_id } }
+              nextTask: {
+                ...(task.nextId
+                  ? { connect: { taskId: task.nextId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    ...(task.next_id
+    ...(task.nextId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.next_id },
+          context.prisma.task.update({
+            where: { taskId: task.nextId },
             data: {
-              tasks_tasksTotasks_previous_id: {
-                ...(task.previous_id
-                  ? { connect: { id: task.previous_id } }
+              previousTask: {
+                ...(task.previousId
+                  ? { connect: { taskId: task.previousId } }
                   : { disconnect: true }),
               },
             },
@@ -153,13 +229,13 @@ export const changeScheduledDate = async (
       : []),
     ...(lastTask
       ? [
-          context.prisma.tasks.update({
+          context.prisma.task.update({
             where: {
-              id: lastTask.id,
+              taskId: lastTask.taskId,
             },
             data: {
-              tasks_tasksTotasks_next_id: {
-                connect: { id: task.id },
+              nextTask: {
+                connect: { taskId: task.taskId },
               },
             },
           }),
@@ -169,62 +245,62 @@ export const changeScheduledDate = async (
   return true;
 };
 
-export const changeTaskStatus = async (
+const changeStatus = async (
   context: any,
-  id: number,
+  taskId: number,
   status: Status
 ): Promise<boolean> => {
-  const task = await context.prisma.tasks.findUnique({
-    where: { id },
+  const task = await context.prisma.task.findUnique({
+    where: { taskId },
   });
   await context.prisma.$transaction([
-    context.prisma.tasks.update({
-      where: { id: task.id },
+    context.prisma.task.update({
+      where: { taskId: task.taskId },
       data: {
         status,
-        ...(task.status_changed_at
+        ...(task.statusChangedAt
           ? {}
           : {
-              status_changed_at: Math.floor(Date.now() / 1000),
+              statusChangedAt: Date.now(),
             }),
-        ...(task.previous_id
+        ...(task.previousId
           ? {
-              tasks_tasksTotasks_previous_id: {
+              previousTask: {
                 disconnect: true,
               },
             }
           : {}),
-        ...(task.next_id
+        ...(task.nextId
           ? {
-              tasks_tasksTotasks_next_id: {
+              nextTask: {
                 disconnect: true,
               },
             }
           : {}),
       },
     }),
-    ...(task.previous_id
+    ...(task.previousId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.previous_id },
+          context.prisma.task.update({
+            where: { taskId: task.previousId },
             data: {
-              tasks_tasksTotasks_next_id: {
-                ...(task.next_id
-                  ? { connect: { id: task.next_id } }
+              nextTask: {
+                ...(task.nextId
+                  ? { connect: { taskId: task.nextId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    ...(task.next_id
+    ...(task.nextId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.next_id },
+          context.prisma.task.update({
+            where: { taskId: task.nextId },
             data: {
-              tasks_tasksTotasks_previous_id: {
-                ...(task.previous_id
-                  ? { connect: { id: task.previous_id } }
+              previousTask: {
+                ...(task.previousId
+                  ? { connect: { taskId: task.previousId } }
                   : { disconnect: true }),
               },
             },
@@ -235,47 +311,55 @@ export const changeTaskStatus = async (
   return true;
 };
 
+export const complete = async (
+  context: any,
+  taskId: number
+): Promise<boolean> => changeStatus(context, taskId, Status.Completed);
+
+export const archive = async (context: any, taskId: number): Promise<boolean> =>
+  changeStatus(context, taskId, Status.Archived);
+
 export const deleteTask = async (
   context: any,
-  id: number
+  taskId: number
 ): Promise<boolean> => {
-  const task = await context.prisma.tasks.findUnique({
-    where: { id },
+  const task = await context.prisma.task.findUnique({
+    where: { taskId },
   });
   await context.prisma.$transaction([
-    ...(task.previous_id
+    ...(task.previousId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.previous_id },
+          context.prisma.task.update({
+            where: { taskId: task.previousId },
             data: {
-              tasks_tasksTotasks_next_id: {
-                ...(task.next_id
-                  ? { connect: { id: task.next_id } }
+              nextTask: {
+                ...(task.nextId
+                  ? { connect: { taskId: task.nextId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    ...(task.next_id
+    ...(task.nextId
       ? [
-          context.prisma.tasks.update({
-            where: { id: task.next_id },
+          context.prisma.task.update({
+            where: { taskId: task.nextId },
             data: {
-              tasks_tasksTotasks_previous_id: {
-                ...(task.previous_id
-                  ? { connect: { id: task.previous_id } }
+              previousTask: {
+                ...(task.previousId
+                  ? { connect: { taskId: task.previousId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    context.prisma.task_tracks.deleteMany({
-      where: { task_id: task.id },
+    context.prisma.taskTrack.deleteMany({
+      where: { taskId: task.taskId },
     }),
-    context.prisma.tasks.delete({
-      where: { id: task.id },
+    context.prisma.task.delete({
+      where: { taskId: task.taskId },
     }),
   ]);
   return true;
@@ -285,16 +369,24 @@ export const importTemplate = async (
   context: any,
   templateId: number
 ): Promise<boolean> => {
-  const tasks = sort<TemplateTask>(
-    await context.prisma.template_tasks.findMany({
-      where: { templateId },
-    })
-  );
+  const tasks = (await context.prisma.templateTask.findMany({
+    where: { templateId },
+  })) as TemplatesTemplateTask[];
+  const sortedTasks = sort(
+    tasks.map(
+      (t) =>
+        ({
+          id: t.templateTaskId,
+          previousId: t.previousId,
+          nextId: t.nextId,
+        } as Sortable)
+    )
+  ).map((s) => tasks.find((t) => t.templateTaskId === s.id));
 
-  for (let i = 0; i < tasks.length; i++) {
-    let task = tasks[i];
+  for (let i = 0; i < sortedTasks.length; i++) {
+    let task = sortedTasks[i];
 
-    await context.prisma.tasks.create({
+    await context.prisma.task.create({
       data: {
         name: task.name,
         status: Status.Normal,
@@ -306,56 +398,64 @@ export const importTemplate = async (
   return true;
 };
 
-export const importTemplateWithScheduledDate = async (
+export const importWithScheduledDate = async (
   context: any,
   templateId: number,
   scheduledDate: number
 ): Promise<boolean> => {
-  const lastTask = await context.prisma.tasks.findFirst({
+  const lastTask = await context.prisma.task.findFirst({
     where: {
       status: Status.Normal,
-      scheduled_date: scheduledDate,
-      next_id: null,
+      scheduledDate,
+      nextId: null,
     },
   });
-  const tasks = sort<TemplateTask>(
-    await context.prisma.template_tasks.findMany({
-      where: { templateId },
-    })
-  );
+  const tasks = (await context.prisma.templateTask.findMany({
+    where: { templateId },
+  })) as TemplatesTemplateTask[];
+  const sortedTasks = sort(
+    tasks.map(
+      (t) =>
+        ({
+          id: t.templateTaskId,
+          previousId: t.previousId,
+          nextId: t.nextId,
+        } as Sortable)
+    )
+  ).map((s) => tasks.find((t) => t.templateTaskId === s.id));
 
-  let previous_id = lastTask?.id;
-  for (let i = 0; i < tasks.length; i++) {
-    let task = tasks[i];
+  let previousId = lastTask?.taskId;
+  for (let i = 0; i < sortedTasks.length; i++) {
+    let task = sortedTasks[i];
 
-    const createdTask = await context.prisma.tasks.create({
+    const createdTask = await context.prisma.task.create({
       data: {
         name: task.name,
         status: Status.Normal,
         estimate: task.estimate,
-        scheduled_date: scheduledDate,
-        ...(previous_id
+        scheduledDate,
+        ...(previousId
           ? {
-              tasks_tasksTotasks_previous_id: {
-                connect: { id: previous_id },
+              previousTask: {
+                connect: { taskId: previousId },
               },
             }
           : {}),
       },
     });
 
-    if (previous_id) {
-      await context.prisma.tasks.update({
-        where: { id: previous_id },
+    if (previousId) {
+      await context.prisma.task.update({
+        where: { taskId: previousId },
         data: {
-          tasks_tasksTotasks_next_id: {
-            connect: { id: createdTask.id },
+          nextTask: {
+            connect: { taskId: createdTask.taskId },
           },
         },
       });
     }
 
-    previous_id = createdTask.id;
+    previousId = createdTask.taskId;
   }
 
   return true;
@@ -363,35 +463,35 @@ export const importTemplateWithScheduledDate = async (
 
 export const updateTasksOrder = async (
   context: any,
-  updatedTasks: Tasks_Updated_Task[]
+  updatedTasks: TasksUpdatedTask[]
 ): Promise<boolean> => {
   await context.prisma.$transaction(
-    updatedTasks.map(({ id, previous_id, next_id }) =>
-      context.prisma.tasks.update({
-        where: { id: id },
+    updatedTasks.map(({ taskId, previousId, nextId }) =>
+      context.prisma.task.update({
+        where: { taskId },
         data: {
-          ...(previous_id
+          ...(previousId
             ? {
-                tasks_tasksTotasks_previous_id: {
-                  connect: { id: previous_id },
+                previousTask: {
+                  connect: { taskId: previousId },
                 },
               }
-            : previous_id === null
+            : previousId === null
             ? {
-                tasks_tasksTotasks_previous_id: {
+                previousTask: {
                   disconnect: true,
                 },
               }
             : {}),
-          ...(next_id
+          ...(nextId
             ? {
-                tasks_tasksTotasks_next_id: {
-                  connect: { id: next_id },
+                nextTask: {
+                  connect: { taskId: nextId },
                 },
               }
-            : next_id === null
+            : nextId === null
             ? {
-                tasks_tasksTotasks_next_id: {
+                nextTask: {
                   disconnect: true,
                 },
               }

@@ -21,11 +21,11 @@ export const WorkingTaskTrackListItem = ({
     <StyledWorkingTaskTrackListItem>
       <WorkingIcon size="26" />
       <Text size="small">{taskTrack.task.name}</Text>
-      <Timer startAt={taskTrack.start_at} />
+      <Timer startAt={taskTrack.startAt} />
       <Button
         label="Stop"
         onClick={() =>
-          stopTaskTrack(client, taskTrack.task_track_id).then(() => reload())
+          stopTaskTrack(client, taskTrack.taskTrackId).then(() => reload())
         }
       />
     </StyledWorkingTaskTrackListItem>

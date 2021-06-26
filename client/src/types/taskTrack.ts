@@ -1,22 +1,20 @@
 import { TaskTrackTask } from "./taskTrackTask";
 
-export interface TaskTrack {
-  task_track_id: number;
+export type TaskTrack = {
+  taskTrackId: number;
   task: TaskTrackTask;
-  start_at: number;
-  stop_at?: number;
-}
+  startAt: number;
+  stopAt?: number;
+};
 
 export const setStartAt = (
   taskTracks: TaskTrack[],
   setTaskTracks: Function,
   index: number,
-  startAt: string
+  startAt: number
 ) => {
   const newTaskTracks = [...taskTracks];
-  newTaskTracks[index].start_at = Math.floor(
-    new Date(startAt).getTime() / 1000
-  );
+  newTaskTracks[index].startAt = startAt;
   setTaskTracks(newTaskTracks);
 };
 
@@ -24,9 +22,9 @@ export const setStopAt = (
   taskTracks: TaskTrack[],
   setTaskTracks: Function,
   index: number,
-  stopAt: string
+  stopAt: number
 ) => {
   const newTaskTracks = [...taskTracks];
-  newTaskTracks[index].stop_at = Math.floor(new Date(stopAt).getTime() / 1000);
+  newTaskTracks[index].stopAt = stopAt;
   setTaskTracks(newTaskTracks);
 };

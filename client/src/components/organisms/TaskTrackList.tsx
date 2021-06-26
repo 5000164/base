@@ -7,15 +7,15 @@ import { TaskTracksPageContext } from "../pages/TaskTracksPage";
 import { TaskTrackListItem } from "../molecules/TaskTrackListItem";
 
 export const TaskTrackList = () => {
-  const { client, date } = React.useContext(AppContext);
+  const { client, time } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(TaskTracksPageContext);
 
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
-    fetchTaskTracks(client, date).then((taskTracks) =>
+    fetchTaskTracks(client, time).then((taskTracks) =>
       setTaskTracks(taskTracks)
     );
-  }, [client, date, reloadCount]);
+  }, [client, time, reloadCount]);
 
   return (
     <>
@@ -24,10 +24,10 @@ export const TaskTrackList = () => {
           <TaskTrackListItem
             key={index}
             taskTrack={taskTrack}
-            setStartAt={(v: string) =>
+            setStartAt={(v: number) =>
               setStartAt(taskTracks, setTaskTracks, index, v)
             }
-            setStopAt={(v: string) =>
+            setStopAt={(v: number) =>
               setStopAt(taskTracks, setTaskTracks, index, v)
             }
           />

@@ -10,19 +10,19 @@ import { fetchTaskTracks } from "../../repositories/taskTracks";
 import { ReviewPageContext } from "../pages/ReviewPage";
 
 export const RecordedList = () => {
-  const { client, date } = React.useContext(AppContext);
+  const { client, time } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(ReviewPageContext);
 
   const [recordedTasks, setRecordedTasks] = useState([] as Task[]);
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
-    fetchRecordedTasks(client, date).then((recordedTasks) =>
-      fetchTaskTracks(client, date).then((taskTracks) => {
+    fetchRecordedTasks(client, time).then((recordedTasks) =>
+      fetchTaskTracks(client, time).then((taskTracks) => {
         setRecordedTasks(recordedTasks);
         setTaskTracks(taskTracks);
       })
     );
-  }, [client, date, reloadCount]);
+  }, [client, time, reloadCount]);
 
   return (
     <>
@@ -60,12 +60,12 @@ const tasksWithTracks = (tasks: Task[], taskTracks: TaskTrack[]) => {
 
   const totalTaskTracks = taskTracks.reduce(
     (totalTaskTracks: Map<number, number>, taskTrack: TaskTrack) => {
-      const totalTime = totalTaskTracks.get(taskTrack.task.id);
-      const taskTrackTime = taskTrack.stop_at
-        ? taskTrack.stop_at - taskTrack.start_at
+      const totalTime = totalTaskTracks.get(taskTrack.task.taskId);
+      const taskTrackTime = taskTrack.stopAt
+        ? taskTrack.stopAt - taskTrack.startAt
         : 0;
       totalTaskTracks.set(
-        taskTrack.task.id,
+        taskTrack.task.taskId,
         totalTime ? totalTime + taskTrackTime : taskTrackTime
       );
       return totalTaskTracks;
@@ -74,6 +74,6 @@ const tasksWithTracks = (tasks: Task[], taskTracks: TaskTrack[]) => {
   );
   return tasks.map((task) => ({
     task,
-    seconds: totalTaskTracks.get(task.id) ?? 0,
+    seconds: totalTaskTracks.get(task.taskId) ?? 0,
   }));
 };

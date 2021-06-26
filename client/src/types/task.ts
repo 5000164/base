@@ -1,15 +1,17 @@
+import { TasksUpdatedTask } from "schema/src/generated/client/graphql";
 import { Status } from "shared/src/types/status";
 import { Sortable } from "shared/src/types/sortable";
 
-export interface Task extends Sortable {
-  id: number;
+export type Task = {
+  taskId: number;
   name: string;
-  status?: Status;
+  status: Status;
   estimate?: number;
-  scheduled_date?: number;
-  previous_id?: number;
-  next_id?: number;
-}
+  scheduledDate?: number;
+  statusChangedAt?: number;
+  previousId?: number;
+  nextId?: number;
+};
 
 export const setName = (
   tasks: Task[],
@@ -37,9 +39,29 @@ export const setScheduledDate = (
   tasks: Task[],
   setTasks: Function,
   index: number,
-  scheduled_date: number
+  scheduledDate: number
 ) => {
   const newTasks = [...tasks];
-  newTasks[index].scheduled_date = scheduled_date;
+  newTasks[index].scheduledDate = scheduledDate;
   setTasks(newTasks);
 };
+
+export const toSortable = (task: Task) =>
+  ({
+    id: task.taskId,
+    previousId: task.previousId,
+    nextId: task.nextId,
+  } as Sortable);
+
+export const toTasksFromSortable = (tasks: Task[], sortables: Sortable[]) =>
+  sortables.map((s) => tasks.find((t) => t.taskId === s.id)) as Task[];
+
+export const toTasksUpdatedTask = (item: Sortable) =>
+  // null の場合は null との接続、つまり先頭か末尾を表すので除外するのは undefined の時のみ
+  ({
+    taskId: item.id,
+    ...(typeof item.previousId !== "undefined"
+      ? { previousId: item.previousId }
+      : {}),
+    ...(typeof item.nextId !== "undefined" ? { nextId: item.nextId } : {}),
+  } as TasksUpdatedTask);

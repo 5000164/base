@@ -8,52 +8,58 @@ datasource db {
   url      = "file:../../app.db"
 }
 
+model Task {
+  taskId          Int         @id @default(autoincrement()) @map("id")
+  name            String
+  status          Int
+  estimate        Int?
+  scheduledDate   Int?        @map("scheduled_date")
+  statusChangedAt Int?        @map("status_changed_at")
+  previousId      Int?        @map("previous_id")
+  nextId          Int?        @map("next_id")
+  nextTask        Task?       @relation("tasksTotasks_next_id", fields: [nextId], references: [taskId])
+  previousTask    Task?       @relation("tasksTotasks_previous_id", fields: [previousId], references: [taskId])
+  taskTracks      TaskTrack[]
+  nextTasks       Task[]      @relation("tasksTotasks_next_id")
+  previousTasks   Task[]      @relation("tasksTotasks_previous_id")
+
+  @@map("tasks")
+}
+
+model TaskTrack {
+  taskTrackId Int  @id @default(autoincrement()) @map("task_track_id")
+  taskId      Int  @map("task_id")
+  startAt     Int  @map("start_at")
+  stopAt      Int? @map("stop_at")
+  task        Task @relation(fields: [taskId], references: [taskId])
+
+  @@map("task_tracks")
+}
+
+model Template {
+  templateId    Int            @id @default(autoincrement()) @map("id")
+  name          String
+  templateTasks TemplateTask[]
+
+  @@map("templates")
+}
+
+model TemplateTask {
+  templateTaskId        Int            @id @default(autoincrement()) @map("id")
+  templateId            Int?
+  name                  String
+  estimate              Int?
+  previousId            Int?           @map("previous_id")
+  nextId                Int?           @map("next_id")
+  nextTemplateTask      TemplateTask?  @relation("template_tasksTotemplate_tasks_next_id", fields: [nextId], references: [templateTaskId])
+  previousTemplateTask  TemplateTask?  @relation("template_tasksTotemplate_tasks_previous_id", fields: [previousId], references: [templateTaskId])
+  template              Template?      @relation(fields: [templateId], references: [templateId])
+  nextTemplateTasks     TemplateTask[] @relation("template_tasksTotemplate_tasks_next_id")
+  previousTemplateTasks TemplateTask[] @relation("template_tasksTotemplate_tasks_previous_id")
+
+  @@map("template_tasks")
+}
+
 model SequelizeMeta {
   name String @id
-}
-
-model task_tracks {
-  task_track_id Int   @id @default(autoincrement())
-  task_id       Int
-  start_at      Int
-  stop_at       Int?
-  task          tasks @relation(fields: [task_id], references: [id])
-}
-
-model tasks {
-  id                                   Int           @id @default(autoincrement())
-  name                                 String
-  status                               Int
-  estimate                             Int?
-  scheduled_date                       Int?
-  status_changed_at                    Int?
-  previous_id                          Int?
-  next_id                              Int?
-  tasks_tasksTotasks_next_id           tasks?        @relation("tasksTotasks_next_id", fields: [next_id], references: [id])
-  tasks_tasksTotasks_previous_id       tasks?        @relation("tasksTotasks_previous_id", fields: [previous_id], references: [id])
-  task_tracks                          task_tracks[]
-  other_tasks_tasksTotasks_next_id     tasks[]       @relation("tasksTotasks_next_id")
-  other_tasks_tasksTotasks_previous_id tasks[]       @relation("tasksTotasks_previous_id")
-}
-
-model template_tasks {
-  id                                                              Int              @id @default(autoincrement())
-  templateId                                                      Int?
-  name                                                            String
-  estimate                                                        Int?
-  previous_id                                                     Int?
-  next_id                                                         Int?
-  template_tasks_template_tasksTotemplate_tasks_next_id           template_tasks?  @relation("template_tasksTotemplate_tasks_next_id", fields: [next_id], references: [id])
-  template_tasks_template_tasksTotemplate_tasks_previous_id       template_tasks?  @relation("template_tasksTotemplate_tasks_previous_id", fields: [previous_id], references: [id])
-  templates                                                       templates?       @relation(fields: [templateId], references: [id])
-  other_template_tasks_template_tasksTotemplate_tasks_next_id     template_tasks[] @relation("template_tasksTotemplate_tasks_next_id")
-  other_template_tasks_template_tasksTotemplate_tasks_previous_id template_tasks[] @relation("template_tasksTotemplate_tasks_previous_id")
-}
-
-model templates {
-  id                Int              @id @default(autoincrement())
-  name              String
-  status            Int
-  status_changed_at Int?
-  template_tasks    template_tasks[]
 }

@@ -1,39 +1,43 @@
 import { Sortable } from "../types/sortable";
 
-export const sort = <T extends Sortable>(tasks: T[]): T[] => {
-  const [firstTask] = tasks.splice(
-    tasks.findIndex((t) => !t.previous_id),
+export const sort = (items: Sortable[]): Sortable[] => {
+  const [firstItem] = items.splice(
+    items.findIndex((t) => !t.previousId),
     1
   );
 
-  if (firstTask) {
+  if (firstItem) {
     const sortedTasks = [];
-    sortedTasks.push(firstTask);
+    sortedTasks.push(firstItem);
 
-    const sort = (nextId: number, remainTasks: T[], sortedTasks: T[]): T[] => {
-      if (remainTasks.length === 0) {
-        return sortedTasks;
+    const sort = (
+      nextId: number,
+      remainItems: Sortable[],
+      sortedItems: Sortable[]
+    ): Sortable[] => {
+      if (remainItems.length === 0) {
+        return sortedItems;
       }
 
-      const [nextTask] = remainTasks.splice(
-        remainTasks.findIndex((t) => t.id === nextId),
+      const [nextItem] = remainItems.splice(
+        remainItems.findIndex((i) => i.id === nextId),
         1
       );
-      sortedTasks.push(nextTask);
+      sortedItems.push(nextItem);
 
-      if (nextTask.next_id) {
-        return sort(nextTask.next_id, remainTasks, sortedTasks);
+      if (nextItem.nextId) {
+        return sort(nextItem.nextId, remainItems, sortedItems);
       } else {
-        return [...sortedTasks, ...remainTasks];
+        return [...sortedItems, ...remainItems];
       }
     };
 
-    if (firstTask.next_id) {
-      return sort(firstTask.next_id, tasks, sortedTasks);
+    if (firstItem.nextId) {
+      return sort(firstItem.nextId, items, sortedTasks);
     } else {
-      return [...sortedTasks, ...tasks];
+      return [...sortedTasks, ...items];
     }
   } else {
-    return tasks;
+    return items;
   }
 };

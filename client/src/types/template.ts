@@ -1,7 +1,7 @@
-export interface Template {
-  id: number;
+export type Template = {
+  templateId: number;
   name: string;
-}
+};
 
 export const setName = (
   templates: Template[],

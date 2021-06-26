@@ -1,37 +1,80 @@
-import { Templates_Updated_Template_Task } from "./generated/schema/graphql";
+import { TemplatesUpdatedTemplateTask } from "./generated/schema/graphql";
 
-export const addTemplateTask = async (
+export const all = (context: any) => context.prisma.template.findMany();
+
+export const tasks = (context: any, templateId: number) =>
+  context.prisma.templateTask.findMany({
+    where: { templateId },
+  });
+
+export const add = async (context: any): Promise<boolean> => {
+  await context.prisma.template.create({
+    data: {
+      name: "",
+    },
+  });
+  return true;
+};
+
+export const update = async (
+  context: any,
+  templateId: number,
+  name?: string
+): Promise<boolean> => {
+  await context.prisma.template.update({
+    where: { templateId },
+    data: {
+      ...(name ? { name } : {}),
+    },
+  });
+  return true;
+};
+
+export const deleteTemplate = async (
   context: any,
   templateId: number
 ): Promise<boolean> => {
-  const lastTask = await context.prisma.template_tasks.findFirst({
-    where: { templateId, next_id: null },
+  await context.prisma.templateTask.deleteMany({
+    where: { templateId },
   });
-  const createdTask = await context.prisma.template_tasks.create({
+  await context.prisma.template.delete({
+    where: { templateId },
+  });
+  return true;
+};
+
+export const addTask = async (
+  context: any,
+  templateId: number
+): Promise<boolean> => {
+  const lastTask = await context.prisma.templateTask.findFirst({
+    where: { templateId, nextId: null },
+  });
+  const createdTask = await context.prisma.templateTask.create({
     data: {
-      templates: {
+      template: {
         connect: {
-          id: templateId,
+          templateId,
         },
       },
       name: "",
       ...(lastTask
         ? {
-            template_tasks_template_tasksTotemplate_tasks_previous_id: {
-              connect: { id: lastTask.id },
+            previousTemplateTask: {
+              connect: { templateTaskId: lastTask.templateTaskId },
             },
           }
         : {}),
     },
   });
   if (lastTask) {
-    await context.prisma.template_tasks.update({
+    await context.prisma.templateTask.update({
       where: {
-        id: lastTask.id,
+        templateTaskId: lastTask.templateTaskId,
       },
       data: {
-        template_tasks_template_tasksTotemplate_tasks_next_id: {
-          connect: { id: createdTask.id },
+        nextTemplateTask: {
+          connect: { templateTaskId: createdTask.templateTaskId },
         },
       },
     });
@@ -39,14 +82,14 @@ export const addTemplateTask = async (
   return true;
 };
 
-export const updateTemplateTask = async (
+export const updateTask = async (
   context: any,
-  id: number,
+  templateTaskId: number,
   name?: string,
   estimate?: number
 ): Promise<boolean> => {
-  await context.prisma.template_tasks.update({
-    where: { id: id },
+  await context.prisma.templateTask.update({
+    where: { templateTaskId },
     data: {
       ...(name ? { name } : {}),
       ...(estimate ? { estimate } : {}),
@@ -55,44 +98,44 @@ export const updateTemplateTask = async (
   return true;
 };
 
-export const deleteTemplateTask = async (
+export const deleteTask = async (
   context: any,
-  id: number
+  templateTaskId: number
 ): Promise<boolean> => {
-  const task = await context.prisma.template_tasks.findUnique({
-    where: { id },
+  const task = await context.prisma.templateTask.findUnique({
+    where: { templateTaskId },
   });
   await context.prisma.$transaction([
-    ...(task.previous_id
+    ...(task.previousId
       ? [
-          context.prisma.template_tasks.update({
-            where: { id: task.previous_id },
+          context.prisma.templateTask.update({
+            where: { templateTaskId: task.previousId },
             data: {
-              template_tasks_template_tasksTotemplate_tasks_next_id: {
-                ...(task.next_id
-                  ? { connect: { id: task.next_id } }
+              nextTemplateTask: {
+                ...(task.nextId
+                  ? { connect: { templateTaskId: task.nextId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    ...(task.next_id
+    ...(task.nextId
       ? [
-          context.prisma.template_tasks.update({
-            where: { id: task.next_id },
+          context.prisma.templateTask.update({
+            where: { templateTaskId: task.nextId },
             data: {
-              template_tasks_template_tasksTotemplate_tasks_previous_id: {
-                ...(task.previous_id
-                  ? { connect: { id: task.previous_id } }
+              previousTemplateTask: {
+                ...(task.previousId
+                  ? { connect: { templateTaskId: task.previousId } }
                   : { disconnect: true }),
               },
             },
           }),
         ]
       : []),
-    context.prisma.template_tasks.delete({
-      where: { id: task.id },
+    context.prisma.templateTask.delete({
+      where: { templateTaskId: task.templateTaskId },
     }),
   ]);
   return true;
@@ -100,35 +143,35 @@ export const deleteTemplateTask = async (
 
 export const updateTemplateTasksOrder = async (
   context: any,
-  updatedTemplateTasks: Templates_Updated_Template_Task[]
+  updatedTemplateTasks: TemplatesUpdatedTemplateTask[]
 ): Promise<boolean> => {
   await context.prisma.$transaction(
-    updatedTemplateTasks.map(({ id, previous_id, next_id }) =>
-      context.prisma.template_tasks.update({
-        where: { id: id },
+    updatedTemplateTasks.map(({ templateTaskId, previousId, nextId }) =>
+      context.prisma.templateTask.update({
+        where: { templateTaskId },
         data: {
-          ...(previous_id
+          ...(previousId
             ? {
-                template_tasks_template_tasksTotemplate_tasks_previous_id: {
-                  connect: { id: previous_id },
+                previousTemplateTask: {
+                  connect: { templateTaskId: previousId },
                 },
               }
-            : previous_id === null
+            : previousId === null
             ? {
-                template_tasks_template_tasksTotemplate_tasks_previous_id: {
+                previousTemplateTask: {
                   disconnect: true,
                 },
               }
             : {}),
-          ...(next_id
+          ...(nextId
             ? {
-                template_tasks_template_tasksTotemplate_tasks_next_id: {
-                  connect: { id: next_id },
+                nextTemplateTask: {
+                  connect: { templateTaskId: nextId },
                 },
               }
-            : next_id === null
+            : nextId === null
             ? {
-                template_tasks_template_tasksTotemplate_tasks_next_id: {
+                nextTemplateTask: {
                   disconnect: true,
                 },
               }

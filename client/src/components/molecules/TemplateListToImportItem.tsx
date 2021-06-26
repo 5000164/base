@@ -13,7 +13,10 @@ export const TemplateListToImportItem = ({
   return (
     <StyledTemplateListItem>
       <div>{template.name ?? ""}</div>
-      <Button label="Import" onClick={() => importFunction(template.id)} />
+      <Button
+        label="Import"
+        onClick={() => importFunction(template.templateId)}
+      />
     </StyledTemplateListItem>
   );
 };

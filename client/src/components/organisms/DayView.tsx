@@ -18,7 +18,7 @@ import { Am, Pm } from "../atoms/Calendar";
 import { Tooltip } from "../atoms/Tooltip";
 
 export const DayView = () => {
-  const { client, date } = React.useContext(AppContext);
+  const { client, time } = React.useContext(AppContext);
   const { reloadCount } = React.useContext(ReviewPageContext);
 
   const [tasks, setTasks] = useState([] as Task[]);
@@ -26,15 +26,15 @@ export const DayView = () => {
   const [taskTracks, setTaskTracks] = useState([] as TaskTrack[]);
   useEffect(() => {
     fetchTasks(client).then((tasks) =>
-      fetchRecordedTasks(client, date).then((recordedTasks) =>
-        fetchTaskTracks(client, date).then((taskTracks) => {
+      fetchRecordedTasks(client, time).then((recordedTasks) =>
+        fetchTaskTracks(client, time).then((taskTracks) => {
           setTasks(tasks);
           setRecordedTasks(recordedTasks);
           setTaskTracks(taskTracks);
         })
       )
     );
-  }, [client, date, reloadCount]);
+  }, [client, time, reloadCount]);
 
   const events = useMemo(
     () => formatTaskTracksToEvents(taskTracks, tasks.concat(recordedTasks)),
@@ -63,9 +63,9 @@ export const DayView = () => {
   const amRef = useRef<FullCalendar>();
   const pmRef = useRef<FullCalendar>();
   useEffect(() => {
-    amRef.current!.getApi().gotoDate(date);
-    pmRef.current!.getApi().gotoDate(date);
-  }, [date]);
+    amRef.current!.getApi().gotoDate(time);
+    pmRef.current!.getApi().gotoDate(time);
+  }, [time]);
 
   return (
     <CalendarWrapper>
@@ -94,20 +94,20 @@ const CalendarWrapper = styled.div`
 const formatTaskTracksToEvents = (taskTracks: TaskTrack[], tasks: Task[]) => {
   const taskNamesWithId = tasks.reduce(
     (taskNamesWithId: Map<number, string>, task: Task) => {
-      taskNamesWithId.set(task.id, task.name);
+      taskNamesWithId.set(task.taskId, task.name);
       return taskNamesWithId;
     },
     new Map()
   );
 
   return taskTracks.map((taskTrack) => {
-    const startAtDate = new Date(taskTrack.start_at * 1000);
-    const stopAtDate = taskTrack.stop_at
-      ? new Date(taskTrack.stop_at * 1000)
+    const startAtDate = new Date(taskTrack.startAt);
+    const stopAtDate = taskTrack.stopAt
+      ? new Date(taskTrack.stopAt)
       : new Date();
 
     return {
-      title: taskNamesWithId.get(taskTrack.task.id) ?? "Unknown",
+      title: taskNamesWithId.get(taskTrack.task.taskId) ?? "Unknown",
       start: formatToDatetime(startAtDate),
       end: formatToDatetime(stopAtDate),
     };

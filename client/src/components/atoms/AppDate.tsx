@@ -1,17 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import { TextInput } from "grommet";
+import {
+  dateStringToLocalMidnightTime,
+  timeToDateString,
+} from "../../utils/date";
 import { AppContext } from "../../App";
 
-export const Date = () => {
-  const { date, setDate } = React.useContext(AppContext);
+export const AppDate = () => {
+  const { time, setTime } = React.useContext(AppContext);
 
   return (
     <StyledDate>
       <StyledTextInput
         type="date"
-        value={date ?? ""}
-        onChange={(e) => setDate(e.target.value)}
+        value={timeToDateString(time)}
+        onChange={(e) => setTime(dateStringToLocalMidnightTime(e.target.value))}
       />
     </StyledDate>
   );

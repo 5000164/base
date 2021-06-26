@@ -4,31 +4,31 @@ import { TaskTrack } from "../types/taskTrack";
 
 export const fetchTaskTracks = (
   client: DefaultClient<any>,
-  date: string
+  recordedDate: number
 ): Promise<TaskTrack[]> =>
   client
     .query<Query>({
       fetchPolicy: "no-cache",
       query: gql`
-        query($date: String!) {
-          task_tracks {
-            taskTracks(date: $date) {
-              task_track_id
+        query ($recordedDate: Float!) {
+          taskTracks {
+            recorded(recordedDate: $recordedDate) {
+              taskTrackId
               task {
-                id
+                taskId
                 name
               }
-              start_at
-              stop_at
+              startAt
+              stopAt
             }
           }
         }
       `,
       variables: {
-        date,
+        recordedDate,
       },
     })
-    .then((result) => result.data.task_tracks.taskTracks);
+    .then((result) => result.data.taskTracks.recorded);
 
 export const fetchWorkingTaskTracks = (
   client: DefaultClient<any>
@@ -38,48 +38,36 @@ export const fetchWorkingTaskTracks = (
       fetchPolicy: "no-cache",
       query: gql`
         {
-          task_tracks {
-            workingTaskTracks {
-              task_track_id
+          taskTracks {
+            working {
+              taskTrackId
               task {
-                id
+                taskId
                 name
               }
-              start_at
-              stop_at
+              startAt
+              stopAt
             }
           }
         }
       `,
     })
-    .then((result) => result.data.task_tracks.workingTaskTracks);
+    .then((result) => result.data.taskTracks.working);
 
-export const updateTaskTrack = (
+export const startTaskTrack = (
   client: DefaultClient<any>,
-  taskTrack: TaskTrack
+  taskId: number
 ): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($task_track_id: Int!, $start_at: Int, $stop_at: Int) {
-          task_tracks {
-            update_task_track(
-              task_track_id: $task_track_id
-              start_at: $start_at
-              stop_at: $stop_at
-            ) {
-              task_track_id
-              task {
-                id
-                name
-              }
-              start_at
-              stop_at
-            }
+        mutation ($taskId: Int!) {
+          taskTracks {
+            start(taskId: $taskId)
           }
         }
       `,
-      variables: taskTrack,
+      variables: { taskId },
     })
     .then(() => true);
 
@@ -90,21 +78,34 @@ export const stopTaskTrack = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($task_track_id: Int!) {
-          task_tracks {
-            stop_task_track(task_track_id: $task_track_id) {
-              task_track_id
-              task {
-                id
-                name
-              }
-              start_at
-              stop_at
-            }
+        mutation ($taskTrackId: Int!) {
+          taskTracks {
+            stop(taskTrackId: $taskTrackId)
           }
         }
       `,
-      variables: { task_track_id: taskTrackId },
+      variables: { taskTrackId },
+    })
+    .then(() => true);
+
+export const updateTaskTrack = (
+  client: DefaultClient<any>,
+  taskTrack: TaskTrack
+): Promise<boolean> =>
+  client
+    .mutate<Mutation>({
+      mutation: gql`
+        mutation ($taskTrackId: Int!, $startAt: Float, $stopAt: Float) {
+          taskTracks {
+            update(
+              taskTrackId: $taskTrackId
+              startAt: $startAt
+              stopAt: $stopAt
+            )
+          }
+        }
+      `,
+      variables: taskTrack,
     })
     .then(() => true);
 
@@ -115,12 +116,12 @@ export const deleteTaskTrack = (
   client
     .mutate<Mutation>({
       mutation: gql`
-        mutation($task_track_id: Int!) {
-          task_tracks {
-            delete_task_track(task_track_id: $task_track_id)
+        mutation ($taskTrackId: Int!) {
+          taskTracks {
+            delete(taskTrackId: $taskTrackId)
           }
         }
       `,
-      variables: { task_track_id: taskTrackId },
+      variables: { taskTrackId },
     })
     .then(() => true);
