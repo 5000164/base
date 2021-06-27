@@ -1,8 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import { DragIndicator, PlayArrow } from "styled-icons/material";
-import { Archive, Check, Trash } from "styled-icons/boxicons-regular";
-import { TextInput } from "grommet";
+import {
+  Archive,
+  Circle,
+  DotsHorizontalRounded,
+  Sun,
+  Trash,
+} from "styled-icons/boxicons-regular";
+import { Menu, TextInput } from "grommet";
 import { Draggable } from "react-beautiful-dnd";
 import { theme } from "../../theme";
 import { Task } from "../../types/task";
@@ -15,10 +21,7 @@ import {
 } from "../../repositories/tasks";
 import { startTaskTrack } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
-import {
-  dateStringToUTCMidnightTime,
-  timeToDateString,
-} from "../../utils/date";
+import { moveDay, toUTCUnixTime } from "../../utils/date";
 
 export const ScheduledTaskListItem = ({
   task,
@@ -35,7 +38,7 @@ export const ScheduledTaskListItem = ({
   setScheduledDate: (scheduled_date: number) => void;
   reload: () => void;
 }) => {
-  const { client } = React.useContext(AppContext);
+  const { client, time } = React.useContext(AppContext);
 
   return (
     <Draggable draggableId={index.toString()} index={index}>
@@ -47,6 +50,15 @@ export const ScheduledTaskListItem = ({
           <Handle {...provided.dragHandleProps}>
             <StyledDragIndicator size="16" />
           </Handle>
+          <StyledIcon>
+            <Circle
+              title="Complete"
+              size="28"
+              onClick={() =>
+                completeTask(client, task.taskId).then(() => reload())
+              }
+            />
+          </StyledIcon>
           <TextInput
             type="text"
             value={task.name ?? ""}
@@ -59,56 +71,58 @@ export const ScheduledTaskListItem = ({
             onChange={(e) => setEstimate(Number(e.target.value))}
             onBlur={() => updateTask(client, task).then()}
           />
-          <StyledTextInput
-            type="date"
-            value={
-              task.scheduledDate ? timeToDateString(task.scheduledDate) : ""
-            }
-            onChange={(e) =>
-              setScheduledDate(dateStringToUTCMidnightTime(e.target.value))
-            }
-            onBlur={() =>
-              changeScheduledDate(client, task).then(() => reload())
-            }
+          <StyledIcon>
+            <PlayArrow
+              title="Start"
+              size="28"
+              onClick={() =>
+                startTaskTrack(client, task.taskId).then(() => reload())
+              }
+            />
+          </StyledIcon>
+          <Menu
+            label={<DotsHorizontalRounded title="Menu" size="28" />}
+            items={[
+              {
+                label: (
+                  <>
+                    <StyledIcon>
+                      <Sun title="Tomorrow" size="24" />
+                    </StyledIcon>
+                    Tomorrow
+                  </>
+                ),
+                onClick: () => {
+                  setScheduledDate(toUTCUnixTime(moveDay(time, 1)));
+                  changeScheduledDate(client, task).then(() => reload());
+                },
+              },
+              {
+                label: (
+                  <>
+                    <StyledIcon>
+                      <Archive title="Archive" size="24" />
+                    </StyledIcon>
+                    Archive
+                  </>
+                ),
+                onClick: () =>
+                  archiveTask(client, task.taskId).then(() => reload()),
+              },
+              {
+                label: (
+                  <>
+                    <StyledIcon>
+                      <Trash title="Delete" size="24" />
+                    </StyledIcon>
+                    Delete
+                  </>
+                ),
+                onClick: () =>
+                  deleteTask(client, task.taskId).then(() => reload()),
+              },
+            ]}
           />
-          <div>
-            <StyledIcon>
-              <Check
-                title="Complete"
-                size="28"
-                onClick={() =>
-                  completeTask(client, task.taskId).then(() => reload())
-                }
-              />
-            </StyledIcon>
-            <StyledIcon>
-              <Archive
-                title="Archive"
-                size="24"
-                onClick={() =>
-                  archiveTask(client, task.taskId).then(() => reload())
-                }
-              />
-            </StyledIcon>
-            <StyledIcon>
-              <Trash
-                title="Delete"
-                size="24"
-                onClick={() =>
-                  deleteTask(client, task.taskId).then(() => reload())
-                }
-              />
-            </StyledIcon>
-            <StyledIcon>
-              <PlayArrow
-                title="Start"
-                size="28"
-                onClick={() =>
-                  startTaskTrack(client, task.taskId).then(() => reload())
-                }
-              />
-            </StyledIcon>
-          </div>
         </StyledTaskListItem>
       )}
     </Draggable>
@@ -118,7 +132,7 @@ export const ScheduledTaskListItem = ({
 const StyledTaskListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 16px 1fr 40px 176px 160px;
+  grid-template-columns: 16px 32px 1fr 64px 32px 128px;
   grid-gap: 5px;
   margin: 5px 0;
 `;
@@ -133,16 +147,8 @@ const StyledDragIndicator = styled(DragIndicator)`
   color: ${theme.global.colors.text};
 `;
 
-const StyledTextInput = styled(TextInput)`
-  &::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
-`;
-
 const StyledIcon = styled.div`
-  display: inline-block;
   width: 32px;
-  margin-left: 8px;
   text-align: center;
   cursor: pointer;
 `;
