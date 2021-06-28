@@ -80,17 +80,22 @@ export const ScheduledTaskListItem = ({
               }
             />
           </StyledIcon>
-          <Menu
-            label={<DotsHorizontalRounded title="Menu" size="28" />}
+          <StyledMenu
+            icon={
+              <StyledIcon>
+                <DotsHorizontalRounded title="Menu" size="28" />
+              </StyledIcon>
+            }
+            dropAlign={{ top: "top", right: "right" }}
             items={[
               {
                 label: (
-                  <>
+                  <StyledItem>
                     <StyledIcon>
                       <Sun title="Tomorrow" size="24" />
                     </StyledIcon>
                     Tomorrow
-                  </>
+                  </StyledItem>
                 ),
                 onClick: () => {
                   setScheduledDate(toUTCUnixTime(moveDay(time, 1)));
@@ -99,24 +104,24 @@ export const ScheduledTaskListItem = ({
               },
               {
                 label: (
-                  <>
+                  <StyledItem>
                     <StyledIcon>
                       <Archive title="Archive" size="24" />
                     </StyledIcon>
                     Archive
-                  </>
+                  </StyledItem>
                 ),
                 onClick: () =>
                   archiveTask(client, task.taskId).then(() => reload()),
               },
               {
                 label: (
-                  <>
+                  <StyledItem>
                     <StyledIcon>
                       <Trash title="Delete" size="24" />
                     </StyledIcon>
                     Delete
-                  </>
+                  </StyledItem>
                 ),
                 onClick: () =>
                   deleteTask(client, task.taskId).then(() => reload()),
@@ -132,7 +137,7 @@ export const ScheduledTaskListItem = ({
 const StyledTaskListItem = styled.li`
   display: grid;
   align-items: center;
-  grid-template-columns: 16px 32px 1fr 64px 32px 128px;
+  grid-template-columns: 16px 32px 1fr 64px 32px 32px;
   grid-gap: 5px;
   margin: 5px 0;
 `;
@@ -151,4 +156,17 @@ const StyledIcon = styled.div`
   width: 32px;
   text-align: center;
   cursor: pointer;
+`;
+
+const StyledMenu = styled(Menu)`
+  & > div {
+    padding: 0;
+  }
+`;
+
+const StyledItem = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
 `;
