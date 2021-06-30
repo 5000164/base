@@ -11,19 +11,13 @@ export const AppDate = () => {
   const { time, setTime } = React.useContext(AppContext);
 
   return (
-    <StyledDate>
-      <StyledTextInput
-        type="date"
-        value={timeToDateString(time)}
-        onChange={(e) => setTime(dateStringToLocalMidnightTime(e.target.value))}
-      />
-    </StyledDate>
+    <StyledTextInput
+      type="date"
+      value={timeToDateString(time)}
+      onChange={(e) => setTime(dateStringToLocalMidnightTime(e.target.value))}
+    />
   );
 };
-
-const StyledDate = styled.div`
-  display: inline-block;
-`;
 
 const StyledTextInput = styled(TextInput)`
   &::-webkit-calendar-picker-indicator {

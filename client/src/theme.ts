@@ -75,6 +75,9 @@ export const theme = {
   },
   textInput: {
     extend: "border-bottom: 1px solid #444444;",
+    container: {
+      extend: "min-width: 0;",
+    },
   },
   button: {
     padding: {
