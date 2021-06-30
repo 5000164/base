@@ -10,6 +10,7 @@ import { AnchorLink } from "../atoms/AnchorLink";
 export const Navigation = () => {
   return (
     <StyledNavigation>
+      <Draggable />
       <StyledDateNavigator>
         <DateNavigator />
       </StyledDateNavigator>
@@ -47,6 +48,12 @@ export const Navigation = () => {
     </StyledNavigation>
   );
 };
+
+const Draggable = styled.div`
+  -webkit-app-region: drag;
+  width: 100%;
+  height: 32px;
+`;
 
 const StyledNavigation = styled.div`
   background: hsla(0, 0%, 0%, 0);
