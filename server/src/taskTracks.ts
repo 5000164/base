@@ -2,14 +2,34 @@ export const recorded = async (context: any, recordedDate: number) => {
   const nextDate = recordedDate + 86400000;
   return context.prisma.taskTrack.findMany({
     where: {
-      AND: [
+      OR: [
         {
-          startAt: { gte: recordedDate },
+          AND: [
+            {
+              startAt: {
+                gte: recordedDate,
+              },
+            },
+            {
+              startAt: {
+                lt: nextDate,
+              },
+            },
+          ],
         },
         {
-          startAt: {
-            lt: nextDate,
-          },
+          AND: [
+            {
+              stopAt: {
+                gte: recordedDate,
+              },
+            },
+            {
+              stopAt: {
+                lt: nextDate,
+              },
+            },
+          ],
         },
       ],
     },
