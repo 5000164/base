@@ -86,7 +86,7 @@ export const ScheduledTaskListItem = ({
                 <DotsHorizontalRounded title="Menu" size="28" />
               </StyledIcon>
             }
-            dropAlign={{ top: "top", right: "right" }}
+            dropAlign={{ top: "bottom", right: "right" }}
             items={[
               {
                 label: (
