@@ -15,7 +15,7 @@ import { startTaskTrack } from "../../repositories/taskTracks";
 import { AppContext } from "../../App";
 import {
   dateStringToUTCMidnightTime,
-  timeToDateString,
+  formatToDateString,
 } from "../../utils/date";
 
 export const TaskListItem = ({
@@ -49,7 +49,7 @@ export const TaskListItem = ({
       />
       <StyledTextInput
         type="date"
-        value={task.scheduledDate ? timeToDateString(task.scheduledDate) : ""}
+        value={task.scheduledDate ? formatToDateString(task.scheduledDate) : ""}
         onChange={(e) =>
           setScheduledDate(dateStringToUTCMidnightTime(e.target.value))
         }

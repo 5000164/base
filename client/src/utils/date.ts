@@ -1,4 +1,4 @@
-export const timeToDateString = (time: number) => {
+export const formatToDateString = (time: number) => {
   const date = new Date(time);
   return [
     date.getFullYear().toString().padStart(4, "0"),
@@ -38,11 +38,11 @@ export const formatToDateTimeString = (time: number) => {
 };
 
 export const dateStringToLocalMidnightTime = (dateString: string) => {
-  const UTCDate = new Date(Date.parse(dateString));
+  const date = new Date(Date.parse(dateString));
   return new Date(
-    UTCDate.getUTCFullYear(),
-    UTCDate.getUTCMonth(),
-    UTCDate.getUTCDate(),
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
     0,
     0,
     0,
@@ -64,7 +64,7 @@ export const moveDay = (time: number, moveDays: number): number => {
   return new Date(new Date(date).setDate(date.getDate() + moveDays)).getTime();
 };
 
-export const setTime = (time: number, timeString: string) => {
+export const setTimeOfDay = (time: number, timeString: string) => {
   const times = timeString.split(":").map((t) => parseInt(t, 10));
   return new Date(time).setHours(times[0], times[1], times[2], 0);
 };
