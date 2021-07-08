@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { TextInput } from "grommet";
 import {
   dateStringToLocalMidnightTime,
-  timeToDateString,
+  formatToDateString,
 } from "../../utils/date";
 import { AppContext } from "../../App";
 
@@ -13,7 +13,7 @@ export const AppDate = () => {
   return (
     <StyledTextInput
       type="date"
-      value={timeToDateString(time)}
+      value={formatToDateString(time)}
       onChange={(e) => setTime(dateStringToLocalMidnightTime(e.target.value))}
     />
   );
