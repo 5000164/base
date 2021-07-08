@@ -20,6 +20,23 @@ export const formatToTimeString = (time: number) => {
   ].join("");
 };
 
+export const formatToDateTimeString = (time: number) => {
+  const date = new Date(time);
+  return [
+    date.getFullYear().toString().padStart(4, "0"),
+    "-",
+    (date.getMonth() + 1).toString().padStart(2, "0"),
+    "-",
+    date.getDate().toString().padStart(2, "0"),
+    "T",
+    date.getHours().toString().padStart(2, "0"),
+    ":",
+    date.getMinutes().toString().padStart(2, "0"),
+    ":",
+    date.getSeconds().toString().padStart(2, "0"),
+  ].join("");
+};
+
 export const dateStringToLocalMidnightTime = (dateString: string) => {
   const UTCDate = new Date(Date.parse(dateString));
   return new Date(
@@ -35,6 +52,9 @@ export const dateStringToLocalMidnightTime = (dateString: string) => {
 
 export const dateStringToUTCMidnightTime = (dateString: string) =>
   toUTCUnixTime(dateStringToLocalMidnightTime(dateString));
+
+export const dateTimeStringToLocalTime = (dateTimeString: string) =>
+  new Date(Date.parse(dateTimeString)).getTime();
 
 export const toUTCUnixTime = (time: number) =>
   time - new Date().getTimezoneOffset() * 60000;
