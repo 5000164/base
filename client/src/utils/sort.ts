@@ -5,6 +5,8 @@ export const reorder = <T, U>(
   result: DropResult,
   items: T[],
   toSortable: (item: T) => Sortable,
+  toItemsFromSortable: (items: T[], sortables: Sortable[]) => T[],
+  setItems: (items: T[]) => void,
   toUpdatedItems: (item: Sortable) => U,
   updateOrder: (items: U[]) => Promise<boolean>
 ) => {
@@ -57,6 +59,25 @@ export const reorder = <T, U>(
       }
       return items;
     }, [] as Sortable[]);
+
+  // 更新が必要なデータを並び替えたリストに適用し、
+  // リストを元の型に変換して値をセットする
+  setItems(
+    toItemsFromSortable(
+      items,
+      sortableItems.map((si) => {
+        const ui = updatedItems.find((ui) => si.id === ui.id);
+        return ui
+          ? ({
+              id: ui.id,
+              previousId:
+                ui.previousId !== undefined ? ui.previousId : si.previousId,
+              nextId: ui.nextId !== undefined ? ui.nextId : si.nextId,
+            } as Sortable)
+          : si;
+      })
+    )
+  );
 
   return updateOrder(updatedItems.map(toUpdatedItems));
 };

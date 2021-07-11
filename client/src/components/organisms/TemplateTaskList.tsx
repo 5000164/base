@@ -38,15 +38,16 @@ export const TemplateTaskList = () => {
     <>
       <TemplateName>{selectedTemplate.name}</TemplateName>
       <DragDropContext
-        onDragEnd={
-          (result) =>
-            reorder<TemplateTask, TemplatesUpdatedTemplateTask>(
-              result,
-              tasks,
-              toSortable,
-              toTemplatesUpdatedTemplateTask,
-              (tasks) => updateTemplateTasksOrder(client, tasks)
-            ).then(() => reload()) // ひとまず毎回 reload して表示を合わせる
+        onDragEnd={(result) =>
+          reorder<TemplateTask, TemplatesUpdatedTemplateTask>(
+            result,
+            tasks,
+            toSortable,
+            toTemplateTasksFromSortable,
+            setTasks,
+            toTemplatesUpdatedTemplateTask,
+            (tasks) => updateTemplateTasksOrder(client, tasks)
+          )
         }
       >
         <Droppable droppableId="template-list">
