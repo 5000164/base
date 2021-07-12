@@ -51,15 +51,16 @@ export const ScheduledTaskList = () => {
   return (
     <>
       <DragDropContext
-        onDragEnd={
-          (result) =>
-            reorder<Task, TasksUpdatedTask>(
-              result,
-              tasks,
-              toSortable,
-              toTasksUpdatedTask,
-              (tasks) => updateTasksOrder(client, tasks)
-            ).then(() => reload()) // ひとまず毎回 reload して表示を合わせる
+        onDragEnd={(result) =>
+          reorder<Task, TasksUpdatedTask>(
+            result,
+            tasks,
+            toSortable,
+            toTasksFromSortable,
+            setTasks,
+            toTasksUpdatedTask,
+            (tasks) => updateTasksOrder(client, tasks)
+          )
         }
       >
         <Droppable droppableId="task-list">
