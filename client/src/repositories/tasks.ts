@@ -9,7 +9,6 @@ import { Task } from "../types/task";
 export const fetchTasks = (client: ApolloClient<any>): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         {
           tasks {
@@ -35,7 +34,6 @@ export const fetchScheduledTasks = (
 ): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($scheduledDate: Float!) {
           tasks {
@@ -64,7 +62,6 @@ export const fetchRecordedTasks = (
 ): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($recordedDate: Float!) {
           tasks {

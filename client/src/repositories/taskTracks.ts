@@ -8,7 +8,6 @@ export const fetchTaskTracks = (
 ): Promise<TaskTrack[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($recordedDate: Float!) {
           taskTracks {
@@ -35,7 +34,6 @@ export const fetchWorkingTaskTracks = (
 ): Promise<TaskTrack[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         {
           taskTracks {

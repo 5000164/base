@@ -12,7 +12,6 @@ export const fetchTemplates = (
 ): Promise<Template[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query {
           templates {
@@ -32,7 +31,6 @@ export const fetchTasks = (
 ): Promise<TemplateTask[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($templateId: Int!) {
           templates {
