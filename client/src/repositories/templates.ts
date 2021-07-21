@@ -1,4 +1,4 @@
-import DefaultClient, { gql } from "apollo-boost";
+import { ApolloClient, gql } from "@apollo/client";
 import {
   Mutation,
   Query,
@@ -8,7 +8,7 @@ import { Template } from "../types/template";
 import { TemplateTask } from "../types/templateTask";
 
 export const fetchTemplates = (
-  client: DefaultClient<any>
+  client: ApolloClient<any>
 ): Promise<Template[]> =>
   client
     .query<Query>({
@@ -27,7 +27,7 @@ export const fetchTemplates = (
     .then((result) => result.data.templates.all);
 
 export const fetchTasks = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateId: number
 ): Promise<TemplateTask[]> =>
   client
@@ -50,7 +50,7 @@ export const fetchTasks = (
     })
     .then((result) => result.data.templates.tasks as TemplateTask[]);
 
-export const addTemplate = (client: DefaultClient<any>): Promise<boolean> =>
+export const addTemplate = (client: ApolloClient<any>): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
@@ -64,7 +64,7 @@ export const addTemplate = (client: DefaultClient<any>): Promise<boolean> =>
     .then(() => true);
 
 export const updateTemplate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   template: Template
 ): Promise<boolean> =>
   client
@@ -81,7 +81,7 @@ export const updateTemplate = (
     .then(() => true);
 
 export const deleteTemplate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateId: number
 ): Promise<boolean> =>
   client
@@ -98,7 +98,7 @@ export const deleteTemplate = (
     .then(() => true);
 
 export const addTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateId: number
 ): Promise<boolean> =>
   client
@@ -115,7 +115,7 @@ export const addTask = (
     .then(() => true);
 
 export const updateTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   task: TemplateTask
 ): Promise<boolean> =>
   client
@@ -136,7 +136,7 @@ export const updateTask = (
     .then(() => true);
 
 export const deleteTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateTaskId: number
 ): Promise<boolean> =>
   client
@@ -153,7 +153,7 @@ export const deleteTask = (
     .then(() => true);
 
 export const updateTemplateTasksOrder = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   updatedTemplateTasks: TemplatesUpdatedTemplateTask[]
 ): Promise<boolean> =>
   client

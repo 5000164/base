@@ -1,9 +1,9 @@
-import DefaultClient, { gql } from "apollo-boost";
+import { ApolloClient, gql } from "@apollo/client";
 import { Mutation, Query } from "schema/src/generated/client/graphql";
 import { TaskTrack } from "../types/taskTrack";
 
 export const fetchTaskTracks = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   recordedDate: number
 ): Promise<TaskTrack[]> =>
   client
@@ -31,7 +31,7 @@ export const fetchTaskTracks = (
     .then((result) => result.data.taskTracks.recorded);
 
 export const fetchWorkingTaskTracks = (
-  client: DefaultClient<any>
+  client: ApolloClient<any>
 ): Promise<TaskTrack[]> =>
   client
     .query<Query>({
@@ -55,7 +55,7 @@ export const fetchWorkingTaskTracks = (
     .then((result) => result.data.taskTracks.working);
 
 export const startTaskTrack = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskId: number
 ): Promise<boolean> =>
   client
@@ -72,7 +72,7 @@ export const startTaskTrack = (
     .then(() => true);
 
 export const stopTaskTrack = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskTrackId: number
 ): Promise<boolean> =>
   client
@@ -89,7 +89,7 @@ export const stopTaskTrack = (
     .then(() => true);
 
 export const updateTaskTrack = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskTrack: TaskTrack
 ): Promise<boolean> =>
   client
@@ -110,7 +110,7 @@ export const updateTaskTrack = (
     .then(() => true);
 
 export const deleteTaskTrack = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskTrackId: number
 ): Promise<boolean> =>
   client
