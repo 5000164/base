@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
-import DefaultClient from "apollo-boost";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled, { createGlobalStyle } from "styled-components";
 import { Box, Grid, Grommet } from "grommet";
@@ -12,8 +12,19 @@ import { TaskTracksPage } from "./components/pages/TaskTracksPage";
 import { TasksPage } from "./components/pages/TasksPage";
 import { Navigation } from "./components/organisms/Navigation";
 
-const client = new DefaultClient({
+const client = new ApolloClient({
   uri: `http://localhost:${process.env.REACT_APP_BASE_PORT ?? "5164"}`,
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "ignore",
+    },
+    query: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
+    },
+  },
 });
 
 export const AppContext = React.createContext({
@@ -21,12 +32,12 @@ export const AppContext = React.createContext({
   time: 0,
   setTime: () => {},
 } as {
-  client: DefaultClient<any>;
+  client: ApolloClient<any>;
   time: number;
   setTime: (time: number) => void;
 });
 
-const useAppContext = (client: DefaultClient<any>) => {
+const useAppContext = (client: ApolloClient<any>) => {
   const [time, setTime] = useState(new Date().setHours(0, 0, 0, 0));
   return {
     client,

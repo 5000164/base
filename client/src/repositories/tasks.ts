@@ -1,4 +1,4 @@
-import DefaultClient, { gql } from "apollo-boost";
+import { ApolloClient, gql } from "@apollo/client";
 import {
   Mutation,
   Query,
@@ -6,10 +6,9 @@ import {
 } from "schema/src/generated/client/graphql";
 import { Task } from "../types/task";
 
-export const fetchTasks = (client: DefaultClient<any>): Promise<Task[]> =>
+export const fetchTasks = (client: ApolloClient<any>): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         {
           tasks {
@@ -30,12 +29,11 @@ export const fetchTasks = (client: DefaultClient<any>): Promise<Task[]> =>
     .then((result) => result.data.tasks.all as Task[]);
 
 export const fetchScheduledTasks = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   scheduledDate: number
 ): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($scheduledDate: Float!) {
           tasks {
@@ -59,12 +57,11 @@ export const fetchScheduledTasks = (
     .then((result) => result.data.tasks.scheduled as Task[]);
 
 export const fetchRecordedTasks = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   recordedDate: number
 ): Promise<Task[]> =>
   client
     .query<Query>({
-      fetchPolicy: "no-cache",
       query: gql`
         query ($recordedDate: Float!) {
           tasks {
@@ -87,7 +84,7 @@ export const fetchRecordedTasks = (
     })
     .then((result) => result.data.tasks.recorded as Task[]);
 
-export const addTask = (client: DefaultClient<any>): Promise<boolean> =>
+export const addTask = (client: ApolloClient<any>): Promise<boolean> =>
   client
     .mutate<Mutation>({
       mutation: gql`
@@ -101,7 +98,7 @@ export const addTask = (client: DefaultClient<any>): Promise<boolean> =>
     .then(() => true);
 
 export const addTaskWithScheduledDate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   scheduledDate: number
 ): Promise<boolean> =>
   client
@@ -120,7 +117,7 @@ export const addTaskWithScheduledDate = (
     .then(() => true);
 
 export const updateTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   task: Task
 ): Promise<boolean> =>
   client
@@ -137,7 +134,7 @@ export const updateTask = (
     .then(() => true);
 
 export const changeScheduledDate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   task: Task
 ): Promise<boolean> =>
   client
@@ -154,7 +151,7 @@ export const changeScheduledDate = (
     .then(() => true);
 
 export const completeTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskId: number
 ): Promise<boolean> =>
   client
@@ -184,7 +181,7 @@ export const completeTask = (
     );
 
 export const archiveTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskId: number
 ): Promise<boolean> =>
   client
@@ -201,7 +198,7 @@ export const archiveTask = (
     .then(() => true);
 
 export const deleteTask = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   taskId: number
 ): Promise<boolean> =>
   client
@@ -218,7 +215,7 @@ export const deleteTask = (
     .then(() => true);
 
 export const importTemplate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateId: number
 ): Promise<boolean> =>
   client
@@ -235,7 +232,7 @@ export const importTemplate = (
     .then(() => true);
 
 export const importTemplateWithScheduledDate = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   templateId: number,
   scheduledDate: number
 ): Promise<boolean> =>
@@ -256,7 +253,7 @@ export const importTemplateWithScheduledDate = (
     .then(() => true);
 
 export const updateTasksOrder = (
-  client: DefaultClient<any>,
+  client: ApolloClient<any>,
   updatedTasks: TasksUpdatedTask[]
 ): Promise<boolean> =>
   client
