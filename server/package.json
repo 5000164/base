@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "start": "ts-node-dev --no-notify src/server.ts",
+    "start": "ts-node-dev --exit-child --no-notify src/server.ts",
     "prebuild": "rm -rf ../dist/server && mkdir -p ../dist/server",
     "build": "tsc",
     "postbuild": "cp src/generated/schema/schema.graphql ../dist/server/generated/schema/schema.graphql && cp -R src/migrations ../dist/server/migrations",
