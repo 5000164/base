@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "build": "electron-builder",
+    "build": "PYTHON_PATH=/Users/hiroshi/.pyenv/shims/python2 electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -36,7 +36,7 @@
     "graphql-tools": "^7.0.5",
     "prisma": "^2.26.0",
     "sequelize": "^6.6.5",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.0.10",
     "umzug": "3.0.0-beta.9"
   },
   "devDependencies": {

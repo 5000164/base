@@ -8,9 +8,10 @@ export const BacklogPageContext = React.createContext({
 
 const useBacklogPageContext = () => {
   const [reloadCount, setReloadCount] = useState(0);
-  const reload = useCallback(() => setReloadCount(reloadCount + 1), [
-    reloadCount,
-  ]);
+  const reload = useCallback(
+    () => setReloadCount(reloadCount + 1),
+    [reloadCount]
+  );
   return {
     reloadCount,
     reload,

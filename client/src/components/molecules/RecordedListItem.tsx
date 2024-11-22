@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, TextInput } from "grommet";
+import { Menu, TextInput } from "grommet";
+import { DotsHorizontalRounded } from "styled-icons/boxicons-regular";
 import { Status } from "shared/src/types/status";
 import { Task } from "../../types/task";
 import {
@@ -51,17 +52,33 @@ export const RecordedListItem = ({
         onBlur={() => updateTask(client, task).then()}
       />
       <ElapsedTime seconds={seconds} />
-      <Button
-        label="Complete"
-        onClick={() => completeTask(client, task.taskId).then(() => reload())}
-      />
-      <Button
-        label="Archive"
-        onClick={() => archiveTask(client, task.taskId).then(() => reload())}
-      />
-      <Button
-        label="Delete"
-        onClick={() => deleteTask(client, task.taskId).then(() => reload())}
+      <StyledMenu
+        icon={
+          <StyledIcon>
+            <DotsHorizontalRounded title="Menu" size="28" />
+          </StyledIcon>
+        }
+        dropAlign={{ top: "bottom", right: "right" }}
+        items={[
+          {
+            label: <span>Complete</span>,
+            onClick: () => {
+              completeTask(client, task.taskId).then(() => reload());
+            },
+          },
+          {
+            label: <span>Archive</span>,
+            onClick: () => {
+              archiveTask(client, task.taskId).then(() => reload());
+            },
+          },
+          {
+            label: <span>Delete</span>,
+            onClick: () => {
+              deleteTask(client, task.taskId).then(() => reload());
+            },
+          },
+        ]}
       />
     </StyledRecordedListItem>
   );
@@ -73,4 +90,16 @@ const StyledRecordedListItem = styled.li`
   grid-gap: 5px;
   align-items: center;
   margin: 5px 0;
+`;
+
+const StyledIcon = styled.div`
+  width: 32px;
+  text-align: center;
+  cursor: pointer;
+`;
+
+const StyledMenu = styled(Menu)`
+  & > div {
+    padding: 0;
+  }
 `;

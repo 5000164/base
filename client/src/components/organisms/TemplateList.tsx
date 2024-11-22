@@ -9,12 +9,8 @@ import { TemplateListItem } from "../molecules/TemplateListItem";
 
 export const TemplateList = () => {
   const { client } = React.useContext(AppContext);
-  const {
-    reloadCount,
-    reload,
-    showEditDialog,
-    setSelectedTemplate,
-  } = React.useContext(TemplatesPageContext);
+  const { reloadCount, reload, showEditDialog, setSelectedTemplate } =
+    React.useContext(TemplatesPageContext);
 
   const [templates, setTemplates] = useState([] as Template[]);
   useEffect(() => {

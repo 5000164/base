@@ -56,33 +56,34 @@ export const Navigation = () => {
   );
 };
 
-const Draggable = styled.div`
-  -webkit-app-region: drag;
-  width: 100%;
-  height: 32px;
+const StyledNavigation = styled.div`
+  display: flex;
+  background: hsla(0, 0%, 0%, 0);
+  overflow: scroll;
 `;
 
-const StyledNavigation = styled.div`
-  background: hsla(0, 0%, 0%, 0);
+const Draggable = styled.div`
+  -webkit-app-region: drag;
+  width: 100px;
+  height: 32px;
 `;
 
 const DateNavigatorWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
-  height: 56px;
+  width: 300px;
+  height: 32px;
   margin-left: 8px;
 `;
 
 const StyledDateNavigator = styled.div`
-  width: calc(100% - 32px);
   margin-left: 8px;
 `;
 
 const NavigationItem = styled(AnchorLink)`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 300px;
   height: 32px;
   margin-top: 8px;
   margin-left: 8px;

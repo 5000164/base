@@ -62,13 +62,13 @@ export const App = () => {
               />
             </Helmet>
             <Grid
-              rows={["flex"]}
-              columns={["280px", "flex"]}
+              columns={["flex"]}
+              rows={["32px", "flex"]}
               fill={true}
               gap="small"
               areas={[
                 { name: "nav", start: [0, 0], end: [0, 0] },
-                { name: "main", start: [1, 0], end: [1, 0] },
+                { name: "main", start: [0, 1], end: [0, 1] },
               ]}
             >
               <Box gridArea="nav" overflow="hidden">

@@ -3,7 +3,9 @@
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="install" />
     <node-interpreter value="project" />
-    <envs />
+    <envs>
+      <env name="npm_config_build_from_source" value="true" />
+    </envs>
     <method v="2" />
   </configuration>
 </component>
